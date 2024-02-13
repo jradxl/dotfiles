@@ -120,3 +120,6 @@ export EDITOR="nano"
 export PATH="$HOME/bin:$PATH"
 export PATH="/opt/nvim-linux64/bin:$PATH"
 
+eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+
+
