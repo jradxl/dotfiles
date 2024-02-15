@@ -54,7 +54,7 @@ function isDesktopOrServer() {
 isDesktopOrServer
 
 ##Install packages common to both Server and Desktop
-apt-get --no-install-recommends --quiet --yes install curl wget openssh-server \
+apt-get --no-install-recommends --quiet --yes install nano vim curl wget openssh-server \
         git mtools btrfs-progs build-essential libxt-dev libpython3-dev libncurses-dev \
         htop glances btop keychain jq python3-venv python3-pip net-tools dirmngr gnupg \
         gawk bridge-utils smartmontools
