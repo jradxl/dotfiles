@@ -93,5 +93,7 @@ else
   echo "Tailscale is up"
 fi
 
+echo "Completed Root Install"
+echo "IMPORTANT: change passwords for newly created users"
 exit 0
 
