@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#Download this file using the following URL:
+#  curl -fsSl https://raw.githubusercontent.com/jradxl/dotfiles/main/install.sh > install.sh
+
+
 PUBLICKEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK3YXTN6G2zLiwneZgtlPsAAg1uwj8OcB3vVmph4paM2"
 
 echo "Installing..."
@@ -35,8 +39,7 @@ isDesktopOrServer
 ##Install packages common to both Server and Desktop
 apt-get --no-install-recommends --quiet --yes install curl wget openssh-server \
         git mtools btrfs-progs build-essential libxt-dev libpython3-dev libncurses-dev \
-        htop glances btop keychain
-
+        htop glances btop keychain jq python3-venv python3-pip
 
 if [[ "$LOCATION" == "desktop" ]]; then
   echo "Installing for Desktop..."
@@ -50,7 +53,6 @@ fi
 #fi
 
 snap refresh lxd --channel=latest
-
 
 username=jovyan
 password=jovyan
