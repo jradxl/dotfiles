@@ -7,27 +7,46 @@
 #  chmod +x install.sh
 # ./install.sh
 
-PUBLICKEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK3YXTN6G2zLiwneZgtlPsAAg1uwj8OcB3vVmph4paM2"
-
-# IMPORTANT
-#Not stored in Git Repo. Add manually before running.
-TAILSCALEAUTHKEY="Empty"
-
 if [[ "$(id -u)" != "0" ]]; then
    echo "This script must be run as root" 1>&2
    exit 1
 fi
 
-if [[ "$TAILSCALEAUTHKEY" == "Empty" ]]; then
-   echo "Edit this script to add a Tailscale Auth Key before running." 1>&2
-   exit 1
+SSHPUBLICKEY="Not Set"
+TAILSCALEAUTHKEY="Not Set"
+
+if [[ -f .env ]]; then
+  echo "Environmental Secrets file .env has been sourced."
+  source .env
+else
+  echo "Environmental Secrets file .env created. Please update and re-run script."
+  cat << EOF > .env
+SSHPUBLICKEY="Not Set"
+TAILSCALEAUTHKEY="Not Set"
+EOF
+  exit 1
+fi
+
+if [[ "$SSHPUBLICKEY" == "Not Set" || "$TAILSCALEAUTHKEY" == "Not Set" || "$SSHPUBLICKEY" == "" || "$TAILSCALEAUTHKEY" == "" ]]; then
+  echo "Please update the values in .env"
+  exit 1
+else
+    if [[ ! "$SSHPUBLICKEY" =~ ^ssh ]]; then
+       echo "Edit this script to correct the SSH Key before running." 1>&2
+       exit 1
+    fi
+    if [[ ! "$TAILSCALEAUTHKEY" =~ ^tskey ]]; then
+       echo "Edit this script to correct the Tailscale Auth Key before running." 1>&2
+       exit 1
+    fi
+    echo "Environmental Secrets values accepted. Continuing..."
 fi
 
 echo "Installing..."
 touch /root/.ssh/authorized_keys
-$(grep -Fxq "$PUBLICKEY" /root/.ssh/authorized_keys)
+$(grep -Fxq "$SSHPUBLICKEY" /root/.ssh/authorized_keys)
 if [[  "$?" -eq 1 ]]; then
-    echo "$PUBLICKEY" >> /root/.ssh/authorized_keys
+    echo "$SSHPUBLICKEY" >> /root/.ssh/authorized_keys
 fi
 
 export NEEDRESTART_MODE=a
@@ -57,12 +76,12 @@ isDesktopOrServer
 apt-get --no-install-recommends --quiet --yes install nano vim curl wget openssh-server \
         git mtools btrfs-progs build-essential libxt-dev libpython3-dev libncurses-dev \
         htop glances btop keychain jq python3-venv python3-pip net-tools dirmngr gnupg \
-        gawk bridge-utils smartmontools
+        gawk bridge-utils smartmontools iproute2
 
 if [[ "$LOCATION" == "desktop" ]]; then
   echo "Installing for Desktop..."
-  apt-get --no-install-recommends --quiet --yes install  terminator gparted libgtk-3-dev \
-          chromium-browser firefox gsmartcontrol
+  apt-get --no-install-recommends --quiet --yes install terminator gparted libgtk-3-dev \
+          chromium-browser firefox gsmartcontrol gnome-keyring
 fi
 
 #if [[ "$LOCATION" == "server" ]]; then
