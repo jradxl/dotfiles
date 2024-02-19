@@ -15,17 +15,21 @@ fi
 SSHPUBLICKEY="Not Set"
 TAILSCALEAUTHKEY="Not Set"
 
-if [[ -f .env ]]; then
+if [[ -f ./.env ]]; then
   echo "Environmental Secrets file .env has been sourced."
-  source .env
+  cat ./.env
+  . ./.env
 else
   echo "Environmental Secrets file .env created. Please update and re-run script."
-  cat << EOF > .env
+  cat << EOF > ./.env
 SSHPUBLICKEY="Not Set"
 TAILSCALEAUTHKEY="Not Set"
 EOF
   exit 1
 fi
+
+echo "<<$SSHPUBLICKEY>>"
+echo "<<$TAILSCALEAUTHKEY>>"
 
 if [[ "$SSHPUBLICKEY" == "Not Set" || "$TAILSCALEAUTHKEY" == "Not Set" || "$SSHPUBLICKEY" == "" || "$TAILSCALEAUTHKEY" == "" ]]; then
   echo "Please update the values in .env"
@@ -76,7 +80,7 @@ isDesktopOrServer
 apt-get --no-install-recommends --quiet --yes install nano vim curl wget openssh-server \
         git mtools btrfs-progs build-essential libxt-dev libpython3-dev libncurses-dev \
         htop glances btop keychain jq python3-venv python3-pip net-tools dirmngr gnupg \
-        gawk bridge-utils smartmontools iproute2
+        gawk bridge-utils smartmontools iproute2 nmap lvm2
 
 if [[ "$LOCATION" == "desktop" ]]; then
   echo "Installing for Desktop..."
@@ -111,6 +115,19 @@ if [[ $(tailscale status | grep "Logged" ) ]]; then
 else
   echo "Tailscale is up"
 fi
+
+if [[ -f dot_root_bashrc ]]; then
+  echo "Updating .bashrc for root"
+  cp dot_root_bashrc .bashrc
+  source .bashrc
+fi
+
+echo "Getting PIPX"
+wget -q -O /usr/local/bin/pipx $(wget -q -O - 'https://api.github.com/repos/pypa/pipx/releases/latest' | jq -r '.assets[] | select(.name=="pipx.pyz").browser_download_url')
+chmod +x   /usr/local/bin/pipx
+
+echo "Installing lastversion"
+pipx install lastversion
 
 echo "Completed Root Install"
 echo "IMPORTANT: change passwords for newly created users"

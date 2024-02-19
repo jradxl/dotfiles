@@ -2,4 +2,4 @@ config
 README.md
 install.sh
 .env
-
+dot_root_bashrc
