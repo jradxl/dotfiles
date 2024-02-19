@@ -8,6 +8,21 @@ case $- in
       *) return;;
 esac
 
+# .bashrc file from Chezmoi
+
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -118,10 +133,13 @@ if ! shopt -oq posix; then
 fi
 
 export EDITOR="nano"
-export PATH="$HOME/bin:$PATH"
+#export PATH="$HOME/bin:$PATH"
 export PATH="/opt/nvim-linux64/bin:$PATH"
+
+pathmunge "$HOME/bin"
+pathmunge "/opt/nvim-linux64/bin"
 
 eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
 
-
 . "$HOME/.cargo/env"
+
