@@ -19,7 +19,7 @@ log "Running run_once_install-packages.sh once..."
 
 now=$(date +"%Y-%m-%d-%H%M%S")
 mkdir -p $HOME/.czm-tests
-touch "$HOME/.czm-tests/czm-wrote-this-$now"
+touch "$HOME/.czm-tests/czm-wrote-thisAAA-$now"
 
 log "Done. Please restart the shell."
 
