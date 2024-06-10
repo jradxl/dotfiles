@@ -1,6 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
+# 20240610b
 
 # If not running interactively, don't do anything
 case $- in
@@ -9,6 +10,7 @@ case $- in
 esac
 
 # .bashrc file from Chezmoi
+echo "Chezmoi: START .bashrc"
 
 pathmunge () {
     case ":${PATH}:" in
@@ -103,7 +105,8 @@ fi
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
-alias ll='ls -alF'
+#alias ll='ls -alF'
+alias ll='eza -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias czm='chezmoi'
@@ -133,15 +136,87 @@ if ! shopt -oq posix; then
 fi
 
 export EDITOR="nano"
-#export PATH="$HOME/bin:$PATH"
-export PATH="/opt/nvim-linux64/bin:$PATH"
 
+##export PATH="$HOME/bin:$PATH"
 pathmunge "$HOME/bin"
+pathmunge "$HOME/.local/bin"
+pathmunge "$HOME/.rd/bin"
+##export PATH="/opt/nvim-linux64/bin:$PATH"
 pathmunge "/opt/nvim-linux64/bin"
+##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
+pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
+pathmunge "$HOME/podman/bin"
+pathmunge "$HOME/lima/bin"
 
-eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
 
-if [[ -f "$HOME/.cargo/env" ]]; then
-  . "$HOME/.cargo/env"
+########### KEYCHAIN START #################
+## Logic to run once per day
+export LOCK="$HOME/.runonce-lock"
+
+#echo "JSR1"
+if [[ "$(pwd)" == "$HOME" ]]; then
+    ##Test If run already today
+    SHOULDRUN="N"
+    if [[ ! -e "$LOCK" ]]; then  # no lock - command run for the first time
+        #"$@"
+        touch "$LOCK"
+        SHOULDRUN="Y"
+        #echo "JSR2"
+    else                         # lock exists
+        #echo "JSR3"
+        if [[ "$(find "$LOCK" -mmin +720)" ]]; then
+            #"$@"
+            SHOULDRUN="Y"
+            touch "$LOCK"
+            #echo "JSR4"
+        fi
+    fi
+    #echo "JSR5"
+    #echo "SHOULDRUN: $SHOULDRUN"
+    if [[ "$SHOULDRUN" == "Y" ]]; then
+        echo ""
+        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        ##$HOME/scripts/go-version.sh
+        #$HOME/.local/bin/go-version-user.sh
+    else
+        echo ""
+        eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
+        keychain --list
+        #ssh-add -l
+    fi
 fi
+
+if [[ -z "$HOSTNAME" ]]; then
+  HOSTNAME=$(uname -n)
+fi
+if [[ -f $HOME/.keychain/$HOSTNAME-sh ]]; then
+  source $HOME/.keychain/$HOSTNAME-sh
+fi
+if [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]]; then
+  source $HOME/.keychain/$HOSTNAME-sh-gpg
+fi
+
+########### KEYCHAIN END #################
+
+. "$HOME/.cargo/env"
+##export DOCKER_HOST=unix:///run/user/1000/docker.sock
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+
+# Password Store
+# export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
+# export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=ask
+
+##NOTES PinEntry
+## apt install pinentry-curses
+## apt install pinentry-tty
+## update-alternatives --config pinentry
+## Select TTY
+GPG_TTY=$(tty)
+echo "Current TTY: $GPG_TTY"
+export GPG_TTY
+echo "ChezMoi Alias: czm"
+
+echo "Chezmoi: End .bashrc"
 
