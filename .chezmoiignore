@@ -5,3 +5,5 @@ installasroot.sh
 installasuser.sh
 .env
 dot_root_bashrc
+root
+
