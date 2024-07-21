@@ -39,3 +39,6 @@ fi
 # Added by Toolbox App
 export PATH="$PATH:/home/jradley/.local/share/JetBrains/Toolbox/scripts"
 
+#DBUS Mate Tweak
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+
