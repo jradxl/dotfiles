@@ -12,15 +12,14 @@ case $- in
       *) return;;
 esac
 
+# .bashrc file from Chezmoi
+echo "Chezmoi: START .bashrc"
+. "$HOME/.chezmoi-pac"
+
 export UUID=$(id -u $USER)
 export GGID=$(id -g $USER)
 echo "User, UID and GID is: $USER;$UUID;$GGID"
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
-
-# .bashrc file from Chezmoi
-echo "Chezmoi: START .bashrc"
-
-. "$HOME/.chezmoi-pac"
 
 pathmunge () {
     case ":${PATH}:" in
