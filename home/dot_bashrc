@@ -244,3 +244,4 @@ export GPG_TTY
 echo "ChezMoi Alias: czm"
 
 echo "Chezmoi: End .bashrc"
+
