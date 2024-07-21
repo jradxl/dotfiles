@@ -17,7 +17,7 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 
 INTERACTIVE="$-"
-echo "INTERACTIVE: $INTERACTIVE"
+echo "DotProfile - INTERACTIVE?: $INTERACTIVE"
 ## If not running interactively, don't do anything
 #case $- in
 #    *i*) ;;
@@ -33,13 +33,5 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-. "$HOME/.cargo/env"
 
-
-# Added by Toolbox App
-export PATH="$PATH:/home/jradley/.local/share/JetBrains/Toolbox/scripts"
-
-#DBUS Mate Tweak
-export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
-
-. "$HOME/.rye/env"
+echo "Dot Profile end"
