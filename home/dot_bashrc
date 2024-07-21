@@ -155,8 +155,9 @@ pathmunge "/opt/nvim-linux64/bin"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
+pathmunge "$HOME/.rye/env"
 
-. "$HOME/.rye/env"
+#NOT USED . "$HOME/.rye/env"
 . "$HOME/.cargo/env"
 
 ########### KEYCHAIN START #################
@@ -207,6 +208,7 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed Chezmoi Version: $(chezmoi --version)"
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
+        rye self upgrade
         chezmoi upgrade
         #ssh-add -l
     fi
