@@ -12,6 +12,8 @@ esac
 # .bashrc file from Chezmoi
 echo "Chezmoi: START .bashrc"
 
+. "$HOME/.chezmoi-pac"
+
 pathmunge () {
     case ":${PATH}:" in
         *:"$1":*)
