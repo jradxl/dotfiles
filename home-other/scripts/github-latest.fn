@@ -1,0 +1,5 @@
+#Function imported into .bashrc
+get-github-latest() {
+    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release"  | grep -v "weekly" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev 
+}
+

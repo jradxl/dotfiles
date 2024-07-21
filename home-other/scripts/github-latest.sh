@@ -8,6 +8,16 @@
 #git-latest.sh https://github.com/pypa/pipx
 #git-latest.sh https://github.com/nodejs/node
 
+echo "Test Get-Github-Latest See .bashrc"
+FILE="$HOME/scripts/github-latest.fn"
+
+if [[ -f $FILE ]]; then
+    . "$FILE"
+else
+    echo "$FILE is missing."
+    exit 1
+fi
+
 base_name=$(basename $0)
 
 if [[ $# -ne 1 ]] ;then
@@ -15,8 +25,9 @@ if [[ $# -ne 1 ]] ;then
   exit
 fi
 
-git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release"  | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev 
+get-github-latest $1
 
+#git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release"  | grep -v "weekly" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev 
 #git ls-remote --tags --sort=v:refname $1 | grep -o 'v.*' | sort -r | head -1
 
 exit 0
@@ -38,3 +49,4 @@ BEGIN {
       com = $2
   printf com ? "%s-%s-g%s\n" : "%s\n", tag, com, sha
 }
+
