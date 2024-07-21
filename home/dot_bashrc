@@ -3,6 +3,9 @@
 # for examples
 # 20240610c
 
+## CHEZMOI supported: https://www.chezmoi.io/
+## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
