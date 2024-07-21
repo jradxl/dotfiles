@@ -201,8 +201,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
         
-        echo "Latest Chexmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
+        echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version)"
+        echo "Installed Rye version: $(rye --version)"
         chezmoi upgrade
         #ssh-add -l
     fi
@@ -220,7 +221,9 @@ fi
 
 ########### KEYCHAIN END #################
 
+. "$HOME/.rye/env"
 . "$HOME/.cargo/env"
+
 ##export DOCKER_HOST=unix:///run/user/1000/docker.sock
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
