@@ -25,6 +25,10 @@ pathmunge () {
     esac
 }
 
+get-github-latest () {
+    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -135,7 +139,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export EDITOR="nano"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export EDITOR="zed"
 
 ##export PATH="$HOME/bin:$PATH"
 pathmunge "$HOME/bin"
@@ -178,11 +186,24 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
+        echo ""
+        echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
+        echo "Installed node version: $(node -v)"
+        echo "Installed npm version:  $(npm -v)"
+        echo "Installed npx version:  $(npx -v)"
+        echo "Installed rustc version:  $(rustc -V)"
+        echo "Installed cargo version:  $(cargo -V)"
+        chezmoi upgrade
+        echo ""
     else
         echo ""
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
+        
+        echo "Latest Chexmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
+        echo "Installed Chezmoi Version: $(chezmoi --version)"
+        chezmoi upgrade
         #ssh-add -l
     fi
 fi
@@ -219,4 +240,3 @@ export GPG_TTY
 echo "ChezMoi Alias: czm"
 
 echo "Chezmoi: End .bashrc"
-
