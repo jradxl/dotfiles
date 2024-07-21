@@ -206,9 +206,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         
         echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version)"
-        echo "Installed Rye version: $(./rye/shims/rye --version)"
-        echo "Installed Python version (Rye): $(./rye/shims/python -V)"
-        ./rye/shims/rye self upgrade
+        echo "Installed Rye version: $($HOME/rye/shims/rye --version)"
+        echo "Installed Python version (Rye): $($HOME/rye/shims/python -V)"
+        $HOME/rye/shims/rye self upgrade
         chezmoi upgrade
         #ssh-add -l
     fi
