@@ -208,9 +208,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         keychain --list
         echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version)"
+        chezmoi upgrade
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
-        chezmoi upgrade
         #ssh-add -l
     fi
 fi
