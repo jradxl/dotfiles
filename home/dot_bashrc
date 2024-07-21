@@ -27,6 +27,7 @@ pathmunge () {
     esac
 }
 
+#Update function in this file if needed
 GFILE="$HOME/scripts/github-latest.fn"
 if [[ -f $GFILE ]]; then
     . "$GFILE"
@@ -218,6 +219,7 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         chezmoi upgrade
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
+        echo "Installed Golang version: $(go version)"
         #ssh-add -l
     fi
 fi
