@@ -196,6 +196,7 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed npx version:  $(npx -v)"
         echo "Installed rustc version:  $(rustc -V)"
         echo "Installed cargo version:  $(cargo -V)"
+        rye self update
         chezmoi upgrade
         echo ""
     else
@@ -203,12 +204,10 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
-        
         echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version)"
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
-        rye self update
         chezmoi upgrade
         #ssh-add -l
     fi
