@@ -155,7 +155,7 @@ pathmunge "/opt/nvim-linux64/bin"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
-pathmunge "$HOME/.rye/env"
+pathmunge "$HOME/.rye/shims"
 
 #NOT USED . "$HOME/.rye/env"
 . "$HOME/.cargo/env"
