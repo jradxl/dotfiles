@@ -9,6 +9,11 @@ case $- in
       *) return;;
 esac
 
+export UID=$(id -u $USER)
+export GID=$(id -g $USER)
+echo "User, UID and GID is: $USER;$UID;$GID"
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
+
 # .bashrc file from Chezmoi
 echo "Chezmoi: START .bashrc"
 
