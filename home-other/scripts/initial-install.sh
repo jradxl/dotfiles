@@ -89,6 +89,10 @@ fi
 
 exit 0
 
+curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes"  bash
+rye --version
+
+
 curl -f https://zed.dev/install.sh | sh
 
 ##

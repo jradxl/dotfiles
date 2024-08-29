@@ -172,10 +172,11 @@ pathmunge "/opt/nvim-linux64/bin"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
-pathmunge "$HOME/.rye/shims"
+#NOT USED pathmunge "$HOME/.rye/shims"
 
-#NOT USED . "$HOME/.rye/env"
+. "$HOME/.rye/env"
 . "$HOME/.cargo/env"
+. "$HOME/.local/share/swiftly/env.sh"
 
 ########### KEYCHAIN START #################
 ## Logic to run once per day
@@ -261,7 +262,6 @@ echo "Current TTY: $GPG_TTY"
 export GPG_TTY
 echo "ChezMoi Alias: czm"
 
-. $HOME/.local/share/swiftly/env.sh
 
 echo "Chezmoi: End .bashrc"
 
