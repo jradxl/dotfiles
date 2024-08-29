@@ -34,4 +34,6 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+. $HOME/.local/share/swiftly/env.sh
+
 echo "Dot Profile end"

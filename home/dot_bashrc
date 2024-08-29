@@ -261,7 +261,8 @@ echo "Current TTY: $GPG_TTY"
 export GPG_TTY
 echo "ChezMoi Alias: czm"
 
+. $HOME/.local/share/swiftly/env.sh
+
 echo "Chezmoi: End .bashrc"
 
 
-#1
