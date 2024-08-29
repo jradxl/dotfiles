@@ -69,6 +69,11 @@ if [[ $(ssh git@github.com) == 1 ]]; then
     exit 1
 fi
 
+if [[ ! -f "$HOME/.chezmoi-pac" ]]; then
+    echo "Update .chezmoi-pac when convenient."
+    echo 'export CHEZMOI_GITHUB_ACCESS_TOKEN=""' > "$HOME/.chezmoi-pac"
+fi
+
 exit 0
 
 CURENTDIR=$(pwd)
@@ -91,6 +96,12 @@ exit 0
 
 curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes"  bash
 rye --version
+mkdir -p ~/.local/share/bash-completion/completions
+rye self completion > ~/.local/share/bash-completion/completions/rye.bash
+
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+nvm --version
+nvm install node
 
 
 curl -f https://zed.dev/install.sh | sh
