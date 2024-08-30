@@ -208,6 +208,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
         echo ""
+        echo "Updating NVM..."
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
         echo "Installed node version: $(node -v)"
         echo "Installed npm version:  $(npm -v)"
