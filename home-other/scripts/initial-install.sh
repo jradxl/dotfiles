@@ -15,7 +15,6 @@ sudo systemctl daemon-reload
 sudo apt-get -y install terminator git nmap net-tools curl wget iproute2 apt-utils age vim pipx rsync bison
 sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
 
-
 ### CHEZMOI ###
 if [[ $(command -v chezmoi ) ]]; then
     echo "Chezmoi already installed."
@@ -30,6 +29,9 @@ else
     echo "Getting existing Dofiles repo..."
     chezmoi init https://github.com/jradxl/dotfiles.git
 fi
+chezmoi --version
+echo "Applying Chezmoi updates to the underlying files : forced"
+chezmoi apply --force
 
 #Set up Github
 git config --global user.email "jradxl@gmail.com"
@@ -81,6 +83,7 @@ fi
 
 ### End Chezmoi ###
 
+### RYE for Python ###
 
 if [[ $(command -v rye) ]]; then
     echo "Rye already installed"
@@ -93,7 +96,9 @@ else
     mkdir -p ~/.local/share/bash-completion/completions
     rye self completion > ~/.local/share/bash-completion/completions/rye.bash
 fi
+## RYE End ###
 
+### NVM and NODE ###
 if [[ -d "$HOME/.nvm" ]]; then
     echo "NVM already installed"
 else
@@ -110,32 +115,54 @@ else
     nvm install node
 fi
 node --version
+### End NVM and NODE ###
 
-exit 0
+### RUST ###
+if [[ -d "$HOME/.cargo" ]]; then
+    echo "Rust Toolchain already installed."
+else
+    echo "Installing Rust Toolchain"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
+### End RUST ###
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-curl -f https://zed.dev/install.sh | sh
+### ZED editor ###
+if [[ -f "$HOME/.local/bin/zed" ]]; then
+    echo "Zed Editor already installed"
+else
+    echo "Installing Zed editor"
+    curl -f https://zed.dev/install.sh | sh
+fi
+### End Zed ###
 
-##
+## BITWARDEN Secrets ###
 #See: https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8
 #See: dra https://github.com/devmatteini/dra
 #This works to get filename:
 # wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux | sed 's:.*/::'
 
 ## Bitwarden Secrets CLI
-BWSPATH=$(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
-TESTPATH="https://github.com/bitwarden/sdk/releases/download/bws-v0.5.0/bws-x86_64-unknown-linux-gnu-0.5.0.zip"
-FILENAME=echo "$BWSPATH" | sed 's:.*/::'
+if [[ $(command -v bws) ]]; then
+    echo "Bitwarden Secrets Manager is already installed"
+else
+    echo "Installing Bitwarden Secrets Manager "
+    BWSPATH=$(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
+    TESTPATH="https://github.com/bitwarden/sdk/releases/download/bws-v0.5.0/bws-x86_64-unknown-linux-gnu-0.5.0.zip"
+    FILENAME=$(echo "$BWSPATH" | sed 's:.*/::')
 
-mkdir -p "$HOME/SecretsManager"
-CURENTDIR=$(pwd)
-cd "$HOME/SecretsManager"
-#wget $(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
-wget $($BWSPATH)
-unzip "$HOME/SecretsManager/$FILENAME"
-mv bws "$HOME/.local/bin"
-cd $CURENTDIR
+    mkdir -p "$HOME/SecretsManager"
+    CURENTDIR=$(pwd)
+    cd "$HOME/SecretsManager"
+    #wget $(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
+    wget $BWSPATH
+    unzip "$HOME/SecretsManager/$FILENAME"
+    mv bws "$HOME/.local/bin"
+    cd $CURENTDIR
+    rm -rf "$HOME/SecretsManager"
+fi
+bws --version
 
+### GOLANG Version Manager G, which seems easiest to use ###
 if [[ -d  "$HOME/.g" ]]; then
     echo "Golang Version manager G is already installed."
 else
@@ -151,13 +178,7 @@ echo "Latest Go Version: <$GOLATEST>"
 echo "Installing Latest Golang..."
 g install "$GOLATEST"
 go version
-exit 0
-
-exit 0
-
-
-
-
+### End GOLAND ###
 
 #GVM appears to need a working Go to install others
 #if [[ -d "$HOME/.gvm" ]]; then
@@ -169,9 +190,7 @@ exit 0
 #. "$HOME/.gvm/scripts/gvm"
 #gvm version
 
-
-exit 0
-
+### VSCODE ###
 if [[ $(command -v code) ]]; then
     echo "VSCode is already installed"
 else
@@ -186,7 +205,9 @@ else
     sudo apt-get -y install code
 fi
 code --version
+### End VSCODE ###
 
+### Swift and Swiftly ###
 if [[ $(command -v swiftly) ]]; then
     ##All Set
     echo "Swiftly set up, continuing..."
@@ -217,7 +238,9 @@ else
     swiftly --version
     swift --version
 fi
+### END Swift and Swiftly ###
 
+### BORG and BORGMATIC ###
 #Borg is installed as root user uisng pipx. Therefore must be run as root
 #for the venv to work
 if [[ $(sudo -u root /root/.local/bin/borg --version) ]]; then
@@ -237,3 +260,6 @@ else
     sudo pipx install borgmatic
 fi
 sudo -u root /root/.local/bin/borgmatic --version
+#### End Borg and Borgmatic
+
+exit 0
