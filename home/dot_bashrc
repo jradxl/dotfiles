@@ -178,6 +178,11 @@ pathmunge "$HOME/lima/bin"
 . "$HOME/.cargo/env"
 . "$HOME/.local/share/swiftly/env.sh"
 
+pathmunge "${HOME}/.g/bin"
+if [[ -s "${HOME}/.g/env" ]]; then
+    . "${HOME}/.g/env"
+fi
+
 ########### KEYCHAIN START #################
 ## Logic to run once per day
 export LOCK="$HOME/.runonce-lock"
@@ -262,11 +267,6 @@ export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 GPG_TTY=$(tty)
 echo "Current TTY: $GPG_TTY"
 export GPG_TTY
-
-pathmunge "${HOME}/.g/bin"
-if [[ -s "${HOME}/.g/env" ]]; then
-    . "${HOME}/.g/env"
-fi
 
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
