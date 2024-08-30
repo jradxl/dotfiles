@@ -35,16 +35,16 @@ pathmunge () {
 }
 
 #Update function in this file if needed
-GFILE="$HOME/scripts/github-latest.fn"
-if [[ -f $GFILE ]]; then
-    . "$GFILE"
-else
-    echo "$GFILE is missing."
-    #exit 1
-fi
-#get-github-latest () {
-#    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
-#}
+#GFILE="$HOME/scripts/github-latest.fn"
+#if [[ -f $GFILE ]]; then
+#    . "$GFILE"
+#else
+#    echo "$GFILE is missing."
+#    #exit 1
+#fi
+get-github-latest () {
+    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -262,9 +262,12 @@ export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 GPG_TTY=$(tty)
 echo "Current TTY: $GPG_TTY"
 export GPG_TTY
+
+pathmunge "${HOME}/.g/bin"
+if [[ -s "${HOME}/.g/env" ]]; then
+    . "${HOME}/.g/env"
+fi
+
 echo "ChezMoi Alias: czm"
-
-
 echo "Chezmoi: End .bashrc"
-
 

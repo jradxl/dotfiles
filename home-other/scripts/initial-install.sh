@@ -10,61 +10,13 @@ else
     sudo apt-get -y install curl
 fi
 
-if [[ $(command -v swiftly) ]]; then
-    ##All Set
-    echo "Swiftly set up, continuing..."
-else
-    echo "Swiftly not found. Checking Installation..."
-    if [[ -f $HOME/.local/share/swiftly/env.sh ]]; then
-        echo "Swiftly installed but not sourced. Sourcing for this shell."
-    else
-        echo "Installing Swiftly. Will ask Questions..."
-        curl -L https://swiftlang.github.io/swiftly/swiftly-install.sh | bash
-    fi
-    RERUNFLAG="TRUE"
-    . $HOME/.local/share/swiftly/env.sh
-    grep -qxF ". $HOME/.local/share/swiftly/env.sh" "$HOME/.bashrc"  || echo ". $HOME/.local/share/swiftly/env.sh" >> "$HOME/.bashrc"
-    grep -qxF ". $HOME/.local/share/swiftly/env.sh" "$HOME/.profile" || echo ". $HOME/.local/share/swiftly/env.sh" >> "$HOME/.profile"
-fi
+sudo systemctl daemon-reload
 
-if [[ -f "$HOME/.local/bin/swift"  ]]; then
-    echo "Swift already installed"
-else
-    swiftly install latest
-fi
-
-if [[ "$RERUNFLAG" == "TRUE" ]]; then
-    echo "You MUST restart this shell, and then re-run."
-else
-    echo "Swiftly and Swift installed"
-    swiftly --version
-    swift --version
-fi
-
-sudo apt-get -y install terminator git nmap net-tools curl wget iproute2 apt-utils age vim pipx rsync
+sudo apt-get -y install terminator git nmap net-tools curl wget iproute2 apt-utils age vim pipx rsync bison
 sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
 
-#Borg is installed as root user uisng pipx. Therefore must be run as root
-#for the venv to work
-if [[ $(sudo -u root /root/.local/bin/borg --version) ]]; then
-    echo "Borg backup is present"
-else
-    echo "Installling Borg backup using pipx"
-    sudo pipx install borgbackup
-fi
-sudo -u root /root/.local/bin/borg --version
 
-#Borgmatic is installed as root user uisng pipx. Therefore must be run as root
-#for the venv to work
-if [[ $(sudo -u root /root/.local/bin/borgmatic --version) ]]; then
-    echo "Borgmatic is present"
-else
-    echo "Installling Borgmatic using pipx"
-    sudo pipx install borgmatic
-fi
-sudo -u root /root/.local/bin/borgmatic --version
-
-
+### CHEZMOI ###
 if [[ $(command -v chezmoi ) ]]; then
     echo "Chezmoi already installed."
 else
@@ -84,7 +36,6 @@ git config --global user.email "jradxl@gmail.com"
 git config --global user.email
 git config --global user.name "John Radley"
 git config --global user.name
-
 
 if [[ -f "$HOME/.github.configured" ]]; then
     echo "Github Private Key setup OK"
@@ -128,13 +79,16 @@ if [[ -f "$HOME/.github.configured" ]]; then
     cd "$CURENTDIR"
 fi
 
+### End Chezmoi ###
+
+
 if [[ $(command -v rye) ]]; then
     echo "Rye already installed"
 else
     echo "Installing Rye"
     curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes"  bash
     rye --version
-    echo "3.11" > .python-version
+    echo "3.11" > "$HOME/.python-version"
     rye fetch
     mkdir -p ~/.local/share/bash-completion/completions
     rye self completion > ~/.local/share/bash-completion/completions/rye.bash
@@ -182,5 +136,104 @@ unzip "$HOME/SecretsManager/$FILENAME"
 mv bws "$HOME/.local/bin"
 cd $CURENTDIR
 
-exit 1
+if [[ -d  "$HOME/.g" ]]; then
+    echo "Golang Version manager G is already installed."
+else
+    echo "Installing the Golang Version manager G."
+    curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+    UNWANTEDLINE="[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup"
+    sed -i '/g shell setup/d'  "$HOME/.bashrc"
+fi
+. "$HOME/.g/env"
+g --version
+GOLATEST=$(g lsr | grep -v rc | grep -v beta | tail -n 1 | sed 's/^[[:space:]]*//g')
+echo "Latest Go Version: <$GOLATEST>"
+echo "Installing Latest Golang..."
+g install "$GOLATEST"
+go version
+exit 0
 
+exit 0
+
+
+
+
+
+#GVM appears to need a working Go to install others
+#if [[ -d "$HOME/.gvm" ]]; then
+#    echo "GVM version manager already installed"
+#else
+#    echo "Installing GVM version manager"
+#    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+#fi
+#. "$HOME/.gvm/scripts/gvm"
+#gvm version
+
+
+exit 0
+
+if [[ $(command -v code) ]]; then
+    echo "VSCode is already installed"
+else
+    ##Installing VSCode
+    echo "Installing VSCode"
+    sudo apt-get -y install wget gpg
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+    rm -f packages.microsoft.gpg
+    sudo apt-get update
+    sudo apt-get -y install code
+fi
+code --version
+
+if [[ $(command -v swiftly) ]]; then
+    ##All Set
+    echo "Swiftly set up, continuing..."
+else
+    echo "Swiftly not found. Checking Installation..."
+    if [[ -f $HOME/.local/share/swiftly/env.sh ]]; then
+        echo "Swiftly installed but not sourced. Sourcing for this shell."
+    else
+        echo "Installing Swiftly. Will ask Questions..."
+        curl -L https://swiftlang.github.io/swiftly/swiftly-install.sh | bash
+    fi
+    RERUNFLAG="TRUE"
+    . $HOME/.local/share/swiftly/env.sh
+    grep -qxF ". $HOME/.local/share/swiftly/env.sh" "$HOME/.bashrc"  || echo ". $HOME/.local/share/swiftly/env.sh" >> "$HOME/.bashrc"
+    grep -qxF ". $HOME/.local/share/swiftly/env.sh" "$HOME/.profile" || echo ". $HOME/.local/share/swiftly/env.sh" >> "$HOME/.profile"
+fi
+
+if [[ -f "$HOME/.local/bin/swift"  ]]; then
+    echo "Swift already installed"
+else
+    swiftly install latest
+fi
+
+if [[ "$RERUNFLAG" == "TRUE" ]]; then
+    echo "You MUST restart this shell, and then re-run."
+else
+    echo "Swiftly and Swift installed"
+    swiftly --version
+    swift --version
+fi
+
+#Borg is installed as root user uisng pipx. Therefore must be run as root
+#for the venv to work
+if [[ $(sudo -u root /root/.local/bin/borg --version) ]]; then
+    echo "Borg backup is present"
+else
+    echo "Installling Borg backup using pipx"
+    sudo pipx install borgbackup
+fi
+sudo -u root /root/.local/bin/borg --version
+
+#Borgmatic is installed as root user uisng pipx. Therefore must be run as root
+#for the venv to work
+if [[ $(sudo -u root /root/.local/bin/borgmatic --version) ]]; then
+    echo "Borgmatic is present"
+else
+    echo "Installling Borgmatic using pipx"
+    sudo pipx install borgmatic
+fi
+sudo -u root /root/.local/bin/borgmatic --version
