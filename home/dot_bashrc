@@ -178,9 +178,12 @@ pathmunge "$HOME/lima/bin"
 . "$HOME/.cargo/env"
 . "$HOME/.local/share/swiftly/env.sh"
 
-pathmunge "${HOME}/.g/bin"
+##pathmunge "${HOME}/.g/bin"
 if [[ -s "${HOME}/.g/env" ]]; then
     . "${HOME}/.g/env"
+    GOPATH1=$(go env GOPATH)
+    echo "<$GOPATH1>"
+    pathmunge "$GOPATH1"
 fi
 
 ########### KEYCHAIN START #################
