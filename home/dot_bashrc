@@ -208,7 +208,6 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "JSR5"
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
-        echo ""
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
@@ -225,7 +224,6 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         chezmoi upgrade
         echo ""
     else
-        echo ""
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
