@@ -1,0 +1,12 @@
+[Unit]
+Description=My TUN/TAP Interfaces
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/root/create-tuntaps.sh
+
+[Install]
+WantedBy=multi-user.target
+
