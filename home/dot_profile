@@ -8,6 +8,7 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
@@ -16,8 +17,29 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-INTERACTIVE="$-"
-echo "DotProfile - INTERACTIVE?: $INTERACTIVE"
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH="$PATH:$1"
+            else
+                PATH="$1:$PATH"
+            fi
+    esac
+}
+
+echo "Start .profile"
+
+#INTERACTIVE="$-"
+#echo "DotProfile - INTERACTIVE?: $INTERACTIVE"
 ## If not running interactively, don't do anything
 #case $- in
 #    *i*) ;;
@@ -26,12 +48,16 @@ echo "DotProfile - INTERACTIVE?: $INTERACTIVE"
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+    #PATH="$HOME/bin:$PATH"
+    pathmunge "$HOME/bin"
 fi
+
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
+    #PATH="$HOME/.local/bin:$PATH"
+    pathmunge "$HOME/.local/bin"
 fi
 
-echo "Dot Profile end"
+echo "End .profile"
+

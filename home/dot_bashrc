@@ -27,9 +27,9 @@ pathmunge () {
             ;;
         *)
             if [ "$2" = "after" ] ; then
-                PATH=$PATH:$1
+                PATH="$PATH:$1"
             else
-                PATH=$1:$PATH
+                PATH="$1:$PATH"
             fi
     esac
 }
@@ -167,14 +167,15 @@ pathmunge "$HOME/lima/bin"
 #NOT USED pathmunge "$HOME/.rye/shims"
 
 . "$HOME/.rye/env"
-. "$HOME/.cargo/env"
+#. "$HOME/.cargo/env"
+pathmunge "$HOME/.cargo/bin"
 . "$HOME/.local/share/swiftly/env.sh"
 
 ##pathmunge "${HOME}/.g/bin"
 if [[ -s "${HOME}/.g/env" ]]; then
     . "${HOME}/.g/env"
     GOPATH1=$(go env GOPATH)
-    echo "<$GOPATH1>"
+    #echo "<$GOPATH1>"
     pathmunge "$GOPATH1"
 fi
 

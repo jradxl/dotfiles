@@ -2,6 +2,19 @@
 
 echo "Starting Initial Install..."
 
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
@@ -41,7 +54,6 @@ else
 fi
 ## RYE End ###
 
-exit 0
 
 ### NVM and NODE ###
 #This is a fussy installer. .nvm dir needs to pre exist.
@@ -63,8 +75,6 @@ fi
 
 nvm --version
 
-exit 0
-
 if [[ $(command -v node) ]]; then
     echo "NODE already installed"
 else
@@ -74,6 +84,7 @@ fi
 node --version
 ### End NVM and NODE ###
 
+
 ### RUST ###
 if [[ -d "$HOME/.cargo" ]]; then
     echo "Rust Toolchain already installed."
@@ -81,7 +92,13 @@ else
     echo "Installing Rust Toolchain"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
+##. "$HOME/.cargo/env"
+export PATH="$HOME/.cargo/bin:$PATH"
+
 ### End RUST ###
+
+
+exit 0
 
 ### ZED editor ###
 if [[ -f "$HOME/.local/bin/zed" ]]; then
