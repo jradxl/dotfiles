@@ -186,6 +186,13 @@ if [[ -s "${HOME}/.g/env" ]]; then
     pathmunge "$GOPATH1"
 fi
 
+##This is a fussy installer. .nvm dir needs to pre exist.
+##Assumed to be already installed, hence check for upgrade.
+export NVM_DIR="$HOME/.nvm"
+mkdir -p "$NVM_DIR"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 ########### KEYCHAIN START #################
 ## Logic to run once per day
 export LOCK="$HOME/.runonce-lock"
@@ -211,12 +218,16 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "JSR5"
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
+		echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
         echo ""
         echo "Updating NVM..."
-        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+		NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
+		echo "Latest NVM Version: $NVM_LATEST"
+        wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
+        echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
         echo "Installed node version: $(node -v)"
         echo "Installed npm version:  $(npm -v)"
@@ -227,16 +238,18 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         chezmoi upgrade
         echo ""
     else
+		echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
+        echo "Installed NVM Version: $(nvm --version)"
         echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version)"
         chezmoi upgrade
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
         echo "Installed Golang version: $(go version)"
-        #ssh-add -l
+        echo ""
     fi
 fi
 

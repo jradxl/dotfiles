@@ -45,17 +45,17 @@ echo "CAREFUL: Do you want to force the application of Chezmoi updates?"
 select yn in "Yes" "No"; do
     case $yn in
         Yes )
-			echo "Appling updates..."
+			echo "Appling Chezmod updates..."
 			chezmoi apply --force
 			break
 			;;
         No )
-			echo "Not applied..."
+			echo "Chezmod updates not applied..."
 			break
 			;;
     esac
 done
-echo "XXX Finished Chezmoi updating..."
+echo "Finished Chezmoi updating..."
 
 #Set up Github
 git config --global user.email "jradxl@gmail.com"
@@ -122,10 +122,9 @@ else
 fi
 ## RYE End ###
 
-### NVM and NODE ###
 
-##This is a fussy installer. .nvm dir needs to pre exist.
-##Assumed to be already installed, hence check for upgrade.
+### NVM and NODE ###
+#This is a fussy installer. .nvm dir needs to pre exist.
 export NVM_DIR="$HOME/.nvm"
 mkdir -p "$NVM_DIR"
 
