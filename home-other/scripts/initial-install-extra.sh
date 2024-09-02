@@ -93,12 +93,11 @@ else
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 ##. "$HOME/.cargo/env"
-export PATH="$HOME/.cargo/bin:$PATH"
+#export PATH="$HOME/.cargo/bin:$PATH"
+pathmunge "$HOME/.cargo/bin"
 
 ### End RUST ###
 
-
-exit 0
 
 ### ZED editor ###
 if [[ -f "$HOME/.local/bin/zed" ]]; then
