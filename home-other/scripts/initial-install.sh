@@ -12,7 +12,8 @@ fi
 
 sudo systemctl daemon-reload
 
-sudo apt-get -y install terminator git nmap net-tools curl wget iproute2 apt-utils age vim pipx rsync bison
+## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
+sudo apt-get -y install build-essential pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent
 sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
 
 ### CHEZMOI ###
@@ -22,6 +23,10 @@ else
     echo "Installing Chezmoi to ~/.local/bin to use existing PATHs" 
     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin   
 fi
+
+##Add to current shell
+export PATH="$HOME/.local/bin:$PATH"
+echo "$PATH"
 
 if [[ -d "$HOME/.local/share/chezmoi" ]]; then
     echo "Chezmoi Dotfiles repo already exists."
@@ -231,6 +236,8 @@ else
     swiftly install latest
 fi
 
+exit 0
+
 if [[ "$RERUNFLAG" == "TRUE" ]]; then
     echo "You MUST restart this shell, and then re-run."
 else
@@ -240,26 +247,5 @@ else
 fi
 ### END Swift and Swiftly ###
 
-### BORG and BORGMATIC ###
-#Borg is installed as root user uisng pipx. Therefore must be run as root
-#for the venv to work
-if [[ $(sudo -u root /root/.local/bin/borg --version) ]]; then
-    echo "Borg backup is present"
-else
-    echo "Installling Borg backup using pipx"
-    sudo pipx install borgbackup
-fi
-sudo -u root /root/.local/bin/borg --version
-
-#Borgmatic is installed as root user uisng pipx. Therefore must be run as root
-#for the venv to work
-if [[ $(sudo -u root /root/.local/bin/borgmatic --version) ]]; then
-    echo "Borgmatic is present"
-else
-    echo "Installling Borgmatic using pipx"
-    sudo pipx install borgmatic
-fi
-sudo -u root /root/.local/bin/borgmatic --version
-#### End Borg and Borgmatic
-
 exit 0
+

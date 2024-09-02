@@ -7,6 +7,6 @@ else
     echo "RSYNC is not installed."
 fi
 
-rm "$HOME/.local/share/chezmoi/home-other/scripts/"*bak1
+rm -f "$HOME/.local/share/chezmoi/home-other/scripts/"*bak1
 exit 0
 
