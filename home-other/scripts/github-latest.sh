@@ -9,7 +9,7 @@
 #git-latest.sh https://github.com/nodejs/node
 
 echo "Test Get-Github-Latest See .bashrc"
-FILE="$HOME/scripts/github-latest.fn"
+FILE="$HOME/.local/share/chezmoi/home-other/scripts/github-latest.fn"
 
 if [[ -f $FILE ]]; then
     . "$FILE"
@@ -31,6 +31,9 @@ get-github-latest $1
 #git ls-remote --tags --sort=v:refname $1 | grep -o 'v.*' | sort -r | head -1
 
 exit 0
+
+
+## Alternative, not used
 
 #!/usr/bin/awk -f
 BEGIN {
