@@ -2,6 +2,10 @@
 
 echo "Starting Initial Install..."
 
+get-github-latest () {
+    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
+
 echo "Checking for Curl. May ask for superuser access."
 if [[ $(command -v curl) ]]; then
     echo "Curl is present, continuing..."
@@ -104,14 +108,28 @@ fi
 ## RYE End ###
 
 ### NVM and NODE ###
-if [[ -d "$HOME/.nvm" ]]; then
+
+##This is a fussy installer. .nvm dir needs to pre exist.
+##Assumed to be already installed, hence check for upgrade.
+export NVM_DIR="$HOME/.nvm"
+mkdir -p "$NVM_DIR"
+
+NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm.git)
+echo "Latest available NVM: $NVM_LATEST"
+
+if [[ -f "$NVM_DIR/nvm.sh" ]]; then
     echo "NVM already installed"
 else
     echo "Installing NVM"
-    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh | bash
 fi
-. "$HOME/.nvm/nvm.sh"
+
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 nvm --version
+
+exit 0
 
 if [[ $(command -v node) ]]; then
     echo "NODE already installed"
