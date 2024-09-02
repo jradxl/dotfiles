@@ -38,9 +38,24 @@ else
     echo "Getting existing Dofiles repo..."
     chezmoi init https://github.com/jradxl/dotfiles.git
 fi
+
 chezmoi --version
-echo "Applying Chezmoi updates to the underlying files : forced"
-chezmoi apply --force
+echo "Applying Chezmoi updates to the underlying files"
+echo "CAREFUL: Do you want to force the application of Chezmoi updates?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes )
+			echo "Appling updates..."
+			chezmoi apply --force
+			break
+			;;
+        No )
+			echo "Not applied..."
+			break
+			;;
+    esac
+done
+echo "XXX Finished Chezmoi updating..."
 
 #Set up Github
 git config --global user.email "jradxl@gmail.com"
@@ -52,7 +67,7 @@ if [[ -f "$HOME/.github.configured" ]]; then
     echo "Github Private Key setup OK"
 else
     echo "Github Private Key NOT setup."
-  echo "Install the Github Private Key and Y to continue?"
+    echo "Install the Github Private Key and Y to continue?"
     select yn in "Yes" "No"; do
         case $yn in
             Yes ) break;;
