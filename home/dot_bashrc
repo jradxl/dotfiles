@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240902A
+# 20240902D
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -34,14 +34,6 @@ pathmunge () {
     esac
 }
 
-#Update function in this file if needed
-#GFILE="$HOME/scripts/github-latest.fn"
-#if [[ -f $GFILE ]]; then
-#    . "$GFILE"
-#else
-#    echo "$GFILE is missing."
-#    #exit 1
-#fi
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
@@ -218,14 +210,14 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "JSR5"
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
-		echo "RUN ONCE TODAY"
+	echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
         echo ""
         echo "Updating NVM..."
-		NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
-		echo "Latest NVM Version: $NVM_LATEST"
+	NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
+	echo "Latest NVM Version: $NVM_LATEST"
         wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
@@ -235,10 +227,11 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed rustc version:  $(rustc -V)"
         echo "Installed cargo version:  $(cargo -V)"
         rye self update
+	echo "Installed Rye version: $(rye --version)"
         chezmoi upgrade
         echo ""
     else
-		echo "RUN TODAY"
+	echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list

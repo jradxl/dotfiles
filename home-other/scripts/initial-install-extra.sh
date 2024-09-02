@@ -32,6 +32,7 @@ if [[ $(command -v rye) ]]; then
 else
     echo "Installing Rye"
     curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes"  bash
+    .  "$HOME/.rye/env"
     rye --version
     echo "3.11" > "$HOME/.python-version"
     rye fetch
