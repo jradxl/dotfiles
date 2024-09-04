@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240904B
+# 20240904C
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -231,7 +231,6 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         rye self update
         echo "Installed Rye version: $(rye --version)"
         chezmoi upgrade
-        echo ""
     else
         echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
@@ -244,12 +243,18 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed Rye version: $(rye --version)"
         echo "Installed Python version (Rye): $(python -V)"
         echo "Installed Golang version: $(go version)"
-        echo ""
     fi
 fi
 
+echo ""
+if [[ -f .python-version ]]; then
+    echo "Current Python set by '.python-version': $(cat .python-version)"
+else
+    echo "Rye '.python-version' is NOT setting version "
+fi
 echo "Current Python  version: $(python -V)"
 echo "Current Python3 version: $(python3 -V)"
+echo ""
 
 if [[ -z "$HOSTNAME" ]]; then
   HOSTNAME=$(uname -n)
