@@ -37,13 +37,26 @@ else
     exit 1
 fi
 
+### RUST ###
+if [[ -d "$HOME/.cargo" ]]; then
+    echo "Rust Toolchain already installed."
+else
+    echo "Installing Rust Toolchain"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
+##. "$HOME/.cargo/env"
+#export PATH="$HOME/.cargo/bin:$PATH"
+pathmunge "$HOME/.cargo/bin"
+
+### End RUST ###
+
 
 ### RYE for Python ###
 
 if [[ $(command -v rye) ]]; then
     echo "Rye already installed"
 else
-    echo "Installing Rye"
+    echo "Installing Rye..."
     curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes"  bash
     .  "$HOME/.rye/env"
     rye --version
@@ -54,6 +67,17 @@ else
 fi
 ## RYE End ###
 
+## UV Start ##
+
+if [[ $(command -v uv) ]]; then
+    echo "UV already installed"
+else
+    echo "Installing UV..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+uv --version
+
+## UV End ##
 
 ### NVM and NODE ###
 #This is a fussy installer. .nvm dir needs to pre exist.
@@ -85,18 +109,6 @@ node --version
 ### End NVM and NODE ###
 
 
-### RUST ###
-if [[ -d "$HOME/.cargo" ]]; then
-    echo "Rust Toolchain already installed."
-else
-    echo "Installing Rust Toolchain"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-fi
-##. "$HOME/.cargo/env"
-#export PATH="$HOME/.cargo/bin:$PATH"
-pathmunge "$HOME/.cargo/bin"
-
-### End RUST ###
 
 
 ### ZED editor ###

@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240904C
+# 20240904F
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -246,16 +246,6 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     fi
 fi
 
-echo ""
-if [[ -f .python-version ]]; then
-    echo "Current Python set by '.python-version': $(cat .python-version)"
-else
-    echo "Rye '.python-version' is NOT setting version "
-fi
-echo "Current Python  version: $(python -V)"
-echo "Current Python3 version: $(python3 -V)"
-echo ""
-
 if [[ -z "$HOSTNAME" ]]; then
   HOSTNAME=$(uname -n)
 fi
@@ -267,6 +257,16 @@ if [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]]; then
 fi
 
 ########### KEYCHAIN END #################
+
+echo ""
+if [[ -f .python-version ]]; then
+    echo "Current Python set by '.python-version': $(cat .python-version)"
+else
+    echo "Rye '.python-version' is NOT setting version "
+fi
+echo "Current Python  version: $(python -V)"
+echo "Current Python3 version: $(python3 -V)"
+echo ""
 
 ##export DOCKER_HOST=unix:///run/user/1000/docker.sock
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
