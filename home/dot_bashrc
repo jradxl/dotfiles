@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240902D
+# 20240904B
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -148,9 +148,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#Pending remove??
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export EDITOR="zed --wait"
 
@@ -171,12 +172,12 @@ pathmunge "$HOME/lima/bin"
 pathmunge "$HOME/.cargo/bin"
 . "$HOME/.local/share/swiftly/env.sh"
 
-##pathmunge "${HOME}/.g/bin"
 if [[ -s "${HOME}/.g/env" ]]; then
-    . "${HOME}/.g/env"
-    GOPATH1=$(go env GOPATH)
-    #echo "<$GOPATH1>"
-    pathmunge "$GOPATH1"
+    #THIS IS WRONG . "${HOME}/.g/env"
+    pathmunge "${HOME}/go/bin"
+    pathmunge "${HOME}/.g/go/bin"
+    pathmunge "${HOME}/.g/bin"
+    export G_MIRROR=https://golang.google.cn/dl/
 fi
 
 ##This is a fussy installer. .nvm dir needs to pre exist.
@@ -211,14 +212,14 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "JSR5"
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
-	echo "RUN ONCE TODAY"
+        echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         ##$HOME/scripts/go-version.sh
         #$HOME/.local/bin/go-version-user.sh
         echo ""
         echo "Updating NVM..."
-	NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
-	echo "Latest NVM Version: $NVM_LATEST"
+        NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
+        echo "Latest NVM Version: $NVM_LATEST"
         wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
@@ -228,11 +229,11 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed rustc version:  $(rustc -V)"
         echo "Installed cargo version:  $(cargo -V)"
         rye self update
-	echo "Installed Rye version: $(rye --version)"
+        echo "Installed Rye version: $(rye --version)"
         chezmoi upgrade
         echo ""
     else
-	echo "RUN TODAY"
+        echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
         #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
@@ -246,6 +247,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo ""
     fi
 fi
+
+echo "Current Python  version: $(python -V)"
+echo "Current Python3 version: $(python3 -V)"
 
 if [[ -z "$HOSTNAME" ]]; then
   HOSTNAME=$(uname -n)
