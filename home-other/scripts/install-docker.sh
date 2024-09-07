@@ -12,10 +12,11 @@ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker c
 
 # Add Docker's official GPG key:
 sudo apt-get update -y
-sudo apt-get install -y ca-certificates curl gnupg uidmap dbus-user-session systemd-container
+sudo apt-get install -y ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo apt-get update -y
 
 # Add the repository to Apt sources:
 echo \
@@ -23,8 +24,8 @@ echo \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt-get -y update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras slirp4netns
+sudo apt-get update -y
+sudo apt-get install -y uidmap dbus-user-session systemd-container docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras slirp4netns
 
 sudo systemctl enable --now docker.service
 sudo systemctl enable --now containerd.service
@@ -60,7 +61,8 @@ if [[ $(getent group docker | grep -w $USER) ]]; then
     echo "$USER is already a member of the Docker group."
 else
   sudo usermod -aG docker $USER
-  echo "$USER added to Docker group. This script will now exit so you can open a new terminal."
+  echo "$USER added to Docker group. This script will now exit so you can re-login. IMPORTANT"
+  echo "ALSO unset DOCKER_HOST too."
   exit 0
 fi
 
