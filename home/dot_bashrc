@@ -167,6 +167,7 @@ pathmunge "$HOME/lima/bin"
 
 [[ -f "$HOME/.rye/env" ]]                    && . "$HOME/.rye/env"
 [[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
+[[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
 [[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
 
 if [[ -s "${HOME}/.g/env" ]]; then
@@ -239,6 +240,7 @@ echo "Installed Chezmoi Version: $(chezmoi --version)"
 [[ $(command -v npx )    ]] && echo "Installed npx version:  $(npx -v)"
 [[ $(command -v rustc )  ]] && echo "Installed rustc version:  $(rustc -V)"
 [[ $(command -v cargo )  ]] && echo "Installed cargo version:  $(cargo -V)"
+[[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
@@ -276,4 +278,5 @@ export GPG_TTY
 
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
+
 
