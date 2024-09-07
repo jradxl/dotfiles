@@ -76,8 +76,11 @@ else
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 uv --version
-
 ## UV End ##
+
+## DIRENV ##
+[[ ! $(command -v direnv) ]] && export bin_path="$HOME/.local/bin" && curl -sfL https://direnv.net/install.sh | bash
+## DIRENV End ##
 
 ### NVM and NODE ###
 #This is a fussy installer. .nvm dir needs to pre exist.

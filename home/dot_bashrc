@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240907A
+# 20240907B
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -221,6 +221,7 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
         [[ $(command -v rye ) ]] && rye self update
+        [[ $(command -v uv )  ]] && uv  self update
     else
         echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
@@ -231,15 +232,19 @@ fi
 echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
 echo "Installed Chezmoi Version: $(chezmoi --version)"
 
-[[ $(command -v rye )    ]] && echo "Installed Rye version: $(rye --version)"
-[[ $(command -v python ) ]] && echo "Installed Python version (Rye): $(python -V)"
-[[ $(command -v go )     ]] && echo "Installed Golang version: $(go version)"
+if [[ $(command -v direnv )    ]]; then
+    eval "$(direnv hook bash)"
+    echo "Installed DIRENV version: $(direnv version)"
+fi
+[[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed PYTHON version (Rye): $(python -V)"
+[[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
 [[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
-[[ $(command -v node )   ]] && echo "Installed node version: $(node -v)"
-[[ $(command -v npm )    ]] && echo "Installed npm version:  $(npm -v)"
-[[ $(command -v npx )    ]] && echo "Installed npx version:  $(npx -v)"
-[[ $(command -v rustc )  ]] && echo "Installed rustc version:  $(rustc -V)"
-[[ $(command -v cargo )  ]] && echo "Installed cargo version:  $(cargo -V)"
+[[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
+[[ $(command -v npm )    ]] && echo "Installed NPM version:  $(npm -v)"
+[[ $(command -v npx )    ]] && echo "Installed NPX version:  $(npx -v)"
+[[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
+[[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
