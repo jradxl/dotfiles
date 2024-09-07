@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240904G
+# 20240907A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -133,9 +133,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -167,10 +165,9 @@ pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
 #NOT USED pathmunge "$HOME/.rye/shims"
 
-. "$HOME/.rye/env"
-#. "$HOME/.cargo/env"
-pathmunge "$HOME/.cargo/bin"
-. "$HOME/.local/share/swiftly/env.sh"
+[[ -f "$HOME/.rye/env" ]]                    && . "$HOME/.rye/env"
+[[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
+[[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
 
 if [[ -s "${HOME}/.g/env" ]]; then
     #THIS IS WRONG . "${HOME}/.g/env"
@@ -188,6 +185,7 @@ mkdir -p "$NVM_DIR"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ########### KEYCHAIN START #################
+
 ## Logic to run once per day
 export LOCK="$HOME/.runonce-lock"
 
@@ -214,8 +212,6 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     if [[ "$SHOULDRUN" == "Y" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
-        ##$HOME/scripts/go-version.sh
-        #$HOME/.local/bin/go-version-user.sh
         echo ""
         echo "Updating NVM..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
@@ -223,40 +219,30 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
-        echo "Installed node version: $(node -v)"
-        echo "Installed npm version:  $(npm -v)"
-        echo "Installed npx version:  $(npx -v)"
-        echo "Installed rustc version:  $(rustc -V)"
-        echo "Installed cargo version:  $(cargo -V)"
-        rye self update
-        echo "Installed Rye version: $(rye --version)"
-        echo "Installed UV version: $(uv --version)"
-        chezmoi upgrade
+        [[ $(command -v rye ) ]] && rye self update
     else
         echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
-        #keychain --gpg2 --nogui --noask --eval --agents ssh,gpg
         keychain --list
-        echo "Installed NVM Version: $(nvm --version)"
-        echo "Latest Chezmoi Version: $(get-github-latest https://github.com/twpayne/chezmoi)"
-        echo "Installed Chezmoi Version: $(chezmoi --version)"
-        chezmoi upgrade
-        echo "Installed Rye version: $(rye --version)"
-        echo "Installed UV version: $(uv --version)"
-        echo "Installed Python version (Rye): $(python -V)"
-        echo "Installed Golang version: $(go version)"
     fi
 fi
 
-if [[ -z "$HOSTNAME" ]]; then
-  HOSTNAME=$(uname -n)
-fi
-if [[ -f $HOME/.keychain/$HOSTNAME-sh ]]; then
-  source $HOME/.keychain/$HOSTNAME-sh
-fi
-if [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]]; then
-  source $HOME/.keychain/$HOSTNAME-sh-gpg
-fi
+echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
+echo "Installed Chezmoi Version: $(chezmoi --version)"
+
+[[ $(command -v rye )    ]] && echo "Installed Rye version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed Python version (Rye): $(python -V)"
+[[ $(command -v go )     ]] && echo "Installed Golang version: $(go version)"
+[[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
+[[ $(command -v node )   ]] && echo "Installed node version: $(node -v)"
+[[ $(command -v npm )    ]] && echo "Installed npm version:  $(npm -v)"
+[[ $(command -v npx )    ]] && echo "Installed npx version:  $(npx -v)"
+[[ $(command -v rustc )  ]] && echo "Installed rustc version:  $(rustc -V)"
+[[ $(command -v cargo )  ]] && echo "Installed cargo version:  $(cargo -V)"
+
+[[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
+[[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
+[[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
 
 ########### KEYCHAIN END #################
 
@@ -264,13 +250,14 @@ echo ""
 if [[ -f .python-version ]]; then
     echo "Current Python set by '.python-version': $(cat .python-version)"
 else
-    echo "Rye '.python-version' is NOT setting version "
+    echo "'.python-version' via Rye is NOT setting version "
 fi
-echo "Current Python  version: $(python -V)"
-echo "Current Python3 version: $(python3 -V)"
-echo ""
 
-##export DOCKER_HOST=unix:///run/user/1000/docker.sock
+[[ $(command -v python ) ]] && echo "Current Python  version: $(python -V)"
+[[ $(command -v python3 ) ]] && echo "Current Python3 version: $(python3 -V)"
+
+echo ""
+echo "WARNING: Setting DOCKER_HOST for Rootless"
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 
