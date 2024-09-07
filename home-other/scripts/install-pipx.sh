@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# If installed from packages it is too old.
-sudo apt-get -y purge pipx 2>/dev/null >/dev/null
+# If installed from packages it is too old. 
+sudo apt-get -y purge pipx 2>/dev/null >/dev/null 
+
+#Correct VENV package is needed
+sudo apt-get -y install python3-venv 2>/dev/null >/dev/null
 
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
@@ -34,6 +37,5 @@ if [[ "$PIPX_INSTALL" == "YES"  ]]; then
 	sudo chmod +x /usr/local/bin/pipx
 fi
 echo "Installed Pipx is: $(pipx --version)"
-
+echo "IMPORTANT: Due to a bug use like, 'sudo pipx install --global <package>'"
 exit 0
-
