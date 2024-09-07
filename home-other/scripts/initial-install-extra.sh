@@ -134,6 +134,7 @@ if [[ $(command -v bws) ]]; then
     echo "Bitwarden Secrets Manager is already installed"
 else
     echo "Installing Bitwarden Secrets Manager "
+    sudo apt-get install -y jq
     BWSPATH=$(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
     TESTPATH="https://github.com/bitwarden/sdk/releases/download/bws-v0.5.0/bws-x86_64-unknown-linux-gnu-0.5.0.zip"
     FILENAME=$(echo "$BWSPATH" | sed 's:.*/::')
