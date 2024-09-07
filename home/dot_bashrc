@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240907B
+# 20240907C
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -220,7 +220,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
+        echo "Updating RYE if needed."
         [[ $(command -v rye ) ]] && rye self update
+        echo "Updating UV if needed."
         [[ $(command -v uv )  ]] && uv  self update
     else
         echo "RUN TODAY"
