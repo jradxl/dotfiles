@@ -14,13 +14,16 @@ echo "DOCKER_HOST: $DOCKER_HOST"
 ## XDG_RUNTIME_DIR=/run/user/1000
 ## DOCKER_HOST=unix:///run/user/1000/docker.sock
 
+docker volume create portainer_data
+
 docker run -p 8000:8000 -p 9000:9000 -d \
     --name=portainer \
     --restart=always  \
     -v $XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock \
-    -v ~/.local/share/docker/volumes:/var/lib/docker/volumes  \
     -v portainer_data:/data \
     portainer/portainer-ee:latest
 
 exit 0
+
+## -v ~/.local/share/docker/volumes:/var/lib/docker/volumes 
 
