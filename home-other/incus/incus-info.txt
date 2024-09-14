@@ -1,0 +1,190 @@
+incus list status=stopped -c n -f csv
+
+CLOUD-INIT
+LXD instance-configuration with cloud-init - Youtube, G
+
+https://linuxcontainers.org/incus/docs/main/cloud-init/
+https://github.com/melato/lxops
+https://discuss.linuxcontainers.org/t/how-to-customize-incus-containers-with-cloud-init/18916/5
+https://blog.simos.info/how-to-customize-incus-containers-with-cloud-init/
+
+##############################
+Example Script
+##############################
+#!/bin/bash
+
+incus profile delete userdata
+sleep 2
+
+incus profile list
+sleep 2
+
+incus profile create userdata
+sleep 2
+
+cat << EOF | incus profile set userdata cloud-init.user-data -
+#cloud-config
+users:
+  - default
+  - name: john
+    gecos: John john
+    shell: /bin/bash
+    groups: users, sudo
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAA-RUBBISH-lZDI1NTE5AAAAIKEPjlP6aM8c/SgnmlVljbpyYuIbBx71R96Qd/2Vvpm+ Incus
+  - name: john1
+    gecos: John john1
+    shell: /bin/bash
+    groups: users, sudo
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAA-RUBBISH-lZDI1NTE5AAAAIKEPjlP6aM8c/SgnmlVljbpyYuIbBx71R96Qd/2Vvpm+ Incus
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - openssh-server
+runcmd:
+  - [touch, /run/john-was-here]
+chpasswd:
+  users:
+    - {name: john, password: secret99, type: text}
+    - {name: john1, password: secret99, type: text}
+  expire: true
+ssh_pwauth: true
+EOF
+
+incus profile show userdata
+###############################
+End Sample Script
+###############################
+
+config:
+  user.vendor-data: |-
+    #cloud-config
+    apt_mirror http://us.archive.ubuntu.com/ubuntu
+  user.user-data: |-
+    #cloud-config
+    package_upgrade: true
+    packages:
+      - whois
+      - openssh-server
+
+config:
+  cloud-init.user-data: |-
+    #cloud-config
+    users:
+      -default
+      -john
+    package_upgrade: true
+    packages:
+      -whois
+      -openssh-server
+description: ""
+devices: {}
+name: cloudinit-userdata
+used_by: []
+project: default
+
+
+
+UFW Defaults
+/etc/default/ufw
+incus network set incusbr0 ipv6.firewall false
+incus network set incusbr0 ipv4.firewall false
+sudo ufw allow in on incusbr0
+sudo ufw route allow in on incusbr0
+sudo ufw route allow out on incusbr0
+
+incus network get incusbr0 ipv4.address
+
+ipv4.dhcp.ranges
+incus network set incusbr0 ipv4.dhcp.ranges=""
+incus network set incusbr0 ipv4.dhcp.ranges=10.155.89.40-10.155.89.60
+
+incus network get incusbr0 ipv4.dhcp.ranges
+
+
+incus delete $(incus list -c n -f csv)
+
+incus profile device add default eth0 nic nictype=bridged parent=bridge0 name=eth0
+
+$ incus profile create bridged
+$ incus profile device add bridged eth0 nic nictype=bridged parent=bridge0
+Device eth0 added to bridged
+johnley@gk41es1:~$ incus profile show bridged
+config: {}
+description: ""
+devices:
+  eth0:
+    nictype: bridged
+    parent: bridge0
+    type: nic
+name: bridged
+used_by: []
+project: default
+
+incus launch images:ubuntu/24.04 u5 -c boot.autostart=true --profile default --profile bridged
+
+ORDER IS IMPORTANT
+incus launch images:ubuntu/24.04 u7 -c boot.autostart=true --profile bridged --profile default
+
+ 
+
+ALL COLUMNS for incus image list
+  lLfFpdeasut
+  
+$ incus image list -c Lfpaut images: ubuntu/24.04/cloud/amd64
+$ incus image list           images: ubuntu/24.04/cloud/amd64
+
+incus launch images:ubuntu/noble/cloud u5
+incus shell u5
+incus exec  u5 bash
+
+
+apt install net-tools
+ ifconfig
+ route -n
+
+
+
+
+# apt install pciutils
+# lspci
+  05:00.0 Ethernet controller: Red Hat, Inc. Virtio 1.0 network device (rev 01)
+  eth0 renamed to enp5s0
+
+non-cloud
+u2   | RUNNING | 10.155.89.68 (enp5s0)  |      | VIRTUAL-MACHINE 
+root@u2:/etc/netplan# cat 10-lxc.yaml 
+network:
+  version: 2
+  ethernets:
+    enp5s0:
+      dhcp4: true
+      dhcp-identifier: mac
+
+CLOUD
+u6   | RUNNING | 10.155.89.225 (enp5s0) |      | VIRTUAL-MACHINE     
+# cat 50-cloud-init.yaml 
+network:
+  version: 2
+  ethernets:
+    enp5s0:
+      dhcp4: true
+
+
+STATIC
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp5s0:
+      dhcp4: no
+      addresses:
+        - 10.155.89.226/24
+      routes:
+        - to: default
+          via: 10.155.89.1
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+
