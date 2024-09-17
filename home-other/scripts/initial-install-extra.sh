@@ -206,6 +206,7 @@ else
         echo "Swiftly installed but not sourced. Sourcing for this shell."
     else
         echo "Installing Swiftly. Will ask Questions..."
+        echo ""
         curl -L https://swiftlang.github.io/swiftly/swiftly-install.sh | bash
     fi
     RERUNFLAG="TRUE"
