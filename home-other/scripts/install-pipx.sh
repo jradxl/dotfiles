@@ -35,6 +35,7 @@ if [[ "$PIPX_INSTALL" == "YES"  ]]; then
 	PIPXURL="https://github.com/pypa/pipx/releases/download/$PIPXLATESTVER/pipx.pyz"
 	sudo wget -O /usr/local/bin/pipx $PIPXURL
 	sudo chmod +x /usr/local/bin/pipx
+	hash -r
 fi
 echo "Installed Pipx is: $(pipx --version)"
 echo "IMPORTANT: Due to a bug use like, 'sudo pipx install --global <package>'"

@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #This does not work for Flatpak
-get-github-latest () {
+function get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" |  grep -v "pre" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
 
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d\n", $1,$2,$3); }'; }
 
 if [[ $(command -v pipx) ]]; then
     echo "Good. PIPX is installed"

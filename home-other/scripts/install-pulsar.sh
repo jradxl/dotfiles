@@ -2,13 +2,39 @@
 
 echo "Installing Pulsar Editor (as in Atom)"
 
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d\n", $1,$2,$3); }'; }
+
+if [[ $(command -v pipx) ]]; then
+    echo "PIPX is installed. Checking version"
+    PIPX_VERSION=$(pipx --version)
+    echo "Installed version: $PIPX_VERSION"
+    AAA=$(version $PIPX_VERSION)
+    BBB=$(version 1.7.1)  
+    if [[ $AAA -ge $BBB ]]; then
+        echo "PIPX version is OK."
+    else
+        echo "PIPX is out of date. Please run 'install-pipx.sh' first"
+        exit 1
+    fi
+else
+    echo "Please install PIPX first. See 'install-pipx.sh'"
+    exit 1
+fi
+
+if [[ $(command -v lastversion) ]]; then
+    echo "Good. LASTVERSION is installed"
+else
+    echo "Installing LASTVERSION using PIPX"
+    sudo pipx install --global lastversion
+fi
+
 CURRENT_VERSION="None"
 if [[ $(command -v pulsar) ]]; then
     echo "Aleady Installed. Checking version..."
     CURRENT_VERSION=$(pulsar --version | grep Pulsar | awk '{ print $3 }' )
-    echo "Current Version: $CURRENT_VERSION"
+    echo "Pulsar Current Version: $CURRENT_VERSION"
 else
-    echo "Not installed"
+    echo "Pulsar is Not installed"
 fi
 
 LATEST_VERSION=$(lastversion https://github.com/pulsar-edit/pulsar)
@@ -30,4 +56,6 @@ if [[ "$INSTALL" == "YES" ]]; then
     (cd /tmp && wget "$URL")
     sudo apt-get install -y /tmp/"$LATEST_FILE"
 fi
+echo "Pulsar installed. Version"
+echo "<$(pulsar --version)>"
 
