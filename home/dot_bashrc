@@ -235,6 +235,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         [[ $(command -v rye ) ]] && rye self update
         echo "Updating UV if needed."
         [[ $(command -v uv )  ]] && uv  self update
+        if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
+            "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
+        fi
     else
         echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
