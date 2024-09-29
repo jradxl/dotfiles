@@ -26,10 +26,10 @@ else
 	## https://github.com/slackhq/nebula/releases/download/v1.8.1/nebula-linux-amd64.tar.gz
 	wget https://github.com/slackhq/nebula/releases/download/v"${latest_nebula}"/nebula-linux-amd64.tar.gz
 	tar xf nebula-linux-amd64.tar.gz
-	chown root:root ./nebula ./nebula-cert
-	systemctl stop nebula
-	mv nebula /usr/local/bin
-	mv nebula-cert /usr/local/bin
+	sudo chown root:root ./nebula ./nebula-cert
+	sudo systemctl stop nebula
+	sudo mv nebula /usr/local/bin
+	sudo mv nebula-cert /usr/local/bin
 	rm -rf ./nebula-linux-amd64.tar.gz
-    systemctl start nebula
+        sudo systemctl start nebula
 fi

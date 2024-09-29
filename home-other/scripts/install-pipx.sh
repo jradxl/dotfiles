@@ -38,5 +38,5 @@ if [[ "$PIPX_INSTALL" == "YES"  ]]; then
 	hash -r
 fi
 echo "Installed Pipx is: $(pipx --version)"
-echo "IMPORTANT: Due to a bug use like, 'sudo pipx install --global <package>'"
+echo "IMPORTANT: Due to a bug: Use like this, 'sudo pipx install --global <package>'"
 exit 0
