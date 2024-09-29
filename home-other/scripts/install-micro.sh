@@ -18,7 +18,6 @@ else
 	exit 1
 fi
 
-LATEST_VERSION=$(lastversion https://github.com/zyedidia/micro)
 echo "LATEST: $LATEST_VERSION"
 if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	echo "Already the current version."

@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20240907C
+# 20240929A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -160,6 +160,20 @@ if ! shopt -oq posix; then
   fi
 fi
 
+#Local User Bash_completions are a bit confusing so I create my own
+if [[ -d "$HOME/.bash_completion.d" ]]; then
+    echo "Adding custom completions ..."
+    for bcfile in "$HOME/.bash_completion.d"/* ; do
+        if [[ -f "$bcfile" ]]; then
+            echo "    Doing .bash_completion.d/$bcfile ..."
+            . $bcfile
+        fi
+    done
+else
+    echo  "Creating custom bash_completion.d"
+    mkdir "$HOME"/.bash_completion.d
+fi
+
 export EDITOR="micro"
 #export EDITOR="zed --wait"
 #export EDITOR="nano"
@@ -180,7 +194,10 @@ pathmunge "$HOME/lima/bin"
 [[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
 [[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
 [[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
-[[ -f "$HOME/.deno/env" ]]                   && . "$HOME/.deno/env"
+if [[ -f "$HOME/.deno/bin/deno" ]]; then
+    pathmunge "${HOME}/.deno/bin"
+    "$HOME"/.deno/bin/deno completions bash > "$HOME/.bash_completion.d/deno_completion"
+fi
 
 if [[ -s "${HOME}/.g/env" ]]; then
     #THIS IS WRONG . "${HOME}/.g/env"
