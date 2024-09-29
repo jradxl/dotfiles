@@ -283,7 +283,7 @@ fi
 [[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
 [[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
-[[ $(command -v deno )   ]] && echo "Installed Deno version:  $(deno --version)"
+[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
