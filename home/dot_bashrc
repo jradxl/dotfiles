@@ -165,7 +165,7 @@ if [[ -d "$HOME/.bash_completion.d" ]]; then
     echo "Adding custom completions ..."
     for bcfile in "$HOME/.bash_completion.d"/* ; do
         if [[ -f "$bcfile" ]]; then
-            echo "    Doing .bash_completion.d/$bcfile ..."
+            echo "    Doing $bcfile ..."
             . $bcfile
         fi
     done
