@@ -180,6 +180,7 @@ pathmunge "$HOME/lima/bin"
 [[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
 [[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
 [[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
+[[ -f "$HOME/.deno/env" ]]                   && . "$HOME/.deno/env"
 
 if [[ -s "${HOME}/.g/env" ]]; then
     #THIS IS WRONG . "${HOME}/.g/env"
@@ -238,6 +239,9 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
             "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
         fi
+        if [[ $(command -v deno ) ]]; then
+            deno upgrade rc
+        fi
     else
         echo "RUN TODAY"
         eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
@@ -262,6 +266,7 @@ fi
 [[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
 [[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
+[[ $(command -v deno )   ]] && echo "Installed Deno version:  $(deno --version)"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
