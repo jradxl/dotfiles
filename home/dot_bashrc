@@ -252,7 +252,7 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Updating RYE if needed."
         [[ $(command -v rye ) ]] && rye self update
         echo "Updating UV if needed."
-        [[ $(command -v uv )  ]] && uv  self update
+        [[ $(command -v uv )  ]] && uv self update
         if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
             "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
         fi
