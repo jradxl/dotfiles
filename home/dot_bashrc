@@ -128,6 +128,7 @@ alias et='electerm'
 alias mr='micro'
 alias pls='pulsar'
 alias sctl='systemctl'
+alias pn='pnpm'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -139,7 +140,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 [[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
-
 
 ## INFO Alias Completion.
 # Install git clone -o complete_alias https://github.com/cykerway/complete-alias.git
@@ -177,6 +177,14 @@ fi
 export EDITOR="micro"
 #export EDITOR="zed --wait"
 #export EDITOR="nano"
+
+# pnpm
+export PNPM_HOME="/home/jradley/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
 
 ##export PATH="$HOME/bin:$PATH"
 pathmunge "$HOME/bin"
@@ -321,4 +329,5 @@ export GPG_TTY
 
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
+
 
