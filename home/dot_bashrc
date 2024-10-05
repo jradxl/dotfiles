@@ -251,6 +251,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         echo ""
+        echo "Updating PNPM..."
+        pnpm self-update
         echo "Updating NVM..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
         echo "Latest NVM Version: $NVM_LATEST"
@@ -292,6 +294,7 @@ fi
 [[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 [[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
+[[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
