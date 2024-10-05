@@ -4,6 +4,8 @@
 #Intentionally, Borg is installed as root user using pipx install --gloabl. 
 #Therefore must be run as root for the venvs to work.
 
+### WARNING WARNING the PYPI package is BORGBACKUP and NOT "BORG"
+
 # If installed from packages are too old, and not using v2.
 echo "Uninstalling borgbackup and borgmatic Ubuntu packages if present as too old."
 sudo apt-get -y purge borgbackup borgbackup borgmatic  2>/dev/null >/dev/null
@@ -54,7 +56,9 @@ else
     build-essential
 
     #NO attempts to remove flatpak sudo apt-get install libfuse-dev fuse pkg-config 
-	sudo pipx install --global borgbackup
+    sudo apt-get install libfuse3-dev fuse3 pkg-config -y
+	#sudo pipx install --global borgbackup
+	sudo pipx install --preinstall pyfuse3 --global borgbackup
 fi
 
 if [[ $(sudo ls /usr/local/bin/borgmatic 2>/dev/null) ]]; then
