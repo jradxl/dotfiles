@@ -157,9 +157,9 @@ cat << EOF > /tmp/config.eta
 #### BORG INIT
 ## Borgmatic rcreate does not work. Use these.
 # To set fingerpring use this dummy first.
-# ssh -i <%= it.keypath %> <%= it.repo %>@<%= it.repo %>.repo.borgbase.com
-# borg init       --rsh "ssh -i <%= it.keypath %> -e repokey-blake2 ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo
-# borg key export --rsh "ssh -i <%= it.keypath %> --paper           ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo > encrypted-key-backup-<%= it.label %>.txt
+# ssh <%= it.repo %>@<%= it.repo %>.repo.borgbase.com
+# borg init       --rsh "ssh -i <%= it.keypath %>" -e repokey-blake2 ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo
+# borg key export --rsh "ssh -i <%= it.keypath %>" --paper           ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo > encrypted-key-backup-<%= it.label %>.txt
 # /etc/cron.d/borgmatic
 # 0 2 * * * root /usr/local/bin/borgmatic --log-file /var/log/borgmatic/borgmatic.log --log-file-verbosity 1
 #### BORG INIT
