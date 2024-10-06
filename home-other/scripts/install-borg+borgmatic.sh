@@ -7,7 +7,7 @@
 ### WARNING WARNING the PYPI package is BORGBACKUP and NOT "BORG"
 
 CONFIG_FILE=config.yaml
-CONFIG_DIR=/etc/borgmatic
+CONFIG_DIR=/etc/borgmaticXX
 
 # If installed from packages they are too old    
 echo "Uninstalling borgbackup and borgmatic Ubuntu packages if present as too old."
@@ -83,8 +83,8 @@ else
     echo "No BORGMATIC: Script error!"
 fi
 
-mkdir -p /etc/borgmatic/
-if [[ ! -f /etc/borgmatic/config.yaml ]]; then
+sudo mkdir -p "$CONFIG_DIR"
+if [[ ! -f "$CONFIG_DIR"/config.yaml ]]; then
 
 ##Two stage HereDoc needed due to SUDO
 cat << EOF > /tmp/$CONFIG_FILE
@@ -138,6 +138,58 @@ after_backup:
 
 EOF
     sudo mv /tmp/"$CONFIG_FILE" "$CONFIG_DIR"
+
+##Two stage HereDoc needed due to SUDO
+## ETA Config Template
+cat << EOF > /tmp/config.eta
+source_directories:
+    - /home
+    - /etc
+    - /root
+
+repositories:
+    - path: ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo
+      label: <%= it.label %> 
+
+one_file_system: true
+
+exclude_patterns:
+    - '*.pyc'
+    - /home/*/.cache
+    - '*/.vim*.tmp'
+    - /etc/ssl
+    - /home/*/Downloads
+    - '*.iso'
+    - /home/jradley-other
+
+exclude_caches: true
+exclude_if_present:
+    - .nobackup
+ssh_command: ssh -i <%= it.keypath %>
+compression: auto,zstd
+encryption_passphrase: <%= it.password %>
+archive_name_format: '{hostname}-{now:%Y-%m-%d-%H%M%S}'
+retries: 5
+retry_wait: 5
+keep_daily: 3
+keep_weekly: 4
+keep_monthly: 12
+keep_yearly: 2
+
+checks:
+    - name: repository
+    - name: archives
+    - name: data
+
+check_last: 3
+
+before_backup:
+    - echo "$(date) - Starting backup"
+after_backup:
+    - echo "$(date) - Finished backup"
+
+EOF
+    sudo mv /tmp/config.eta "$CONFIG_DIR"
 else
     echo "Not overwriting the config file."
 fi
