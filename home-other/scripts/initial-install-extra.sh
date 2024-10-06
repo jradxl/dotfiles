@@ -130,26 +130,27 @@ fi
 # wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux | sed 's:.*/::'
 
 ## Bitwarden Secrets CLI
-if [[ $(command -v bws) ]]; then
-    echo "Bitwarden Secrets Manager is already installed"
-else
-    echo "Installing Bitwarden Secrets Manager "
-    sudo apt-get install -y jq
-    BWSPATH=$(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
-    TESTPATH="https://github.com/bitwarden/sdk/releases/download/bws-v0.5.0/bws-x86_64-unknown-linux-gnu-0.5.0.zip"
-    FILENAME=$(echo "$BWSPATH" | sed 's:.*/::')
-
-    mkdir -p "$HOME/SecretsManager"
-    CURENTDIR=$(pwd)
-    cd "$HOME/SecretsManager"
-    #wget $(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
-    wget $BWSPATH
-    unzip "$HOME/SecretsManager/$FILENAME"
-    mv bws "$HOME/.local/bin"
-    cd $CURENTDIR
-    rm -rf "$HOME/SecretsManager"
-fi
-bws --version
+#if [[ $(command -v bws) ]]; then
+#    echo "Bitwarden Secrets Manager is already installed"
+#else
+#    echo "Installing Bitwarden Secrets Manager "
+#    sudo apt-get install -y jq
+#    BWSPATH=$(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
+#    TESTPATH="https://github.com/bitwarden/sdk/releases/download/bws-v0.5.0/bws-x86_64-unknown-linux-gnu-0.5.0.zip"
+#    FILENAME=$(echo "$BWSPATH" | sed 's:.*/::')
+#
+#    mkdir -p "$HOME/SecretsManager"
+#    CURENTDIR=$(pwd)
+#    cd "$HOME/SecretsManager"
+#    #wget $(wget -q -O - https://api.github.com/repos/bitwarden/sdk/releases/latest  |  jq -r '.assets[] | select(.name | contains ("zip")) | .browser_download_url' | grep x86_64-unknown-linux )
+#    wget $BWSPATH
+#    unzip "$HOME/SecretsManager/$FILENAME"
+#    sudo mv bws "$HOME/.local/bin"
+#    cd $CURENTDIR
+#    rm -rf "$HOME/SecretsManager"
+#    hash -r
+#fi
+#bws --version
 
 ### GOLANG Version Manager G, which seems easiest to use ###
 if [[ -d  "$HOME/.g" ]]; then

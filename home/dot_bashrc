@@ -251,8 +251,10 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         echo ""
-        echo "Updating PNPM..."
-        pnpm self-update
+        if [[ $(command -v pnpm) ]]; then
+            echo "Updating PNPM..."
+            pnpm self-update
+	fi
         echo "Updating NVM..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
         echo "Latest NVM Version: $NVM_LATEST"
@@ -334,3 +336,4 @@ echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
 
 
+. /home/jradley/.local/share/swiftly/env.sh
