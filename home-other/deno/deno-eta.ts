@@ -16,7 +16,7 @@ if (Deno.uid() != 0) {
 const repo = "REPO_ID"
 const hostname = Deno.hostname();
 const configFile = "config.yaml";
-const configDir = "/etc/borgmaticT";
+const configDir = "/etc/borgmatic";
 
 //WARN: Eta removes \n when template ends line
 const keypath = "/root/.ssh/my-keys/borgbase.key";
@@ -28,10 +28,10 @@ try {
 }
 catch (_err) {const _notused = "" } ;
 
-const eta = new Eta({ views: "./" });
+const eta = new Eta({ views: configDir });
 
 //return string is whole of file
-const res = eta.render("config.eta", {repo: repo, label: hostname, keypath: keypath + "\n", password: keypassphrase + "\n" });
+const res = eta.render("config.eta", {repo: repo, label: hostname + "\n", keypath: keypath + "\n", password: keypassphrase + "\n" });
 
 const encoder = new TextEncoder();
 const data = encoder.encode(res);

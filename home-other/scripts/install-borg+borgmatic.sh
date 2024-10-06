@@ -7,7 +7,7 @@
 ### WARNING WARNING the PYPI package is BORGBACKUP and NOT "BORG"
 
 CONFIG_FILE=config.yaml
-CONFIG_DIR=/etc/borgmaticXX
+CONFIG_DIR="/etc/borgmatic"
 
 # If installed from packages they are too old    
 echo "Uninstalling borgbackup and borgmatic Ubuntu packages if present as too old."
@@ -138,6 +138,7 @@ after_backup:
 
 EOF
     sudo mv /tmp/"$CONFIG_FILE" "$CONFIG_DIR"
+    sudo chown root:root "$CONFIG_DIR"/"$CONFIG_FILE"
 
 ##Two stage HereDoc needed due to SUDO
 ## ETA Config Template
@@ -149,7 +150,7 @@ source_directories:
 
 repositories:
     - path: ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo
-      label: <%= it.label %> 
+      label: <%= it.label %>
 
 one_file_system: true
 
@@ -190,6 +191,7 @@ after_backup:
 
 EOF
     sudo mv /tmp/config.eta "$CONFIG_DIR"
+    sudo chown root:root "$CONFIG_DIR"/config.eta
 else
     echo "Not overwriting the config file."
 fi
