@@ -6,7 +6,8 @@ import { Eta } from "https://deno.land/x/eta@v3.5.0/src/index.ts";
 
 console.log("Deno-Eta Borg Config creator...")
 console.log("NOTE: Edit this script for the values needed")
-console.log("DENO install required")
+console.log("A DENO install is required")
+console.log("DON'T edit this file in the Chezmoi directories!")
 
 if (Deno.uid() != 0) {
     console.log("This script is intended to run as root: Use SUDO.");
@@ -14,13 +15,13 @@ if (Deno.uid() != 0) {
 }
 
 const repo = "REPO_ID"
-const hostname = Deno.hostname();
+const hostname = Deno.hostname() + "";
 const configFile = "config.yaml";
 const configDir = "/etc/borgmatic";
 
 //WARN: Eta removes \n when template ends line
 const keypath = "/root/.ssh/my-keys/borgbase.key";
-const keypassphrase = "Secret!";
+const keypassphrase = "Secret!-Change-Me";
 
 //Error if existing ignored
 try {   
