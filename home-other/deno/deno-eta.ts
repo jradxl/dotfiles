@@ -32,7 +32,7 @@ catch (_err) {const _notused = "" } ;
 const eta = new Eta({ views: configDir });
 
 //return string is whole of file
-const res = eta.render("config.eta", {repo: repo, label: hostname + "\n", keypath: keypath + "\n", password: keypassphrase + "\n" });
+const res = eta.render("config.eta", {repo: repo, label: hostname, keypath: keypath, password: keypassphrase });
 
 const encoder = new TextEncoder();
 const data = encoder.encode(res);
