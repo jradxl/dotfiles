@@ -32,10 +32,10 @@ URL="$URL_BASE/$FILENAME"
 echo "CURRENT Deno: $CURRENT_VERSION"
 echo "LATEST Deno:  $LATEST_VERSION"
 
-if [[ $CURRENT_VERSION == "2.0.0-rc.7" ]]; then
-    echo "Version 2 RC installed. Aborting"
-    exit 1
-fi
+#if [[ $CURRENT_VERSION == "2.0.0-rc.7" ]]; then
+#    echo "Version 2 RC installed. Aborting"
+#    exit 1
+#fi
 
 if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	echo "Deno is already the latest version."
@@ -52,6 +52,14 @@ else
         exit 1
     fi
     hash -r
+fi
+if [[ -f "$HOME"/.deno-version ]]; then
+    if [[ $(cat "$HOME"/.deno-version) == 2 ]]; then
+        echo "Upgrading to Deno version 2"
+        deno upgrade rc
+    fi
+else
+    echo 1 > "$HOME"/.deno-version
 fi
 
 echo "Deno installed. Reopen shell to ensure path set."

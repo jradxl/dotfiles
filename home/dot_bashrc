@@ -251,10 +251,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         echo ""
-        if [[ $(command -v pnpm) ]]; then
-            echo "Updating PNPM..."
-            pnpm self-update
-	fi
+        echo "Updating PNPM..."
+        pnpm self-update
         echo "Updating NVM..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
         echo "Latest NVM Version: $NVM_LATEST"
@@ -269,7 +267,11 @@ if [[ "$(pwd)" == "$HOME" ]]; then
             "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
         fi
         if [[ $(command -v deno ) ]]; then
-            deno upgrade rc
+            if [[ -f "$HOME"/.deno-version && $(cat "$HOME"/.deno-version) == 1 ]]; then
+                deno upgrade
+            else
+                deno upgrade rc
+            fi
         fi
     else
         echo "RUN TODAY"
@@ -336,4 +338,3 @@ echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
 
 
-. /home/jradley/.local/share/swiftly/env.sh
