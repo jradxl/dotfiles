@@ -1,5 +1,5 @@
-#/bin/bash
-if [[ -z $1 ]]; then
+#!/bin/bash
+if [[ -z "$1" ]]; then
 	echo "No parameter. Using current."
 	du -a -x . | sort -n -r | head -n 10
 else
