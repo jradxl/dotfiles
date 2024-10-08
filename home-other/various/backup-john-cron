@@ -1,0 +1,3 @@
+##*/2  * * * * root if [ -x /root/scripts/backup-jradley-local.sh ]; then /root/scripts/backup-jradley-local.sh; fi
+
+##*/2  * * * * root if [ -x /root/scripts/backup-root-local.sh ]; then /root/scripts/backup-root-local.sh; fi
