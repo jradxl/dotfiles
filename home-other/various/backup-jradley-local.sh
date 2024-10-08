@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEVICE=WD30EZRXB
+DEVICE=md0
 DESTINATION=/mnt/"$DEVICE"
 BACKUP_DIR="$DESTINATION"/backups-local/jradley
 
@@ -17,11 +17,11 @@ if [[ ! -f "$DESTINATION"/is.mounted ]]; then
   logger -t JOHN "$DESTINATION is NOT mounted."
 else
     mkdir -p /var/log/backup-john
-    mkdir -p "$DESTINATION"
-    chown jradley:jradley "$DESTINATION"
+    mkdir -p "$BACKUP_DIR"
+    chown jradley:jradley "$BACKUP_DIR"
     rm -rf "$HOME"/.local/share/Trash/*
     rm -f /var/log/backup-john/"$filenameprefix"-*
-    rsync -aXAHW -xx --numeric-ids --progress --exclude '.cache' --exclude 'thinclient_drives' /home/jradley/ "$DESTINATION"/ > /var/log/backup-john/"$filename"-"$DEVICE"
+    rsync -aXAHW -xx --numeric-ids --progress --exclude '.cache' --exclude 'thinclient_drives' /home/jradley/ "$BACKUP_DIR"/ > /var/log/backup-john/"$filename"-"$DEVICE"
 fi
 logger -t JOHN  "Backup of jradley completed: $now"
 exit 0
