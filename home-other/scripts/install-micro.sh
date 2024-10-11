@@ -19,6 +19,9 @@ else
 fi
 
 echo "LATEST: $LATEST_VERSION"
+
+exit 0
+
 if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	echo "Already the current version."
 	exit 0

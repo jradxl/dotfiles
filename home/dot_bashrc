@@ -271,8 +271,10 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         fi
         if [[ $(command -v deno ) ]]; then
             if [[ -f "$HOME"/.deno-version && $(cat "$HOME"/.deno-version) == 1 ]]; then
+		echo "Deno Version 1.46.3 requested"
                 deno upgrade 1.46.3
             else
+		echo "Deno latest requested"
                 deno upgrade
             fi
         fi
