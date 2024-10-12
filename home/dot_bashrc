@@ -309,6 +309,19 @@ fi
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
 [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
 
+##PYENV
+#https://realpython.com/python313-free-threading-jit/
+#PYTHON_CONFIGURE_OPTS='--enable-experimental-jit' pyenv install 3.13t
+#chmod 755 jradxl && rye toolchain register /home/jradxl/.pyenv/versions/3.13.0/bin/python
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d $PYENV_ROOT/bin ]]; then
+    pathmunge "${HOME}/.pyenv/bin"
+    echo "Installed PYENV version: $(pyenv --version)"
+fi
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
+##PYENV End
+
 ########### KEYCHAIN END #################
 
 echo ""
