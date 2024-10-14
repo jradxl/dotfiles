@@ -335,9 +335,29 @@ fi
 [[ $(command -v python3 ) ]] && echo "Current Python3 version: $(python3 -V)"
 
 echo ""
-echo "WARNING: Setting DOCKER_HOST for Rootless"
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+echo "Docker settings..."
+if [[ -f "$HOME"/.docker-config ]]; then
+    echo "    File: $(cat "$HOME"/.docker-config)"
+    if [[ $(cat "$HOME"/.docker-config) == "rootfull" ]]; then
+        echo "    Setting Docker context, rootfull ie. default"
+        docker context use default
+    fi
+    if [[ $(cat $HOME/.docker-config) == "rootless" ]]; then
+        echo "    Setting Docker context, rootless"
+        docker context use rootless >/dev/null 2>/dev/null
+    fi    
+else
+    echo "    No .docker-config found, so setting Docker Context as Default"
+    if [[ $(docker --version) ]]; then
+        docker context use default >/dev/null 2>/dev/null
+    fi
+fi
+#echo "WARNING: Setting DOCKER_HOST for Rootless"
+#export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+#export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+echo "    Confirming Docker Context is: $(docker context show)"
+echo "    Note: DOCKER_HOST is <$DOCKER_HOST>"
+echo "Docker settings end"
 
 # Password Store
 # export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
