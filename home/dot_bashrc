@@ -336,28 +336,26 @@ fi
 
 echo ""
 echo "Docker settings..."
-if [[ -f "$HOME"/.docker-config ]]; then
-    echo "    File: $(cat "$HOME"/.docker-config)"
-    if [[ $(cat "$HOME"/.docker-config) == "rootfull" ]]; then
-        echo "    Setting Docker context, rootfull ie. default"
-        docker context use default
-    fi
-    if [[ $(cat $HOME/.docker-config) == "rootless" ]]; then
-        echo "    Setting Docker context, rootless"
-        docker context use rootless >/dev/null 2>/dev/null
-    fi    
-else
-    echo "    No .docker-config found, so setting Docker Context as Default"
+if [[ -f "$HOME"/.docker-config ]]; then  
+    DOCKER_CONFIG=$(cat "$HOME"/.docker-config)
+    case "$DOCKER_CONFIG" in
+    "rootfull")     unset DOCKER_HOST; docker context use default >/dev/null 2>/dev/null;  echo "    Setting Docker Context to rootfull (default)";;
+    "rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
+    "docker_host")  docker context use rootless >/dev/null 2>/dev/null; 
+                    echo      "WARNING: Setting DOCKER_HOST for Rootless";
+                    export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock;;
+    *)  echo "    ERROR: Unknown value in .docker-config file: <$DOCKER_CONFIG>";;
+    esac
+ else
+    echo "    No .docker-config file found, so setting Docker Context as Default"
     if [[ $(docker --version) ]]; then
         docker context use default >/dev/null 2>/dev/null
     fi
 fi
-#echo "WARNING: Setting DOCKER_HOST for Rootless"
-#export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-#export DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 echo "    Confirming Docker Context is: $(docker context show)"
 echo "    Note: DOCKER_HOST is <$DOCKER_HOST>"
 echo "Docker settings end"
+echo ""
 
 # Password Store
 # export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
