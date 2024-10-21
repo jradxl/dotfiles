@@ -84,9 +84,15 @@ echo "Subnet Mask: $SUBNET_MASK"
 NETWORK=$(ip route | awk '/incusbr0/ {print $1}')
 echo "Full Network: $NETWORK"
 
+#incus network set incusbr0 ipv4.dhcp.ranges=10.240.51.100-10.240.51.200
 DHCP_RANGE=$(incus network get $NETWORK_NAME ipv4.dhcp.ranges)
-echo "Network DHCP Range: $DHCP_RANGE"
-
+if [[ -z "$DHCP_RANGE" ]]; then
+    echo "No IPv4 DHCP range set. Setting..."
+    incus network set incusbr0 ipv4.dhcp.ranges="$NETWORK_ADDRESS".100-"$NETWORK_ADDRESS".200
+    echo "Checking Setting. Network DHCP Range: $DHCP_RANGE"
+else
+    echo "Network DHCP Range: $DHCP_RANGE"
+fi
 
 ##Instance
 INSTANCE_IFNAME=$(incus exec "$INSTANCE" -- ip route | awk '/default/ { print $5 }')
@@ -100,8 +106,6 @@ echo "Instance Current with Mask: $INSTANCE_CURRENT_IP1"
 
 INSTANCE_CURRENT_IP2=$( echo $INSTANCE_CURRENT_IP1 | cut -d'/' -f1 )
 echo "Instance Current without Mask: $INSTANCE_CURRENT_IP2"
-
-echo "Requested IP address with Mask: $DESIRED_STATIC_IP"
 
 NETPLAN_LIST=$(incus exec "$INSTANCE" -- ls /etc/netplan)
 #echo "Files found in /etc/netplan: $NETPLAN_LIST"
@@ -149,9 +153,9 @@ echo "Continuing with: $DESIRED_STATIC_IP"
 #OLD_IFS=$IFS
 #IFS=$'\n'
 
-#Incus Delete only actions one file
+#Incus Delete: only actions one file at a time
 for i in $(incus exec "$INSTANCE" -- ls /etc/netplan); do
-	echo "Deleting existing Netplan config file $i: $(incus file delete "$INSTANCE"/etc/netplan/$i)"
+	echo "Deleting existing Netplan config file $i: $(incus file delete $INSTANCE//etc/netplan/$i)"
 done
 
 IFS=$OLD_IFS
