@@ -340,24 +340,28 @@ fi
 
 echo ""
 echo "Docker settings..."
-if [[ -f "$HOME"/.docker-config ]]; then  
-    DOCKER_CONFIG=$(cat "$HOME"/.docker-config)
-    case "$DOCKER_CONFIG" in
-    "rootfull")     unset DOCKER_HOST; docker context use default >/dev/null 2>/dev/null;  echo "    Setting Docker Context to rootfull (default)";;
-    "rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
-    "docker_host")  docker context use rootless >/dev/null 2>/dev/null; 
-                    echo      "WARNING: Setting DOCKER_HOST for Rootless";
-                    export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock;;
-    *)  echo "    ERROR: Unknown value in .docker-config file: <$DOCKER_CONFIG>";;
-    esac
- else
-    echo "    No .docker-config file found, so setting Docker Context as Default"
-    if [[ $(docker --version) ]]; then
-        docker context use default >/dev/null 2>/dev/null
-    fi
+if [[ $(command -v docker) ]]; then
+	if [[ -f "$HOME"/.docker-config ]]; then  
+		DOCKER_CONFIG=$(cat "$HOME"/.docker-config)
+		case "$DOCKER_CONFIG" in
+		"rootfull")     unset DOCKER_HOST; docker context use default >/dev/null 2>/dev/null;  echo "    Setting Docker Context to rootfull (default)";;
+		"rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
+		"docker_host")  docker context use rootless >/dev/null 2>/dev/null; 
+		                echo      "WARNING: Setting DOCKER_HOST for Rootless";
+		                export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock;;
+		*)  echo "    ERROR: Unknown value in .docker-config file: <$DOCKER_CONFIG>";;
+		esac
+	 else
+		echo "    No .docker-config file found, so setting Docker Context as Default"
+		if [[ $(docker --version) ]]; then
+		    docker context use default >/dev/null 2>/dev/null
+		fi
+	fi
+	echo "    Confirming Docker Context is: $(docker context show)"
+	echo "    Note: DOCKER_HOST is <$DOCKER_HOST>"
+else
+	echo "    Docker not installed"
 fi
-echo "    Confirming Docker Context is: $(docker context show)"
-echo "    Note: DOCKER_HOST is <$DOCKER_HOST>"
 echo "Docker settings end"
 echo ""
 
