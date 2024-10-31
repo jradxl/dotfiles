@@ -17,10 +17,26 @@ fi
 sudo systemctl daemon-reload
 
 ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
-sudo apt-get -y install apt-file trash-cli build-essential micro jq apt-transport-https pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent
+sudo apt-get -y install apt-file trash-cli build-essential micro jq apt-transport-https pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent openssh-server
+
 sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
+
 #For MOJO
 sudo apt-get -y install javascript-common libjs-jquery libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip python3-setuptools python3-wheel
+
+## Xrdp Easy Intstaller
+mkdir -p "$HOME/scripts"
+if [[ ! -f  "$HOME"/scripts/xrdp-installer-1.5.2.zip ]]; then
+    echo "Downloading the xrdp easy installer Version 1.5.2"
+    (cd "$HOME"/scripts; wget https://c-nergy.be/downloads/xRDP/xrdp-installer-1.5.2.zip)
+    if [[ -f $HOME/scripts/xrdp-installer-1.5.2.sh ]]; then
+        chmod +x "$HOME"/scripts/xrdp-installer-1.5.2.sh
+        echo "Xrdp Easy Installer Version 1.5.2 available"
+    fi
+else
+    echo "Xrdp Easy Installer already present"
+fi
+## Xrdp Easy Intstaller
 
 ### CHEZMOI ###
 if [[ $(command -v chezmoi ) ]]; then
