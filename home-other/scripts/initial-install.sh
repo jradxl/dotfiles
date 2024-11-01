@@ -28,7 +28,7 @@ sudo apt-get -y install javascript-common libjs-jquery libjs-sphinxdoc libjs-und
 mkdir -p "$HOME/scripts"
 if [[ ! -f  "$HOME"/scripts/xrdp-installer-1.5.2.zip ]]; then
     echo "Downloading the xrdp easy installer Version 1.5.2"
-    (cd "$HOME"/scripts; wget https://c-nergy.be/downloads/xRDP/xrdp-installer-1.5.2.zip)
+    (cd "$HOME"/scripts && wget https://c-nergy.be/downloads/xRDP/xrdp-installer-1.5.2.zip)
     if [[ -f $HOME/scripts/xrdp-installer-1.5.2.sh ]]; then
         chmod +x "$HOME"/scripts/xrdp-installer-1.5.2.sh
         echo "Xrdp Easy Installer Version 1.5.2 available"
