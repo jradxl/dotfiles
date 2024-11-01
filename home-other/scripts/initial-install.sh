@@ -17,7 +17,7 @@ fi
 sudo systemctl daemon-reload
 
 ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
-sudo apt-get -y install apt-file trash-cli build-essential micro jq apt-transport-https pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent openssh-server
+sudo apt-get -y install apt-file trash-cli build-essential micro jq apt-transport-https pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent openssh-server btop glances
 
 sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
 
