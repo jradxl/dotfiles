@@ -265,6 +265,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
         echo "Installed NVM version: $(nvm --version)"
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
+        echo "Upgrading NVM, NPM and Node if needed..."
+        nvm install --latest-npm 
         echo "Updating RYE if needed."
         [[ $(command -v rye ) ]] && rye self update
         echo "Updating UV if needed."
