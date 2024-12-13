@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20241203A
+# 20241213A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -133,6 +133,8 @@ alias pls='pulsar'
 alias sctl='systemctl'
 alias pn='pnpm'
 alias ppp='pulsar'
+alias pya='source .venv/bin/activate'
+alias neovim=nvim
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -200,9 +202,12 @@ pathmunge "/opt/nvim-linux64/bin"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
-#NOT USED pathmunge "$HOME/.rye/shims"
 
-[[ -f "$HOME/.rye/env" ]]                    && . "$HOME/.rye/env"
+##Use uv pathunge "$HOME/.rye/shims"
+##Use uv [[ -f "$HOME/.rye/env" ]] && . "$HOME/.rye/env"
+
+#Not using Modular export PATH="$PATH:/home/jradley/.modular/bin"
+
 [[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
 [[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
 [[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
@@ -267,8 +272,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
         echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
         echo "Upgrading NVM, NPM and Node if needed..."
         nvm install --latest-npm 
-        echo "Updating RYE if needed."
-        [[ $(command -v rye ) ]] && rye self update
+        ##Use uv echo "Updating RYE if needed."
+        ##Use uv [[ $(command -v rye ) ]] && rye self update
         echo "Updating UV if needed."
         [[ $(command -v uv )  ]] && uv self update
         if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
@@ -298,8 +303,8 @@ if [[ $(command -v direnv )    ]]; then
     eval "$(direnv hook bash)"
     echo "Installed DIRENV version: $(direnv version)"
 fi
-[[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
-[[ $(command -v python ) ]] && echo "Installed PYTHON version (Rye): $(python -V)"
+##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
 [[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
 [[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
 [[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
@@ -315,15 +320,16 @@ fi
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
 [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
 
-##PYENV
+
+##PYENV Discontinued
 #https://realpython.com/python313-free-threading-jit/
 #PYTHON_CONFIGURE_OPTS='--enable-experimental-jit' pyenv install 3.13t
 #chmod 755 jradxl && rye toolchain register /home/jradxl/.pyenv/versions/3.13.0/bin/python
-export PYENV_ROOT="$HOME/.pyenv"
-if [[ -d $PYENV_ROOT/bin ]]; then
-    pathmunge "${HOME}/.pyenv/bin"
-    echo "Installed PYENV version: $(pyenv --version)"
-fi
+#export PYENV_ROOT="$HOME/.pyenv"
+#if [[ -d $PYENV_ROOT/bin ]]; then
+#    pathmunge "${HOME}/.pyenv/bin"
+#    echo "Installed PYENV version: $(pyenv --version)"
+#fi
 #eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
 ##PYENV End
@@ -331,11 +337,13 @@ fi
 ########### KEYCHAIN END #################
 
 echo ""
-if [[ -f .python-version ]]; then
-    echo "Current Python set by '.python-version': $(cat .python-version)"
-else
-    echo "'.python-version' via Rye is NOT setting version "
-fi
+
+##Not Used
+#if [[ -f .python-version ]]; then
+#    echo "Current Python set by '.python-version': $(cat .python-version)"
+#else
+#    echo "'.python-version is NOT seting version "
+#fi
 
 [[ $(command -v python ) ]] && echo "Current Python  version: $(python -V)"
 [[ $(command -v python3 ) ]] && echo "Current Python3 version: $(python3 -V)"
@@ -383,4 +391,5 @@ export XAUTHORITY="$HOME"/.Xauthority
 
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
-export PATH="$PATH:/home/jradley/.modular/bin"
+echo "Use 'pya' to activate python"
+
