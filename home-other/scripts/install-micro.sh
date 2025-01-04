@@ -6,9 +6,6 @@
 
 echo "Installing or upgrading the Micro Editor"
 
-CURRENT_VERSION=$(micro --version | awk '/Version/ {print $2}')
-echo "CURRENT: $CURRENT_VERSION"
-
 LATEST_VERSION="NO"
 
 if [[ $(command -v lastversion)  ]]; then
@@ -18,9 +15,10 @@ else
 	exit 1
 fi
 
-echo "LATEST: $LATEST_VERSION"
+CURRENT_VERSION=$(micro --version | awk '/Version/ {print $2}')
 
-exit 0
+echo "CURRENT: $CURRENT_VERSION"
+echo "LATEST: $LATEST_VERSION"
 
 if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	echo "Already the current version."
