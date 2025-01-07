@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20241213A
+# 20250107A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -37,6 +37,27 @@ pathmunge () {
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
+
+wait4network() {
+    local serverAdr="github.com"
+    local count=0
+    local count_max=10
+
+    ping -c 1 $serverAdr > /dev/null 2>&1
+    
+    while [[ $? -ne 0 ]]; do
+      echo -e "\e[1A\e[K $(date): test connection [$count/$count_max] - ${serverAdr}"
+      sleep 1
+      let "count+=1"
+      if [[ ${count} -gt ${count_max} ]]; then
+        break
+      fi
+      ping -c 1 $serverAdr > /dev/null 2>&1
+    done
+
+    echo "$(date): Connected - ${serverAdr}"
+}
+wait4network
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -258,12 +279,16 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
         echo "RUN ONCE TODAY"
+        if [[ $(command -v chezmoi )  ]]; then
+            echo "Upgrading Chezmoi..."
+            chezmoi upgrade
+        fi
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
         echo ""
         if [[ $(command -v pnpm) ]]; then
             echo "Updating PNPM..."
             pnpm self-update
-	fi
+        fi
         echo "Updating NVM..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
         echo "Latest NVM Version: $NVM_LATEST"
@@ -358,7 +383,8 @@ if [[ $(command -v docker) ]]; then
 		"rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
 		"docker_host")  docker context use rootless >/dev/null 2>/dev/null; 
 		                echo      "WARNING: Setting DOCKER_HOST for Rootless";
-		                export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock;;
+		                export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+		                ;;
 		*)  echo "    ERROR: Unknown value in .docker-config file: <$DOCKER_CONFIG>";;
 		esac
 	 else
