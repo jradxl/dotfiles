@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250107F
+# 20250107G
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -408,8 +408,9 @@ export RBENV_ROOT=$(rbenv root)
 git -C "$(rbenv root)"/plugins/ruby-build pull
 
 # Password Store
-# export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
-# export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=ask
+export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
+export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=ask
+# export PASSWORD_STORE_GPG_OPTS="--pinentry=loopback --passphrase-file /path/to/.passphrase"
 
 ##NOTES PinEntry
 ## apt install pinentry-curses
