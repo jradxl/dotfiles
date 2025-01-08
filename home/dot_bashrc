@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250108F
+# 20250108G
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -44,14 +44,14 @@ echo ""
 wait4network() {
     local serverAdr="github.com"
     local count=0
-    local count_max=10
+    local count_max=20
     
     echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
     ping -c 1 $serverAdr > /dev/null 2>&1    
     while [[ $? -ne 0 ]]; do
       let "count+=1"
       echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
-      sleep 1
+      sleep 2
       if [[ ${count} -gt ${count_max} ]]; then
         break
       fi
