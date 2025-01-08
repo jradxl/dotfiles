@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250107I
+# 20250108A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -280,38 +280,61 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     #echo "SHOULDRUN: $SHOULDRUN"
     if [[ "$SHOULDRUN" == "Y" ]]; then
         echo "RUN ONCE TODAY"
+        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+                
         if [[ $(command -v chezmoi )  ]]; then
-            echo "Upgrading Chezmoi..."
+            echo "Upgrading Chezmoi, if needed..."
             chezmoi upgrade
         fi
-        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        
         echo ""
         if [[ $(command -v pnpm) ]]; then
             echo "Updating PNPM..."
             pnpm self-update
         fi
-        echo "Updating NVM..."
+
+        echo ""
+        echo "Updating NVM if needed..."
         NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
         echo "Latest NVM Version: $NVM_LATEST"
-        wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
-        echo "Installed NVM version: $(nvm --version)"
-        echo "Latest Node Version:    $(get-github-latest https://github.com/nodejs/node)"
-        echo "Upgrading NVM, NPM and Node if needed..."
-        nvm install --latest-npm 
+        NVM_CURRENT=$(nvm --version)
+        echo "Installed NVM version: $NVM_CURRENT"
+        echo "Latest Node Version: $(get-github-latest https://github.com/nodejs/node)"        
+        if [[ "$NVM_LATEST" == "v$NVM_CURRENT" ]]; then
+            echo "No upgrade of NVM needed"
+        else
+            echo "Upgrading NVM"
+            wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
+            echo "Upgrading NPM"
+            nvm install --latest-npm        
+        fi
+
+        echo ""
+        echo "Upgrading RUST etc, if needed"
+        rustup upgrade
+        
         ##Use uv echo "Updating RYE if needed."
         ##Use uv [[ $(command -v rye ) ]] && rye self update
+        
+        echo ""
         echo "Updating UV if needed."
         [[ $(command -v uv )  ]] && uv self update
+        
+        echo ""
+        echo "Upgrading MICRO is needed..."
         if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
-            echo "Upgrading MICRO. May require SUDO password."
+            echo "    Upgrading MICRO. May require SUDO password."
             "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
         fi
+
+        echo ""
+        echo "Upgrading DENO, if necessary..."
         if [[ $(command -v deno ) ]]; then
             if [[ -f "$HOME"/.deno-version && $(cat "$HOME"/.deno-version) == 1 ]]; then
-		echo "Deno Version 1.46.3 requested"
+        		echo "Deno Version 1.46.3 requested"
                 deno upgrade 1.46.3
             else
-		echo "Deno latest requested"
+        		echo "Deno latest requested"
                 deno upgrade
             fi
         fi
@@ -322,6 +345,8 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     fi
 fi
 
+echo ""
+echo "Showing versions of all installed Apps....#"
 echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
 echo "Installed Chezmoi Version: $(chezmoi --version)"
 
@@ -401,6 +426,9 @@ else
 fi
 echo "Docker settings end"
 echo ""
+
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
 
 # Added by `rbenv init` on Tue Jan  7 02:41:16 PM CET 2025
 eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
