@@ -39,4 +39,18 @@ if [[ "$PIPX_INSTALL" == "YES"  ]]; then
 fi
 echo "Installed Pipx is: $(pipx --version)"
 echo "IMPORTANT: Due to a bug: Use like this, 'sudo pipx install --global <package>'"
+
+echo "Now installing LASTVERSION..."
+VERSION=$(pipx list --global | grep lastversion | grep package| awk '{print $3}')
+VERSION="${VERSION//,}"
+
+if [[ -z "$VERSION" ]]; then
+    echo "Installing LASTVERSION"
+    sudo pipx install --global lastversion
+else
+    echo "LASTVERSION already installed. Trying to upgrade..."
+    sudo pipx upgrade --global lastversion
+fi
+lastversion --version
 exit 0
+
