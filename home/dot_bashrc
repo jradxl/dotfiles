@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250108G
+# 20250110A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -368,6 +368,10 @@ fi
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 [[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
 [[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
+[[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
+[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
+[[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
+[[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
@@ -429,13 +433,18 @@ fi
 echo "Docker settings end"
 echo ""
 
-# Set up fzf key bindings and fuzzy completion
-eval "$(fzf --bash)"
+##LUAROCKS
+[[ $(command -v luarocks) ]] && eval "$(luarocks path --bin)"
 
-# Added by `rbenv init` on Tue Jan  7 02:41:16 PM CET 2025
-eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
-export RBENV_ROOT=$(rbenv root)
-git -C "$(rbenv root)"/plugins/ruby-build pull
+# Set up fzf key bindings and fuzzy completion
+[[ $(command -v fzf) ]] &&  eval "$(fzf --bash)"
+
+if [[ $(command -v rbenv) ]]; then
+    # Added by `rbenv init` on Tue Jan  7 02:41:16 PM CET 2025
+    eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
+    export RBENV_ROOT=$(rbenv root)
+    git -C "$(rbenv root)"/plugins/ruby-build pull
+fi
 
 #export GPGME_DEBUG=9:$HOME/mygpgme.log
 # Password Store
@@ -457,4 +466,5 @@ export XAUTHORITY="$HOME"/.Xauthority
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
 echo "Use 'pya' to activate python"
+
 
