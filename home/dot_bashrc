@@ -350,7 +350,7 @@ fi
 echo ""
 echo "Showing versions of all installed Apps....#"
 echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
-echo "Installed Chezmoi Version: $(chezmoi --version)"
+echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
 
 if [[ $(command -v direnv )    ]]; then
     eval "$(direnv hook bash)"
