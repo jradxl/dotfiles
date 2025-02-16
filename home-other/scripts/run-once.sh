@@ -17,7 +17,7 @@ check-pnpm() {
 }
 
 check-rust() {
-    echo "RUSTUP..."
+    echo "## RUSTUP..."
     if [[ $(command -v rustup) ]]; then
         echo "Updating RUST..."
         rustup upgrade
@@ -116,13 +116,13 @@ check-gvm() {
         GO_CURRENT=$(go version)
         GO_CURRENT=${GO_CURRENT:13:6}
         echo "Curent version of GOLANG: $GO_CURRENT"
-    fi
-    
-    if [[ $GO_LATEST == $GO_CURRENT ]]; then
-        echo "GOLANG is latest version."
-    else
-        echo "GOLANG is not latest. Consider using G to upgrade."
-    fi
+
+        if [[ $GO_LATEST == $GO_CURRENT ]]; then
+            echo "GOLANG is latest version."
+        else
+            echo "GOLANG is not latest. Consider using G to upgrade."
+        fi
+     fi
 }
 
 check-direnv() {
