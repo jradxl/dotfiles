@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250216A
+# 20250216C
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -298,20 +298,15 @@ if [[ "$(pwd)" == "$HOME" ]]; then
             chezmoi upgrade
         fi
 
-        RUNONCESCRIPT="$HOME"/scripts/run-once.sh
+        #This is intentionally not sourced, so script 
+        # can be run independently. Master copy held in Github.
         RUNONCE="NO"
-        if [[ -f "$RUNONCESCRIPT" ]]; then
-            if [[ -x "$RUNONCESCRIPT" ]]; then
-                echo "RUN-ONCE script is found and is executable";
-                RUNONCE="YES"
-            else
-                echo "RUN-ONCE script is found and NOT executable";              
-            fi             
-        else
-            echo "RUN-ONCE script is not found.."
-        fi
-        if [[ $RUNONCE == "YES" ]]; then
+        RUNONCESCRIPT="$HOME"/.local/share/chezmoi/home-other/scripts/run-once.sh
+        if [[  -f $RUNONCESCRIPT ]]  && [[ -x $RUNONCESCRIPT ]]; then
+            echo "RUN-ONCE script is found and is executable...";
             "$RUNONCESCRIPT"
+        else
+            echo "ERROR: RUN-ONCE script is not available."
         fi
     else
         echo "RUN TODAY"
@@ -324,6 +319,7 @@ echo ""
 echo "Showing versions of all installed Apps....#"
 
 if [[ $(command -v direnv )    ]]; then
+    #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
     eval "$(direnv hook bash)"
     echo "Installed DIRENV version: $(direnv version)"
 fi
