@@ -40,9 +40,14 @@ fi
 echo "Installed Pipx is: $(pipx --version)"
 echo "IMPORTANT: Due to a bug: Use like this, 'sudo pipx install --global <package>'"
 
+hash -r
+
 echo "Now installing LASTVERSION..."
-VERSION=$(pipx list --global | grep lastversion | grep package| awk '{print $3}')
-VERSION="${VERSION//,}"
+VERSION=""
+if [[ $(command -v lastversion) ]]; then
+	VERSION=$(pipx list --global | grep lastversion | grep package| awk '{print $3}')
+	VERSION="${VERSION//,}"
+fi
 
 if [[ -z "$VERSION" ]]; then
     echo "Installing LASTVERSION"
@@ -53,4 +58,3 @@ else
 fi
 lastversion --version
 exit 0
-
