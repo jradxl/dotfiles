@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250110A
+# 20250216A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -240,12 +240,18 @@ if [[ -f "$HOME/.deno/bin/deno" ]]; then
     "$HOME"/.deno/bin/deno completions bash > "$HOME/.bash_completion.d/deno_completion"
 fi
 
+#https://medium.com/@sahaidachnyi/standard-environment-variables-in-golang-2bcb1b869bae
+#https://go.dev/blog/get-familiar-with-workspaces
 if [[ -s "${HOME}/.g/env" ]]; then
-    #THIS IS WRONG . "${HOME}/.g/env"
+    #TA more explicit version of . "${HOME}/.g/env" is preferred.
     pathmunge "${HOME}/go/bin"
     pathmunge "${HOME}/.g/go/bin"
     pathmunge "${HOME}/.g/bin"
     export G_MIRROR=https://golang.google.cn/dl/
+    #.g/go is sym link to /home/jradley/.g/versions/<goversion>
+    export GOROOT="${HOME}/.g/go"
+    #GOPATH deprecated
+    #GOWORK ???
 fi
 
 ##This is a fussy installer. .nvm dir needs to pre exist.
@@ -283,62 +289,29 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     if [[ "$SHOULDRUN" == "Y" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        
+        echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
+        echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
                 
         if [[ $(command -v chezmoi )  ]]; then
             echo "Upgrading Chezmoi, if needed..."
             chezmoi upgrade
         fi
-        
-        echo ""
-        if [[ $(command -v pnpm) ]]; then
-            echo "Updating PNPM..."
-            pnpm self-update
-        fi
 
-        echo ""
-        echo "Updating NVM if needed..."
-        NVM_LATEST=$(get-github-latest https://github.com/nvm-sh/nvm)
-        echo "Latest NVM Version: $NVM_LATEST"
-        NVM_CURRENT=$(nvm --version)
-        echo "Installed NVM version: $NVM_CURRENT"
-        echo "Latest Node Version: $(get-github-latest https://github.com/nodejs/node)"        
-        if [[ "$NVM_LATEST" == "v$NVM_CURRENT" ]]; then
-            echo "No upgrade of NVM needed"
-        else
-            echo "Upgrading NVM"
-            wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
-            echo "Upgrading NPM"
-            nvm install --latest-npm        
-        fi
-
-        echo ""
-        echo "Upgrading RUST etc, if needed"
-        rustup upgrade
-        
-        ##Use uv echo "Updating RYE if needed."
-        ##Use uv [[ $(command -v rye ) ]] && rye self update
-        
-        echo ""
-        echo "Updating UV if needed."
-        [[ $(command -v uv )  ]] && uv self update
-        
-        echo ""
-        echo "Upgrading MICRO is needed..."
-        if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
-            echo "    Upgrading MICRO. May require SUDO password."
-            "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
-        fi
-
-        echo ""
-        echo "Upgrading DENO, if necessary..."
-        if [[ $(command -v deno ) ]]; then
-            if [[ -f "$HOME"/.deno-version && $(cat "$HOME"/.deno-version) == 1 ]]; then
-        		echo "Deno Version 1.46.3 requested"
-                deno upgrade 1.46.3
+        RUNONCESCRIPT="$HOME"/scripts/run-once.sh
+        RUNONCE="NO"
+        if [[ -f "$RUNONCESCRIPT" ]]; then
+            if [[ -x "$RUNONCESCRIPT" ]]; then
+                echo "RUN-ONCE script is found and is executable";
+                RUNONCE="YES"
             else
-        		echo "Deno latest requested"
-                deno upgrade
-            fi
+                echo "RUN-ONCE script is found and NOT executable";              
+            fi             
+        else
+            echo "RUN-ONCE script is not found.."
+        fi
+        if [[ $RUNONCE == "YES" ]]; then
+            "$RUNONCESCRIPT"
         fi
     else
         echo "RUN TODAY"
@@ -349,8 +322,6 @@ fi
 
 echo ""
 echo "Showing versions of all installed Apps....#"
-echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
-echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
 
 if [[ $(command -v direnv )    ]]; then
     eval "$(direnv hook bash)"
@@ -467,4 +438,9 @@ echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
 echo "Use 'pya' to activate python"
 
+export GOROOT=/home/jradley/.g/versions/1.23.2
+export GOPATH=/home/jradley/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
 

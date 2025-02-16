@@ -2,27 +2,29 @@
 
 echo "Starting Initial Install of CHEZMOI...."
 
+##Not Currently Used.
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
 
-echo "Checking for Curl. May ask for superuser access."
-if [[ $(command -v curl) ]]; then
-    echo "Curl is present, continuing..."
-else
-    echo "Curl is NOT present, installing..."
-    sudo apt-get -y install curl
-fi
+apt-installs () {
+    sudo apt update -y && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt clean -y && sudo apt autoclean -y
+    ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
+    ## Includes dependencies for MOJO
+    sudo apt-get -y install apt-file trash-cli build-essential micro jq \
+         apt-transport-https pluma caja terminator keychain git nmap net-tools \
+         curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent \
+         spice-vdagent openssh-server btop glances liblz4-dev libssl-dev \
+         libzstd-dev libxxhash-dev libacl1-dev javascript-common libjs-jquery\
+         libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip \
+         python3-setuptools python3-wheel
+}
+
+### Script STARTS ###
+echo "Installing all APT PACKAGES that will be needed. Will ask for superuser access."
+apt-installs
 
 sudo systemctl daemon-reload
-
-## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
-sudo apt-get -y install apt-file trash-cli build-essential micro jq apt-transport-https pluma caja terminator keychain git nmap net-tools curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent spice-vdagent openssh-server btop glances
-
-sudo apt-get -y install liblz4-dev libssl-dev libzstd-dev libxxhash-dev libacl1-dev
-
-#For MOJO
-sudo apt-get -y install javascript-common libjs-jquery libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip python3-setuptools python3-wheel
 
 ### CHEZMOI ###
 if [[ $(command -v chezmoi ) ]]; then
@@ -73,6 +75,8 @@ if [[ -f "$HOME/.github.configured" ]]; then
 else
     echo "Github Private Key NOT setup."
     echo "Install the Github Private Key and Y to continue?"
+    echo "Use Crtl-Z to suspend this script, and fg to continue it."
+    echo "On return press Enter for prompt, then either 1 or 2"
     select yn in "Yes" "No"; do
         case $yn in
             Yes ) break;;
