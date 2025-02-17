@@ -62,7 +62,7 @@ check-uv() {
 check-micro() {
         echo "## MICRO..."
         if [[ $(command -v micro ) ]]; then
-            echo "Upgrading MICRO is needed..."
+            echo "Upgrading MICRO if needed (using install-micro script)..."
             if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
                 echo "Upgrading MICRO. May require SUDO password."
                 "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
