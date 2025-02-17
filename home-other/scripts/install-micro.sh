@@ -25,6 +25,13 @@ if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	exit 0
 fi
 
+$(dpkg-query -W -f'${db:Status-Abbrev}\n' micro 2>/dev/null | grep -q '^.i $')
+RET=$?
+if [[ "$RET" == "0" ]]; then
+    echo 'Removing the apt installed version of micro...'
+    sudo apt purge -y micro
+fi
+
 FILENAME="micro-$LATEST_VERSION-linux64-static.tgz"
 URL="https://github.com/zyedidia/micro/releases/download/v$LATEST_VERSION/$FILENAME"
 
