@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250217B
+# 20250218A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -447,6 +447,7 @@ if [[ $(command -v flox ) ]]; then
     echo "FLOX is installed"
     if [[ -d "$HOME"/.flox ]]; then
     echo "FLOX: To activate a project use, flox activate, or alias fxa"
+    eval "$(flox activate -m dev)"
     fi
 fi
 
