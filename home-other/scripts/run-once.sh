@@ -142,6 +142,16 @@ check-direnv() {
     fi
 }
 
+check-flatpaks() {
+    echo "## FLATPAKS"
+    if [[ $(command -v flatpak) ]]; then
+        echo "Updating system flatpaks if any"
+        flatpak update --system -y
+        echo "Updating user flatpaks if any"
+        flatpak update --user -y
+    fi
+}
+
 echo ""
 echo "####### Executing the RUN-ONCE script..."
 
@@ -153,6 +163,7 @@ check-micro
 check-deno
 check-gvm
 check-direnv
+check-flatpaks
         
 echo "####### RUN-ONCE script finished. #######"
 echo ""
