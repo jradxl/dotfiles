@@ -348,6 +348,15 @@ fi
 [[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
 [[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
 
+#Ruby Ubuntu Package
+if [[ $(dpkg -s ruby-full) ]]; then
+    echo "Ubuntu ruby-full package is installed"
+    [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
+    [[ $(command -v gem ) ]] && echo "Installed native Gem version:  $(gem --version)"
+else
+    echo "Ubuntu ruby-full package not installed"
+fi
+
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
 [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
@@ -449,5 +458,15 @@ if [[ $(command -v flox ) ]]; then
     echo "FLOX: To activate a project use, flox activate, or alias fxa"
     eval "$(flox activate -m dev)"
     fi
+fi
+
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+#export PATH="$HOME/gems/bin:$PATH"
+if [[ -d "$GEM_HOME" ]]; then
+    echo "GEMS dir found..."
+    pathmunge "${HOME}/gems/bin"
+else
+    echo "No GEMS dir found"
 fi
 
