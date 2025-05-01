@@ -21,9 +21,9 @@ check-rust() {
     if [[ $(command -v rustup) ]]; then
         echo "Updating RUST..."
         rustup upgrade
-    fi    
+    fi
 }
-        
+
 check-nvm() {
     echo "## NVM..."
     NVM_DIR="$HOME/.nvm"
@@ -39,14 +39,14 @@ check-nvm() {
         echo "Latest NVM Version: $NVM_LATEST"
         NVM_CURRENT=$(nvm --version)
         echo "Installed NVM version: $NVM_CURRENT"
-        echo "Latest Node Version: $(get-github-latest https://github.com/nodejs/node)"        
+        echo "Latest Node Version: $(get-github-latest https://github.com/nodejs/node)"
         if [[ "$NVM_LATEST" == "v$NVM_CURRENT" ]]; then
             echo "No upgrade of NVM needed"
         else
             echo "Upgrading NVM"
             wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST/install.sh" | bash
             echo "Upgrading NPM"
-            nvm install --latest-npm        
+            nvm install --latest-npm
         fi
      fi
 }
@@ -94,25 +94,25 @@ check-gvm() {
     echo "## GVM (as g)..."
     if [[ $(command -v g) ]]; then
         echo "Upgrading GVM (as g) if necessary"
-        
+
         G_CURRENT=$(g --version | grep "g version" | awk '{print $3}')
         echo "G Current Version: $G_CURRENT"
-        
+
         G_LATEST=$(get-github-latest https://github.com/voidint/g)
-        G_LATEST=${G_LATEST:1:6}      
+        G_LATEST=${G_LATEST:1:6}
         echo "G Latest Version: $G_LATEST"
-        
+
         if [[ $G_CURRENT == $G_LATEST ]]; then
             echo "G Voidint's GVM is latest version."
         else
             echo "G Voidint's GVM needs updating."
-            curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash            
+            curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
         fi
-        
+
         GO_LATEST=$(curl -s https://go.dev/VERSION?m=text | head -n 1)
         GO_LATEST=${GO_LATEST:2:6}
         echo "Latest version of GOLANG: $GO_LATEST"
-        
+
         GO_CURRENT=$(go version)
         GO_CURRENT=${GO_CURRENT:13:6}
         echo "Curent version of GOLANG: $GO_CURRENT"
@@ -138,7 +138,7 @@ check-direnv() {
         else
             echo "DIRENV is not latest, upgrading."
             #curl -sfL https://direnv.net/install.sh | bash
-        fi  
+        fi
     fi
 }
 
@@ -146,7 +146,7 @@ check-flatpaks() {
     echo "## FLATPAKS"
     if [[ $(command -v flatpak) ]]; then
         echo "Updating system flatpaks if any"
-        flatpak update --system -y
+        sudo flatpak update --system -y
         echo "Updating user flatpaks if any"
         flatpak update --user -y
     fi
@@ -164,8 +164,7 @@ check-deno
 check-gvm
 check-direnv
 check-flatpaks
-        
+
 echo "####### RUN-ONCE script finished. #######"
 echo ""
 exit 0
-
