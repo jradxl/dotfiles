@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250416A
+# 20250527A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -228,7 +228,10 @@ pathmunge "$HOME/.rd/bin"
 pathmunge "/opt/nvim-linux64/bin"
 ##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
-pathmunge "$HOME/podman/bin"
+
+#NOTE: Found better to install PODMAN etc in /usr/local/
+# pathmunge "$HOME/podman/bin"
+
 pathmunge "$HOME/lima/bin"
 
 ##Use uv pathunge "$HOME/.rye/shims"
@@ -344,72 +347,23 @@ fi
 [[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
 [[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
 [[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
+[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
 [[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
 [[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
+
+#Ruby Ubuntu Package
+if [[ $(dpkg -s ruby-full) ]]; then
+    echo "Ubuntu ruby-full package is installed"
+    [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
+    [[ $(command -v gem ) ]] && echo "Installed native Gem version:  $(gem --version)"
+else
+    echo "Ubuntu ruby-full package not installed"
+fi
 
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
 [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
 
-########### KEYCHAIN END #################
-
-echo ""
-
-### RUBY ###
-echo "Ruby settings..."
-if [[ -f "$HOME"/.ruby-method ]]; then  
-	RUBY_METHOD=$(cat "$HOME"/.ruby-method )
-	case "$RUBY_METHOD" in
-	"ruby-full") echo "    Ruby-Method: Ubuntu Packages";;
-	"rbenv")     echo "    Ruby-Method: Using rbenv";;
-	*)           echo "    ERROR: Unknown value in .ruby-method file: <$RUBY_METHOD>";;
-	esac
- else
-	echo "    No .ruby-method file found, creating..."
-	echo "rbenv" > "$HOME"/.ruby-method
-	RUBY_METHOD="rbenv"
-fi
-
-if [[ $RUBY_METHOD ==  "ruby-full" ]]; then
-    #Ruby Ubuntu Package
-    if [[ $(dpkg -s ruby-full) ]]; then
-        echo "Ubuntu ruby-full package is installed"
-        [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
-        [[ $(command -v gem ) ]] && echo "Installed native Gem version:  $(gem --version)"
-    else
-        echo "Ubuntu ruby-full package not installed"
-    fi
-fi
-
-if [[ $RUBY_METHOD ==  "rbenv" ]]; then
-    if [[ ! $(command -v rbenv) && ! -d "$HOME/.rbenv" ]]; then
-        echo "Installing rbenv..."
-        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-        git clone https://github.com/rbenv/ruby-build.git "$HOME/.rbenv"/plugins/ruby-build
-    fi
-    eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
-    export RBENV_ROOT=$(rbenv root)
-    git -C "$(rbenv root)"/plugins/ruby-build pull    
-fi
-
-# Install Ruby Gems to ~/gems
-export GEM_HOME="$HOME/gems"
-#export PATH="$HOME/gems/bin:$PATH"
-if [[ -d "$GEM_HOME" ]]; then
-    echo "GEMS dir found..."
-    pathmunge "${HOME}/gems/bin"
-else
-    echo "No GEMS dir found"
-fi
-
-echo "Ruby settings end"
-echo ""
-[[ $(command -v rbenv )  ]] && echo "Installed RBENV version:  $(rbenv --version)"
-[[ $(command -v ruby )   ]] && echo "Installed RUBY version:  $(ruby -v)"
-[[ $(command -v gem )    ]] && echo "Installed GEM version:  $(gem -v)"
-echo ""
-
-### RUBY END ###
 
 ##PYENV Discontinued
 #https://realpython.com/python313-free-threading-jit/
@@ -424,6 +378,9 @@ echo ""
 #eval "$(pyenv virtualenv-init -)"
 ##PYENV End
 
+########### KEYCHAIN END #################
+
+echo ""
 
 ##Not Used
 #if [[ -f .python-version ]]; then
@@ -469,6 +426,13 @@ echo ""
 # Set up fzf key bindings and fuzzy completion
 [[ $(command -v fzf) ]] &&  eval "$(fzf --bash)"
 
+if [[ $(command -v rbenv) ]]; then
+    # Added by `rbenv init` on Tue Jan  7 02:41:16 PM CET 2025
+    eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
+    export RBENV_ROOT=$(rbenv root)
+    git -C "$(rbenv root)"/plugins/ruby-build pull
+fi
+
 #export GPGME_DEBUG=9:$HOME/mygpgme.log
 # Password Store
 #export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
@@ -497,5 +461,15 @@ if [[ $(command -v flox ) ]]; then
     echo "FLOX: To activate a project use, flox activate, or alias fxa"
     eval "$(flox activate -m dev)"
     fi
+fi
+
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+#export PATH="$HOME/gems/bin:$PATH"
+if [[ -d "$GEM_HOME" ]]; then
+    echo "GEMS dir found..."
+    pathmunge "${HOME}/gems/bin"
+else
+    echo "No GEMS dir found"
 fi
 
