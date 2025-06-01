@@ -206,10 +206,18 @@ checks:
 
 check_last: 3
 
-before_backup:
-    - echo "$(date) - Starting backup"
-after_backup:
-    - echo "$(date) - Finished backup"
+commands:
+    - before: action
+      when:
+          - create
+      run:
+          - echo "$(date) - Starting backup"
+
+    - after: action
+      when:
+          - create
+      run:
+          - echo "$(date) - Finished backup"
 
 EOF
     sudo mv /tmp/config.eta "$CONFIG_DIR"
