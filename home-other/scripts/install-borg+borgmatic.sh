@@ -91,6 +91,7 @@ cat << EOF > /tmp/$CONFIG_FILE
 
 #### BORG INIT
 ## Borgmatic rcreate does not work. Use these.
+## ssh-keygen -o -a 100 -t ed25519 Generates to OpenSSH private key format with  100 rounds.
 # borg init --rsh "ssh -i /root/.ssh/my-keys/borgbase.key" -e repokey-blake2 ssh://XXXXXX@XXXXXX.repo.borgbase.com/./repo
 # borg key export --rsh "ssh -i /root/.ssh/my-keys/borgbase.key" --paper ssh://XXXXXX@XXXXXX.repo.borgbase.com/./repo > encrypted-key-backup-XXXXXX.txt
 # /etc/cron.d/borgmatic
@@ -141,10 +142,18 @@ checks:
 
 check_last: 3
 
-before_backup:
-    - echo "$(date) - Starting backup"
-after_backup:
-    - echo "$(date)  - Finished backup"
+commands:
+    - before: action
+      when:
+          - create
+      run:
+          - echo "$(date) - Starting backup"
+
+    - after: action
+      when:
+          - create
+      run:
+          - echo "$(date) - Finished backup"
 
 EOF
     sudo mv /tmp/"$CONFIG_FILE" "$CONFIG_DIR"
@@ -156,6 +165,7 @@ cat << EOF > /tmp/config.eta
 
 #### BORG INIT
 ## Borgmatic rcreate does not work. Use these.
+## ssh-keygen -o -a 100 -t ed25519 Generates to OpenSSH private key format with  100 rounds.
 # To set fingerpring use this dummy first.
 # ssh <%= it.repo %>@<%= it.repo %>.repo.borgbase.com
 # borg init       --rsh "ssh -i <%= it.keypath %>" -e repokey-blake2 ssh://<%= it.repo %>@<%= it.repo %>.repo.borgbase.com/./repo
