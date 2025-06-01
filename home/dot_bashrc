@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250527A
+# 20250601A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -229,9 +229,10 @@ pathmunge "/opt/nvim-linux64/bin"
 ##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 
-#NOTE: Found better to install PODMAN etc in /usr/local/
-# pathmunge "$HOME/podman/bin"
-
+# NOTE: Found better to install PODMAN and helpers in /usr/local/ as well as "$HOME/podman/bin"
+# NOTE: /usr/local before $HOME/podman/bin" so my script test work, but podman-desktop needs
+# the latter.
+pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
 
 ##Use uv pathunge "$HOME/.rye/shims"

@@ -145,8 +145,9 @@ check-direnv() {
 check-flatpaks() {
     echo "## FLATPAKS"
     if [[ $(command -v flatpak) ]]; then
-        echo "Updating system flatpaks if any"
-        sudo flatpak update --system -y
+        #Lets not need SUDO in User login
+        #echo "Updating system flatpaks if any"
+        #sudo flatpak update --system -y
         echo "Updating user flatpaks if any"
         flatpak update --user -y
     fi
