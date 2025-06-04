@@ -197,6 +197,7 @@ check-deno
 check-gvm
 check-direnv
 check-flatpaks
+check-hishtory
 
 echo "####### RUN-ONCE script finished. #######"
 echo ""
