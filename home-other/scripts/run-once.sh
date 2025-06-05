@@ -154,8 +154,9 @@ check-flatpaks() {
 }
 
 check-hishtory() {
-    ## SAME as install-hishtory.sh
-    echo "Checking on HISHTORY..."
+    ## See also install-hishtory.sh
+    echo "## HISHTORY"
+    #if [[ -x "$HOME/.hishtory/hishtory" ]]; then
     if [[ $(command -v hishtory) ]]; then
         echo "HISHTORY already installed, checking for upgrade..."
         current_hishtory="$(hishtory --version | awk '{print $3}')"

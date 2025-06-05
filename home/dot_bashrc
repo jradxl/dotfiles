@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250603B
+# 20250605A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -235,6 +235,14 @@ pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 pathmunge "$HOME/podman/bin"
 pathmunge "$HOME/lima/bin"
 
+# My Hishtory Config
+# NOTE: My install script will remove extras!
+# ORIG: export PATH="$PATH:$HOME/.hishtory"
+if [[ -f "$HOME/.hishtory/config.sh" ]]; then
+    pathmunge "$HOME/.hishtory" after
+    source $HOME/.hishtory/config.sh
+fi
+
 ##Use uv pathunge "$HOME/.rye/shims"
 ##Use uv [[ -f "$HOME/.rye/env" ]] && . "$HOME/.rye/env"
 
@@ -456,6 +464,7 @@ export XAUTHORITY="$HOME"/.Xauthority
 
 echo "ChezMoi Alias: czm"
 echo "Chezmoi: End .bashrc"
+
 ##echo "Use 'pya' to activate python"
 if [[ $(command -v flox ) ]]; then
     echo "FLOX is installed"
@@ -475,14 +484,5 @@ else
     echo "No GEMS dir found"
 fi
 
-
-#####
-# My Hishtory Config
-# NOTE: My install script will remove extras!
-# ORIG: export PATH="$PATH:$HOME/.hishtory"
-pathmunge "$HOME/.hishtory" after
-source $HOME/.hishtory/config.sh
-#####
-
-
+## END
 
