@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250605A
+# 20250605B
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -362,7 +362,7 @@ fi
 [[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
 
 #Ruby Ubuntu Package
-if [[ $(dpkg -s ruby-full) ]]; then
+if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
     echo "Ubuntu ruby-full package is installed"
     [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
     [[ $(command -v gem ) ]] && echo "Installed native Gem version:  $(gem --version)"
@@ -485,4 +485,5 @@ else
 fi
 
 ## END
+
 
