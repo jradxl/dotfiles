@@ -120,7 +120,8 @@ check-gvm() {
         if [[ $GO_LATEST == $GO_CURRENT ]]; then
             echo "GOLANG is latest version."
         else
-            echo "GOLANG is not latest. Consider using G to upgrade."
+            echo "GOLANG is not latest. Upgrading..."
+            g i $(g lr | grep -v rc | tail -n 1)
         fi
      fi
 }
@@ -130,7 +131,7 @@ check-direnv() {
     if [[ $(command -v direnv) ]]; then
         DIRENV_LATEST=$(get-github-latest https://github.com/direnv/direnv )
         DIRENV_LATEST=${DIRENV_LATEST:1:6}
-        DIRENV_CURRENT=$(direnv version)
+        DIRENV_CURRENT=$($HOME/gems/bin/direnv version)
         echo "DIRENV latest is: $DIRENV_LATEST"
         echo "DIRENV current is $DIRENV_CURRENT"
         if [[ $DIRENV_LATEST == $DIRENV_CURRENT ]]; then
