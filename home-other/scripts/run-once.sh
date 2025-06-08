@@ -137,7 +137,7 @@ check-direnv() {
             echo "DIRENV is latest version."
         else
             echo "DIRENV is not latest, upgrading."
-            #curl -sfL https://direnv.net/install.sh | bash
+            curl -sfL https://direnv.net/install.sh | bash
         fi
     fi
 }
