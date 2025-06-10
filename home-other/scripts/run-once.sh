@@ -129,17 +129,36 @@ check-gvm() {
 check-direnv() {
     echo "## DIRENV"
     if [[ $(command -v direnv) ]]; then
-        DIRENV_LATEST=$(get-github-latest https://github.com/direnv/direnv )
-        DIRENV_LATEST=${DIRENV_LATEST:1:6}
-        DIRENV_CURRENT=$($HOME/gems/bin/direnv version)
-        echo "DIRENV latest is: $DIRENV_LATEST"
-        echo "DIRENV current is $DIRENV_CURRENT"
-        if [[ $DIRENV_LATEST == $DIRENV_CURRENT ]]; then
-            echo "DIRENV is latest version."
+        echo "DIRENV already installed, checking for upgrade..."
+        current_direnv="$(direnv --version)"  
+        where_direnv=$(which direnv)
+        if [[ "$where_direnv" == "/usr/local/bin/direnv" ]]; then
+            echo "DIRENV on path is correct."
         else
-            echo "DIRENV is not latest, upgrading."
-            curl -sfL https://direnv.net/install.sh | bash
+            if [[ "$where_direnv" != ""  ]]; then
+                echo "DIRENV on path is: $where_direnv"
+                echo "Please remove and then re-run this script."
+                return
+            fi
         fi
+    else
+        echo "DIRENV not found, installing..."
+        current_direnv=""
+    fi
+    echo "CURRENT: $current_direnv"
+    latest_direnv="$(lastversion https://github.com/direnv/direnv)"
+    echo "LATEST: $latest_direnv"
+
+    if [[ "$current_direnv" == "$latest_direnv" ]]; then
+        echo "DIRENV already the latest version."
+    else
+        echo "Installing or Upgrading direnv..." 
+        if [[ -x "$HOME/.local/share/chezmoi/home-other/scripts/install-direnv.sh" ]]; then
+            "$HOME/.local/share/chezmoi/home-other/scripts/install-direnv.sh"
+        else
+	        echo "Pipx needs to be installed first. Run install_direnv.sh"
+	        return
+        fi        
     fi
 }
 
@@ -189,6 +208,21 @@ check-hishtory() {
 
 echo ""
 echo "####### Executing the RUN-ONCE script..."
+
+if [[ ! $(command -v pipx) ]]; then
+    if [[ -x "$HOME/.local/share/chezmoi/home-other/scripts/install-pipx.sh" ]]; then
+        "$HOME/.local/share/chezmoi/home-other/scripts/install-pipx.sh"
+    else
+	    echo "Pipx needs to be installed first. Run install_pipx.sh"
+	    exit 1
+    fi
+else
+    if [[ ! $(command -v lastversion) ]]; then
+	    echo "lastversion needs to be installed."
+	    sudo pipx install --global lastversion
+	    exit 1
+    fi
+fi
 
 check-pnpm
 check-nvm
