@@ -1,0 +1,34 @@
+[Unit]
+Description=CUSTOM nftables
+Documentation=man:nft(8) http://wiki.nftables.org
+Wants=network-pre.target
+Before=network-pre.target shutdown.target
+Conflicts=shutdown.target
+DefaultDependencies=no
+
+[Service]
+#Type=oneshot
+#Type=simple
+#Type=notify
+Type=exec
+RemainAfterExit=yes
+StandardInput=null
+ProtectSystem=full
+ProtectHome=true
+
+ExecStartPre=/usr/sbin/nft -cf /etc/nftables/nftables.conf
+ExecStart=/usr/sbin/nft    -f  /etc/nftables/nftables.conf
+ExecReload=/usr/sbin/nft   -f  /etc/nftables/nftables.conf
+
+#ExecStart=/usr/bin/systemctl restart incus
+#ExecStart=/usr/bin/systemctl restart netbird
+#ExecReload=/usr/bin/systemctl restart incus
+#ExecReload=/usr/bin/systemctl restart netbird
+##ExecStartPre=/usr/sbin/nft -cf /etc/nftables/nftables.conf
+##ExecStart=/bin/bash /etc/nftables/nft-reload-all.sh
+##ExecReload=/bin/bash /etc/nftables/nft-reload-all.sh
+
+ExecStop=/usr/sbin/nft flush ruleset
+
+[Install]
+WantedBy=sysinit.target
