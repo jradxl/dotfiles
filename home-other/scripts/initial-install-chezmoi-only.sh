@@ -8,6 +8,11 @@ get-github-latest () {
 }
 
 apt-installs () {
+
+    #Remove old pipx 
+    if [[ -x /usr/bin/pipx ]]; then
+        sudo apt purge pipx
+    fi
     sudo apt update -y && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt clean -y && sudo apt autoclean -y
     ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
     ## Includes dependencies for MOJO

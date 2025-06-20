@@ -191,19 +191,30 @@ check-hishtory() {
 
     if [[ "$current_hishtory" == "$latest_hishtory" ]]; then
         echo "HISHTORY already the latest version."
-        exit 0
+        return 0
     else
         echo "Installing or Upgrading HISHTORY..."
     fi
 
-    curl https://hishtory.dev/install.py | python3 -
-    echo "<$?>"
+    ## Scripted not suitable curl https://hishtory.dev/install.py | python3 -
+    URL=https://github.com/ddworken/hishtory/releases/download/"$latest_hishtory"/hishtory-linux-amd64
+    TEMP="$HOME/.hishtorytmp/"
+    mkdir -p "$TEMP"
+    wget --output-document="$TEMP/hishtory"  "$URL"
+    if [[ -f "$TEMP/hishtory" ]]; then
+        chmod +x "$TEMP/hishtory"
+        "$TEMP"/hishtory install --offline --skip-config-modification
+        #rm -rf "$TEMP"
+    else
+        echo "HISHTORY Not found"
+    fi
 
-    echo "Removing modifications to .bashrc. PLEASE CHECK!"
-    sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
-    sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
-    sed -i '\|^export PATH="$PATH:/home/jradley/.hishtory"$|d' "$HOME/.bashrc"
+    echo "Check HISHTORY has not added anything to .bashrc. PLEASE CHECK!"
+    #sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
+    #sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
+    #sed -i '\|^export PATH="$PATH:/home/jradley/.hishtory"$|d' "$HOME/.bashrc"
     echo "Done"
+    return 0
 }
 
 echo ""
@@ -223,6 +234,8 @@ else
 	    exit 1
     fi
 fi
+
+cwd=$(pwd)
 
 check-pnpm
 check-nvm
