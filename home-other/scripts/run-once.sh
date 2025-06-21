@@ -176,14 +176,16 @@ check-flatpaks() {
 check-hishtory() {
     ## See also install-hishtory.sh
     echo "## HISHTORY"
-    #if [[ -x "$HOME/.hishtory/hishtory" ]]; then
-    if [[ $(command -v hishtory) ]]; then
+    current_hishtory=""    
+    #path only added later, so can't use command or which
+    if [[ -x "$HOME/.hishtory/hishtory" ]]; then
+    #if [[ $(command -v hishtory) ]]; then
         echo "HISHTORY already installed, checking for upgrade..."
-        current_hishtory="$(hishtory --version | awk '{print $3}')"
+        current_hishtory="$("$HOME/.hishtory/hishtory" --version | awk '{print $3}')"
         echo "CURRENT: $current_hishtory"
     else
         echo "HISHTORY not found, installing..."
-        current_hishtory=""
+        HISHTORY="INSTALL"
     fi
 
     latest_hishtory="v$(lastversion https://github.com/ddworken/hishtory)"
@@ -193,22 +195,27 @@ check-hishtory() {
         echo "HISHTORY already the latest version."
         return 0
     else
-        echo "Installing or Upgrading HISHTORY..."
+        echo "Upgrading HISHTORY..."
+        HISHTORY="UPGRADE"
     fi
 
-    ## Scripted not suitable curl https://hishtory.dev/install.py | python3 -
-    URL=https://github.com/ddworken/hishtory/releases/download/"$latest_hishtory"/hishtory-linux-amd64
-    TEMP="$HOME/.hishtorytmp/"
-    mkdir -p "$TEMP"
-    wget --output-document="$TEMP/hishtory"  "$URL"
-    if [[ -f "$TEMP/hishtory" ]]; then
-        chmod +x "$TEMP/hishtory"
-        "$TEMP"/hishtory install --offline --skip-config-modification
-        #rm -rf "$TEMP"
+    if [[ "$HISHTORY" == "INSTALL" ]]; then
+        ## Scripted not suitable curl https://hishtory.dev/install.py | python3 -
+        URL=https://github.com/ddworken/hishtory/releases/download/"$latest_hishtory"/hishtory-linux-amd64
+        TEMP="$HOME/.hishtorytmp/"
+        mkdir -p "$TEMP"
+        wget --output-document="$TEMP/hishtory"  "$URL"
+        if [[ -f "$TEMP/hishtory" ]]; then
+            chmod +x "$TEMP/hishtory"
+            "$TEMP"/hishtory install --offline --skip-config-modification
+            rm -rf "$TEMP"
+        else
+            echo "Script ERROR: HISHTORY Not found"
+        fi
     else
-        echo "HISHTORY Not found"
+        "$HOME"/.hishtory/hishtory upgrade
     fi
-
+    
     echo "Check HISHTORY has not added anything to .bashrc. PLEASE CHECK!"
     #sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
     #sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
