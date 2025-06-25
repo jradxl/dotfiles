@@ -176,14 +176,18 @@ check-flatpaks() {
 check-hishtory() {
     ## See also install-hishtory.sh
     echo "## HISHTORY"
-    #if [[ -x "$HOME/.hishtory/hishtory" ]]; then
-    if [[ $(command -v hishtory) ]]; then
+    current_hishtory=""
+    HISHTORY="UPGRADE"
+
+    #path only added later, so can't use command or which
+    if [[ -x "$HOME/.hishtory/hishtory" ]]; then
+    #if [[ $(command -v hishtory) ]]; then
         echo "HISHTORY already installed, checking for upgrade..."
-        current_hishtory="$(hishtory --version | awk '{print $3}')"
+        current_hishtory="$("$HOME/.hishtory/hishtory" --version | awk '{print $3}')"
         echo "CURRENT: $current_hishtory"
     else
         echo "HISHTORY not found, installing..."
-        current_hishtory=""
+        HISHTORY="INSTALL"
     fi
 
     latest_hishtory="v$(lastversion https://github.com/ddworken/hishtory)"
@@ -191,19 +195,32 @@ check-hishtory() {
 
     if [[ "$current_hishtory" == "$latest_hishtory" ]]; then
         echo "HISHTORY already the latest version."
-        exit 0
-    else
-        echo "Installing or Upgrading HISHTORY..."
+        return 0
     fi
 
-    curl https://hishtory.dev/install.py | python3 -
-    echo "<$?>"
+    if [[ "$HISHTORY" == "INSTALL" ]]; then
+        ## Scripted not suitable curl https://hishtory.dev/install.py | python3 -
+        URL=https://github.com/ddworken/hishtory/releases/download/"$latest_hishtory"/hishtory-linux-amd64
+        TEMP="$HOME/.hishtorytmp/"
+        mkdir -p "$TEMP"
+        wget --output-document="$TEMP/hishtory"  "$URL"
+        if [[ -f "$TEMP/hishtory" ]]; then
+            chmod +x "$TEMP/hishtory"
+            "$TEMP"/hishtory install --offline --skip-config-modification
+            rm -rf "$TEMP"
+        else
+            echo "Script ERROR: HISHTORY Not found"
+        fi
+    else
+        "$HOME"/.hishtory/hishtory upgrade
+    fi
 
-    echo "Removing modifications to .bashrc. PLEASE CHECK!"
-    sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
-    sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
-    sed -i '\|^export PATH="$PATH:/home/jradley/.hishtory"$|d' "$HOME/.bashrc"
+    echo "Check HISHTORY has not added anything to .bashrc. PLEASE CHECK!"
+    #sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
+    #sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
+    #sed -i '\|^export PATH="$PATH:/home/jradley/.hishtory"$|d' "$HOME/.bashrc"
     echo "Done"
+    return 0
 }
 
 echo ""
@@ -223,6 +240,8 @@ else
 	    exit 1
     fi
 fi
+
+cwd=$(pwd)
 
 check-pnpm
 check-nvm
