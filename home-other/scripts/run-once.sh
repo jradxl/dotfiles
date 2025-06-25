@@ -176,7 +176,9 @@ check-flatpaks() {
 check-hishtory() {
     ## See also install-hishtory.sh
     echo "## HISHTORY"
-    current_hishtory=""    
+    current_hishtory=""
+    HISHTORY="UPGRADE"
+
     #path only added later, so can't use command or which
     if [[ -x "$HOME/.hishtory/hishtory" ]]; then
     #if [[ $(command -v hishtory) ]]; then
@@ -194,9 +196,6 @@ check-hishtory() {
     if [[ "$current_hishtory" == "$latest_hishtory" ]]; then
         echo "HISHTORY already the latest version."
         return 0
-    else
-        echo "Upgrading HISHTORY..."
-        HISHTORY="UPGRADE"
     fi
 
     if [[ "$HISHTORY" == "INSTALL" ]]; then
@@ -215,7 +214,7 @@ check-hishtory() {
     else
         "$HOME"/.hishtory/hishtory upgrade
     fi
-    
+
     echo "Check HISHTORY has not added anything to .bashrc. PLEASE CHECK!"
     #sed -i '\|^# Hishtory Config:$|d'                          "$HOME/.bashrc"
     #sed -i '\|^source /home/jradley/.hishtory/config.sh$|d'    "$HOME/.bashrc"
