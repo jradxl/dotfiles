@@ -17,7 +17,7 @@ apt-installs () {
          spice-vdagent openssh-server btop glances liblz4-dev libssl-dev \
          libzstd-dev libxxhash-dev libacl1-dev javascript-common libjs-jquery\
          libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip \
-         python3-setuptools python3-wheel
+         python3-setuptools python3-wheel software-properties-common
 }
 
 ### Script STARTS ###
