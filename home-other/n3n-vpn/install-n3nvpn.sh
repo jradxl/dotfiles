@@ -188,6 +188,8 @@ check-for-env() {
 
 install-n3n() {
     sudo useradd -r -M -s /usr/sbin/nologin n3n
+    ##Remove a failed build
+    sudo -rf "$REPODEST"
     mkdir -p "$REPODEST"
     cd "$REPODEST"
     git clone "$GITREPO"
