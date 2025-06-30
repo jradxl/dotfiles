@@ -257,7 +257,13 @@ else
     echo "Installing dependancies..."
     sudo apt-get -q -y update &&
     sudo apt-get -q -y upgrade &&
-    sudo apt-get install -y -q git autoconf libnatpmp-dev libminiupnpc-dev libpcap-dev libcap-dev
+    sudo apt-get install -y -q build-essential git autoconf libnatpmp-dev libminiupnpc-dev libpcap-dev libcap-dev
+    if [[ $(command -v lastversion) ]]; then
+        echo "Found lastversion. Continuing..."
+    else
+        echo "Please install PIPX and LASTVERSION"
+        exit 1
+    fi
     install-n3n
     check-for-env
     create-configs   
