@@ -33,6 +33,7 @@ fi
 if [[ "$PIPX_INSTALL" == "YES"  ]]; then
 	echo "Installing or upgrading Pipx"
 	sudo apt purge pipx
+	sudo apt install wget
 	PIPXURL="https://github.com/pypa/pipx/releases/download/$PIPXLATESTVER/pipx.pyz"
 	sudo wget -O /usr/local/bin/pipx $PIPXURL
 	sudo chmod +x /usr/local/bin/pipx
