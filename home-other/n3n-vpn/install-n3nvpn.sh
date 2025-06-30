@@ -214,6 +214,8 @@ install-n3n() {
 
     sudo cp /usr/local/lib/systemd/system/n3n-edge.service /etc/systemd/system
     sudo cp /usr/local/lib/systemd/system/n3n-supernode.service /etc/systemd/system
+    
+    sudo systemctl daemon-reload
 }
 
 upgrade-n3n() {
