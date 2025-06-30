@@ -205,10 +205,10 @@ install-n3n() {
     make
     sudo make install
 
-    if [[ ! $(grep  local /etc/systemd/system/n3n-edge.service) ]]; then
+    if [[ ! $(grep  local /usr/local/lib/systemd/system/n3n-edge.service) ]]; then
         sudo sed -i 's!sbin!local/sbin!g' /usr/local/lib/systemd/system/n3n-edge.service
     fi
-    if [[ ! $(grep  local /etc/systemd/system/n3n-supernode.service) ]]; then
+    if [[ ! $(grep  local /usr/local/lib/systemd/system/n3n-supernode.service) ]]; then
         sudo sed -i 's!sbin!local/sbin!g' /usr/local/lib/systemd/system/n3n-supernode.service
     fi
 
