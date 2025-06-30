@@ -4,7 +4,7 @@ echo "Installing the N3N VPN Software"
 
 GITREPO="https://github.com/n42n/n3n.git"
 REPODEST="$HOME/Devel/n3n"
-ETCDIR="/etc/n3n-test1"
+ETCDIR="/etc/n3n"
 STATE=""
 CWD=$(pwd)
 ENV=".env"
