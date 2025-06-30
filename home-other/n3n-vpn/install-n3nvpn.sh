@@ -187,6 +187,7 @@ check-for-env() {
 }
 
 install-n3n() {
+    sudo useradd -r -M -s /usr/sbin/nologin n3n
     mkdir -p "$REPODEST"
     cd "$REPODEST"
     git clone "$GITREPO"
