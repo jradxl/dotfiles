@@ -4,7 +4,7 @@ echo "Installing the N3N VPN Software"
 
 GITREPO="https://github.com/n42n/n3n.git"
 REPODEST="$HOME/Devel/n3n"
-ETCDIR="/etc/n3n"
+ETCDIR="/etc/n3n-test1"
 STATE=""
 CWD=$(pwd)
 ENV=".env"
@@ -15,22 +15,23 @@ SUPERCONFIG="supernode.conf"
 create-envfile() {
     sudo tee "$ETCDIR/$ENV" <<-EOF > /dev/null
 #EDGE CONFIG
-EDGE_AUTH_PASSWORD="ChangeMe"
+EDGE_AUTH_PASSWORD="Change Me"
 EDGE_AUTH_PUBKEY="Generate after install with 'n3n-edge tools keygen <supernode-fedoration>'"
 EDGE_COMMUNITY_CIPHER=ChaCha20
 EDGE_COMMUNITY_COMPRESSION=lzo
 EDGE_COMMUNITY_HEADER_ENCRYPTION=true
-EDGE_COMMUNITY_KEY="Change Me to some long random strin"
+EDGE_COMMUNITY_KEY="Change Me to some long random string"
 EDGE_COMMUNITY_NAME="Change me to a name of your choice"
 EDGE_COMMUNITY_SUPERNODE="Change Me to domain:port, Only one supernode supported with this key"
 EDGE_CONNECTION_BIND="Change me to TCP/IPv4 Address:Port"
-EDGE_CONNECTION_DESCRIPTION="$HOSTNAME"
+EDGE_CONNECTION_DESCRIPTION=$HOSTNAME
 EDGE_DAEMON_USERID=$(id -u "$N3NUSER")
 EDGE_DAEMON_GROUPID=$(id -g "$N3NUSER")
 EDGE_TUNTAP_ADDRESS="Change Me to CDIR"
 EDGE_TUNTAP_ADDRESS_MODE=static
 EDGE_TUNTAP_NAME=n3n0
 #EDGE CONFIG END
+
 #SUPERNODE CONFIG
 SUPER_SUPERNODE_AUTO_IP_MIN="Change Me"
 SUPER_SUPERNODE_AUTO_IP_MAX="Change Me"
@@ -56,32 +57,32 @@ create-configs() {
     else
         sudo tee "$ETCDIR/$EDGECONFIG" <<-EOF > /dev/null
 [auth]
-password="$EDGE_AUTH_PASSWORD"
-pubkey="$EDGE_AUTH_PUBKEY"
+password=$EDGE_AUTH_PASSWORD
+pubkey=$EDGE_AUTH_PUBKEY
 [community]
-cipher="$EDGE_COMMUNITY_CIPHER"
-compression="$EDGE_COMMUNITY_COMPRESSION"
-header_encryption="$EDGE_COMMUNITY_HEADER_ENCRYPTION"
-key="$EDGE_COMMUNITY_KEY"
-name="$EDGE_COMMUNITY_NAME"
-supernode="$EDGE_COMMUNITY_SUPERNODE"
-supernode1="Change Me or comment out"
-supernode2="Change Me or comment out"
-supernodeN="Change Me or comment out"
+cipher=$EDGE_COMMUNITY_CIPHER
+compression=$EDGE_COMMUNITY_COMPRESSION
+header_encryption=$EDGE_COMMUNITY_HEADER_ENCRYPTION
+key=$EDGE_COMMUNITY_KEY
+name=$EDGE_COMMUNITY_NAME
+supernode=$EDGE_COMMUNITY_SUPERNODE
+supernode1=Change Me or comment out
+supernode2=Change Me or comment out
+supernodeN=Change Me or comment out
 [connection]
 advertise_addr=auto
 allow_p2p=true
-bind="$EDGE_CONNECTION_BIND"
+bind=$EDGE_CONNECTION_BIND
 connect_tcp=false
-description="$EDGE_CONNECTION_DESCRIPTION"
+description=$EDGE_CONNECTION_DESCRIPTION
 pmtu_discovery=false
 register_interval=20
 register_pkt_ttl=0
 supernode_selection=load
 tos=0
 [daemon]
-userid="$EDGE_DAEMON_USERID"
-groupid="$EDGE_DAEMON_GROUPID"
+userid=$EDGE_DAEMON_USERID
+groupid=$EDGE_DAEMON_GROUPID
 background=false
 [filter]
 allow_multicast=false
@@ -95,12 +96,12 @@ password=n3n
 port=0
 unix_sock_perms=0
 [tuntap]
-address="$EDGE_TUNTAP_ADDRESS"
-address_mode="$EDGE_TUNTAP_ADDRESS_MODE"
+address=$EDGE_TUNTAP_ADDRESS
+address_mode=$EDGE_TUNTAP_ADDRESS_MODE
 #macaddr=
 metric=0
 mtu=1290
-name="$EDGE_TUNTAP_NAME"
+name=$EDGE_TUNTAP_NAME
 
 EOF
     echo "'$ETCDIR/$EDGECONFIG' created."
@@ -111,34 +112,34 @@ EOF
     else
         sudo tee "$ETCDIR/$SUPERCONFIG" <<-EOF > /dev/null
 [auth]
-password="$EDGE_AUTH_PASSWORD"
-pubkey="$EDGE_AUTH_PUBKEY"
+password=$EDGE_AUTH_PASSWORD
+pubkey=$EDGE_AUTH_PUBKEY
 [community]
-cipher="$EDGE_COMMUNITY_CIPHER"
-compression="$EDGE_COMMUNITY_COMPRESSION"
-header_encryption="$EDGE_COMMUNITY_HEADER_ENCRYPTION"
-key="$EDGE_COMMUNITY_KEY"
-name="$EDGE_COMMUNITY_NAME"
-#supernode="Comment out on Supernode"
+cipher=$EDGE_COMMUNITY_CIPHER
+compression=$EDGE_COMMUNITY_COMPRESSION
+header_encryption=$EDGE_COMMUNITY_HEADER_ENCRYPTION
+key=$EDGE_COMMUNITY_KEY
+name=$EDGE_COMMUNITY_NAME
+#supernode=Comment out on Supernode
 [connection]
 advertise_addr=auto
 allow_p2p=true
-#bind="Comment out on Supernode"
+#bind=Comment out on Supernode
 connect_tcp=false
-description="$EDGE_CONNECTION_DESCRIPTION"
+description=$EDGE_CONNECTION_DESCRIPTION
 pmtu_discovery=false
 register_interval=20
 register_pkt_ttl=0
 supernode_selection=load
 tos=0
 [daemon]
-userid="$EDGE_DAEMON_USERID"
-groupid="$EDGE_DAEMON_GROUPID"
+userid=$EDGE_DAEMON_USERID
+groupid=$EDGE_DAEMON_GROUPID
 background=false
 [filter]
 allow_multicast=false
 allow_routing=false
-rule="Change Me or comment out"
+rule=Change Me or comment out
 [logging]
 verbose=2
 [management]
@@ -147,20 +148,20 @@ password=n3n
 port=0
 unix_sock_perms=0
 #[tuntap]
-#address="$EDGE_TUNTAP_ADDRESS"
-#address_mode="$EDGE_TUNTAP_ADDRESS_MODE"
+#address=$EDGE_TUNTAP_ADDRESS
+#address_mode=$EDGE_TUNTAP_ADDRESS_MODE
 #macaddr=
 #metric=0
 #mtu=1290
-#name="$EDGE_TUNTAP_NAME"
+#name=$EDGE_TUNTAP_NAME
 [supernode]
-auto_ip_min="Change Me CIDR"
-auto_ip_max="Change Me CDIR"
-community_file="$ETCDIR"/community.list
-federation="Change Me"
+auto_ip_min=Change Me CIDR
+auto_ip_max=Change Me CDIR
+community_file=$ETCDIR/community.list
+federation=Change Me
 macaddr=00:00:00:00:00:00
 spoofing_protection=true
-version="Change Me or comment out"
+version=Change Me or comment out
 
 EOF
     echo "'$ETCDIR/$SUPERCONFIG' created."
@@ -253,7 +254,8 @@ uninstall-n3n() {
 ## MAIN ##
 
 ### TESTING
-# uninstall-n3n
+sudo rm -rf "$ETCDIR"
+uninstall-n3n
 ###
 
 if [[ $(command -v n3n-edge) ]]; then
