@@ -254,8 +254,8 @@ uninstall-n3n() {
 ## MAIN ##
 
 ### TESTING
-sudo rm -rf "$ETCDIR"
-uninstall-n3n
+#sudo rm -rf "$ETCDIR"
+#uninstall-n3n
 ###
 
 if [[ $(command -v n3n-edge) ]]; then
