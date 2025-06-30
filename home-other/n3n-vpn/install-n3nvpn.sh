@@ -263,7 +263,7 @@ else
     echo "Installing dependancies..."
     sudo apt-get -q -y update &&
     sudo apt-get -q -y upgrade &&
-    sudo apt-get install -y -q wget build-essential git autoconf libnatpmp-dev libminiupnpc-dev libpcap-dev libcap-dev
+    sudo apt-get install -y -q wget build-essential git autoconf libzstd-dev liblzo2-dev libnatpmp-dev libminiupnpc-dev libpcap-dev libcap-dev
     if [[ $(command -v lastversion) ]]; then
         echo "Found lastversion. Continuing..."
     else
