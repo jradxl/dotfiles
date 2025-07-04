@@ -56,13 +56,17 @@ echo "installing DIRENV"
 rm -rf /tmp/direnv*
 # https://github.com/direnv/direnv/releases/download/v2.36.0/direnv.linux-amd64
 
-
-( cd /tmp && wget "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-amd64" )
-if [[ -f /tmp/direnv.linux-amd64 ]]; then
-     sudo mv /tmp/direnv.linux-amd64 /usr/local/bin/direnv
+##Found to be a redirect
+( cd /tmp && curl -L -o /tmp/direnv  "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-amd64" )
+if [[ -f /tmp/direnv ]]; then
+     ##sudo rm -f /usr/local/bin/
+     sudo cp /tmp/direnv /usr/local/bin/
+     sudo chown root:root /usr/local/bin/direnv
      sudo chmod +x /usr/local/bin/direnv
      hash -r
      direnv --version
+else
+    echo "Download failed."
 fi
     
 exit 0
