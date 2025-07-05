@@ -59,6 +59,17 @@ check-uv() {
         fi
 }
 
+check-hatch() {
+        echo "## HATCH..."
+        if [[ $(command -v hatch ) ]]; then
+            echo "Upgrading HATCH if needed (using install-hatch script)..."
+            if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-hatch.sh" ]]; then
+                echo "Calling script..."
+                "$HOME/.local/share/chezmoi/home-other/scripts/install-hatch.sh"
+            fi
+        fi
+}
+
 check-micro() {
 ##https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux64-static.tar.gz
 
@@ -66,7 +77,7 @@ check-micro() {
         if [[ $(command -v micro ) ]]; then
             echo "Upgrading MICRO if needed (using install-micro script)..."
             if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
-                echo "Upgrading MICRO."
+                echo "Calling script..."
                 "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
             fi
         fi
@@ -249,6 +260,7 @@ check-pnpm
 check-nvm
 check-rust
 check-uv
+check-hatch
 check-micro
 check-deno
 check-gvm
