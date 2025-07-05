@@ -40,7 +40,7 @@ if [[ "$LATEST_VERSION" == "NO"  ]]; then
 	exit 1
 fi
 
-$(cd /tmp && rm -rf micro* )
+$(cd /tmp && rm -f $(compgen -G "/tmp/micro*") )
 $(cd /tmp && wget "$URL".sha )
 $(cd /tmp && wget "$URL" )
 pushd /tmp > /dev/null
@@ -52,7 +52,8 @@ popd > /dev/null
 if [[ "$RET" == 0 ]]; then
 	echo "Download checksum success"
 	$(cd /tmp && tar xf "$FILENAME")
-	sudo cp /tmp/micro-"$LATEST_VERSION"/micro /usr/local/bin
+	#sudo cp /tmp/micro-"$LATEST_VERSION"/micro /usr/locabin
+	cp /tmp/micro-"$LATEST_VERSION"/micro "$HOME"/.local/bin
 else
 	echo "Download checksum fails."
 	exit 1
@@ -62,3 +63,4 @@ micro --version
 echo "RUN hash -r in your shell"
 
 exit 0
+

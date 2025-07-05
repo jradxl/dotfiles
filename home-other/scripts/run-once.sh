@@ -60,11 +60,13 @@ check-uv() {
 }
 
 check-micro() {
+##https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux64-static.tar.gz
+
         echo "## MICRO..."
         if [[ $(command -v micro ) ]]; then
             echo "Upgrading MICRO if needed (using install-micro script)..."
             if [[ -f "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh" ]]; then
-                echo "Upgrading MICRO. May require SUDO password."
+                echo "Upgrading MICRO."
                 "$HOME/.local/share/chezmoi/home-other/scripts/install-micro.sh"
             fi
         fi

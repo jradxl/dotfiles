@@ -24,7 +24,8 @@ else
 fi
 
 where_direnv=$(which direnv)
-if [[ "$where_direnv" == "/usr/local/bin/direnv" ]]; then
+#if [[ "$where_direnv" == "/usr/local/bin/direnv" ]]; then
+if [[ "$where_direnv" == "$HOME"/.local/bin/direnv ]]; then
     echo "DIRENV on path is correct."
 else
     if [[ "$where_direnv" != ""  ]]; then
@@ -60,9 +61,12 @@ rm -rf /tmp/direnv*
 ( cd /tmp && curl -L -o /tmp/direnv  "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-amd64" )
 if [[ -f /tmp/direnv ]]; then
      ##sudo rm -f /usr/local/bin/
-     sudo cp /tmp/direnv /usr/local/bin/
-     sudo chown root:root /usr/local/bin/direnv
-     sudo chmod +x /usr/local/bin/direnv
+     #sudo cp /tmp/direnv /usr/local/bin/
+     #sudo chown root:root /usr/local/bin/direnv
+     #sudo chmod +x /usr/local/bin/direnv
+     cp /tmp/direnv  "$HOME"/.local/bin/
+     #chown root:root "$HOME"/.local/bin/direnv
+     chmod +x        "$HOME"/.local/bin/direnv     
      hash -r
      direnv --version
 else
