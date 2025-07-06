@@ -146,12 +146,13 @@ check-direnv() {
         current_direnv="$(direnv --version)"  
         where_direnv=$(which direnv)
         if [[ "$where_direnv" == "/usr/local/bin/direnv" ]]; then
-            echo "DIRENV on path is correct."
+            echo "DIRENV on path is NOT correct."
+            echo "Please remove and then re-run this script."
+            return
         else
-            if [[ "$where_direnv" != ""  ]]; then
+            if [[ "$where_direnv" != "$HOME/.local/bin/direnv"  ]]; then
                 echo "DIRENV on path is: $where_direnv"
-                echo "Please remove and then re-run this script."
-                return
+                echo "DIRENV on path is correct."
             fi
         fi
     else
@@ -169,8 +170,7 @@ check-direnv() {
         if [[ -x "$HOME/.local/share/chezmoi/home-other/scripts/install-direnv.sh" ]]; then
             "$HOME/.local/share/chezmoi/home-other/scripts/install-direnv.sh"
         else
-	        echo "Pipx needs to be installed first. Run install_direnv.sh"
-	        return
+	        echo "Install install_direnv.sh not found."
         fi        
     fi
 }
