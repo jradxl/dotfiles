@@ -70,6 +70,14 @@ check-hatch() {
         fi
 }
 
+check-poetry() {
+        echo "## POETRY..."
+        if [[ $(command -v poetry ) ]]; then
+            echo "Updating POETRY if needed."
+            poetry self update
+        fi
+}
+
 check-micro() {
 ##https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux64-static.tar.gz
 
@@ -261,6 +269,7 @@ check-nvm
 check-rust
 check-uv
 check-hatch
+check-poetry
 check-micro
 check-deno
 check-gvm

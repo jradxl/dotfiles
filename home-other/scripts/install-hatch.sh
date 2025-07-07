@@ -28,7 +28,7 @@ FILENAME="hatch-x86_64-unknown-linux-gnu.tar.gz"
 URL="https://github.com/pypa/hatch/releases/download/hatch-v$LATEST_VERSION/hatch-x86_64-unknown-linux-gnu.tar.gz"
 
 if [[ "$LATEST_VERSION" == "NO"  ]]; then
-	echo "Not able to find latest version of micro"
+	echo "Not able to find latest version of hatch"
 	exit 1
 fi
 
