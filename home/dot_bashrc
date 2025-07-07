@@ -356,6 +356,7 @@ fi
 [[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 [[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
+[[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
 [[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
 [[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
 [[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
