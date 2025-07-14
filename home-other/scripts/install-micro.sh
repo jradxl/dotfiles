@@ -15,6 +15,11 @@ else
 	exit 1
 fi
 
+if [[ "$LATEST_VERSION" == "NO"  ]]; then
+	echo "Not able to find latest version of micro"
+	exit 1
+fi
+
 CURRENT_VERSION=$(micro --version | awk '/Version/ {print $2}')
 
 echo "CURRENT: $CURRENT_VERSION"
@@ -35,16 +40,10 @@ fi
 FILENAME="micro-$LATEST_VERSION-linux64-static.tgz"
 URL="https://github.com/zyedidia/micro/releases/download/v$LATEST_VERSION/$FILENAME"
 
-if [[ "$LATEST_VERSION" == "NO"  ]]; then
-	echo "Not able to find latest version of micro"
-	exit 1
-fi
-
 $(cd /tmp && rm -f $(compgen -G "/tmp/micro*") )
 $(cd /tmp && wget "$URL".sha )
 $(cd /tmp && wget "$URL" )
 pushd /tmp > /dev/null
-#Odd usage of shasum. Won't take absolute path, and won't work within $()
 shasum -a 256 -c "$FILENAME".sha
 RET=$?
 popd > /dev/null
@@ -63,4 +62,3 @@ micro --version
 echo "RUN hash -r in your shell"
 
 exit 0
-

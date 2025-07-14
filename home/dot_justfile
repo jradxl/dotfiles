@@ -1,0 +1,8 @@
+#
+host := `uname -a`
+
+first:
+  @echo "Hello from JUST"
+
+aptu:
+  sudo apt-get update && sudo apt upgrade -y
