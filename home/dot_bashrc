@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250714A
+# 20250717A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -162,6 +162,7 @@ alias pn='pnpm'
 alias ppp='pulsar'
 alias pya='source .venv/bin/activate'
 alias neovim=nvim
+alias vim=nvim
 alias fxa="flox activate"
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -221,6 +222,7 @@ esac
 # pnpm end
 
 ##export PATH="$HOME/bin:$PATH"
+pathmunge "$HOME/Apps/nvim/bin"
 pathmunge "$HOME/bin"
 pathmunge "$HOME/.local/bin"
 pathmunge "$HOME/.rd/bin"
@@ -365,6 +367,9 @@ fi
 [[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
 [[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
 [[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
+[[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
+echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
 
 #Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
@@ -500,7 +505,4 @@ else
 fi
 
 ## END
-
-
-[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
 
