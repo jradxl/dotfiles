@@ -8,6 +8,21 @@ get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
 
+check-astronvim() {
+    LATEST_ASTRONVIM=""
+    CURRENT_ASTRONVIM=""
+    if [[ -f "$HOME/.local/share/nvim/lazy/AstroNvim/version.txt" ]]; then
+        CURRENT_ASTRONVIM="$(cat $HOME/.local/share/nvim/lazy/AstroNvim/version.txt)"
+    fi
+    LATEST_ASTRONVIM="$(lastversion https://github.com/AstroNvim/AstroNvim)"
+
+    if [[ "$CURRENT_ASTRONVIM" == "$LATEST_ASTRONVIM" ]]; then
+        echo "ASTRONVIM is already the latest version"
+    else
+        echo "ASTRONVIM needs an upgrade to $LATEST_ASTRONVIM"
+    fi
+}
+
 check-pnpm() {
     echo "## PNPM..."
     if [[ $(command -v pnpm) ]]; then
@@ -276,6 +291,7 @@ check-gvm
 check-direnv
 check-flatpaks
 check-hishtory
+check-astronvim
 
 echo "####### RUN-ONCE script finished. #######"
 echo ""
