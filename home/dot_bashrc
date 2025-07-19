@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250717A
+# 20250719A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -164,6 +164,7 @@ alias pya='source .venv/bin/activate'
 alias neovim=nvim
 alias vim=nvim
 alias fxa="flox activate"
+alias lsdd='lsd -dl'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -284,6 +285,10 @@ mkdir -p "$NVM_DIR"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+##LUAVER
+[ -s ~/.luaver/luaver ] && . ~/.luaver/luaver
+[ -s ~/.luaver/completions/luaver.bash ] && . ~/.luaver/completions/luaver.bash
+
 ########### KEYCHAIN START #################
 
 ## Logic to run once per day
@@ -369,7 +374,10 @@ fi
 [[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
 [[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
-echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
+if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
+    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
+fi
+[[ $(command -v lx )       ]] && echo "Installed LUX_CLI (lx) version:  $(lx -V)"
 
 #Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
@@ -502,6 +510,11 @@ if [[ -d "$GEM_HOME" ]]; then
     pathmunge "${HOME}/gems/bin"
 else
     echo "No GEMS dir found"
+fi
+
+if [[ $(command -v oh-my-posh) ]]; then
+    #NOTE: List Themes with "ls .cache/oh-my-posh/themes"
+    eval "$(oh-my-posh init bash --config 'negligible')"
 fi
 
 ## END
