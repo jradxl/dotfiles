@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250719B
+# 20250823A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -223,12 +223,15 @@ esac
 # pnpm end
 
 ##export PATH="$HOME/bin:$PATH"
-pathmunge "$HOME/Apps/nvim/bin"
+
 pathmunge "$HOME/bin"
 pathmunge "$HOME/.local/bin"
 pathmunge "$HOME/.rd/bin"
-##export PATH="/opt/nvim-linux64/bin:$PATH"
-pathmunge "/opt/nvim-linux64/bin"
+## Now using BOB
+pathmunge "$HOME/Apps/nvim/bin"
+##pathmunge "$HOME/.local/share/bob/nvim-bin"
+## export PATH="/opt/nvim-linux64/bin:$PATH"
+## pathmunge "/opt/nvim-linux64/bin"
 ##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
 pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
 
@@ -246,6 +249,12 @@ if [[ -f "$HOME/.hishtory/config.sh" ]]; then
     pathmunge "$HOME/.hishtory" after
     source $HOME/.hishtory/config.sh
 fi
+
+#Doesn't support luarocks
+#if [[ -f "$HOME/.luaenv/bin/luaenv" ]]; then
+#    pathmunge "$HOME/.luaenv/bin"
+#    eval "$(luaenv init -)"
+#fi
 
 ##Use uv pathunge "$HOME/.rye/shims"
 ##Use uv [[ -f "$HOME/.rye/env" ]] && . "$HOME/.rye/env"
@@ -364,7 +373,7 @@ fi
 [[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
 [[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
 [[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
-[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version)"
+[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version | grep deno)"
 [[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
 [[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
 [[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
@@ -372,13 +381,19 @@ fi
 [[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
 [[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
 [[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
+echo "NVIM Version Start..."
 [[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
+echo "NVIM Version End."
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
-if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
-    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
-fi
+
+#if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
+#    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
+#fi
+
 [[ $(command -v lx )       ]] && echo "Installed LUX_CLI (lx) version:  $(lx -V)"
 [[ $(command -v luaver )   ]] && echo "Installed LUAVER version:  $(luaver version | grep Lua)"
+## Not Used [[ $(command -v luaenv )   ]] && echo "Installed LUAENV version:  $(curl -sL https://api.github.com/repos/cehoffman/luaenv | jq .pushed_at)"
+[[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
 
 #Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
@@ -392,7 +407,6 @@ fi
 [[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
 [[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
 [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
-
 
 ##PYENV Discontinued
 #https://realpython.com/python313-free-threading-jit/
@@ -515,8 +529,40 @@ fi
 
 if [[ $(command -v oh-my-posh) ]]; then
     #NOTE: List Themes with "ls .cache/oh-my-posh/themes"
+    oh-my-posh upgrade
     eval "$(oh-my-posh init bash --config 'negligible')"
 fi
 
+# >>> juliaup initialize >>>
+# !! Contents within this block are managed by juliaup !!
+case ":$PATH:" in
+    *:/home/jradley/.juliaup/bin:*)
+        ;;
+    *)
+        export PATH=/home/jradley/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+# <<< juliaup initialize <<<
+
+## oxidizr to switch coreutils
+
 ## END
+#export PATH="$HOME/.luaver/luarocks/3.12.2_5.1/bin:$PATH"
+#export PATH="$HOME/.luaver/lua/5.1.5/bin:$PATH"
+
+
+# ZVM
+export ZVM_INSTALL="$HOME/.zvm/self"
+#export PATH="$PATH:$HOME/.zvm/bin"
+#export PATH="$PATH:$ZVM_INSTALL/"
+if [[ -d "$HOME/.zvm" ]]; then
+    echo "ZVM is installed."
+    pathmunge "$HOME/.zvm/bin"
+    pathmunge "$ZVM_INSTALL/"
+    if [[  $(command -v zig) ]]; then
+        echo "ZIG version $(zig version)"
+    else
+        echo "No ZIG language installed."
+    fi
+fi
 
