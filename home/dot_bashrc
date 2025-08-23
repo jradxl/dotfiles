@@ -556,7 +556,7 @@ export ZVM_INSTALL="$HOME/.zvm/self"
 #export PATH="$PATH:$HOME/.zvm/bin"
 #export PATH="$PATH:$ZVM_INSTALL/"
 if [[ -d "$HOME/.zvm" ]]; then
-    echo "ZVM is installed."
+    echo "ZVM: $($HOME/.zvm/self/zvm --version)."
     pathmunge "$HOME/.zvm/bin"
     pathmunge "$ZVM_INSTALL/"
     if [[  $(command -v zig) ]]; then
