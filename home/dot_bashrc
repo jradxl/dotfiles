@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250823A
+# 20250827A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -394,6 +394,7 @@ echo "NVIM Version End."
 [[ $(command -v luaver )   ]] && echo "Installed LUAVER version:  $(luaver version | grep Lua)"
 ## Not Used [[ $(command -v luaenv )   ]] && echo "Installed LUAENV version:  $(curl -sL https://api.github.com/repos/cehoffman/luaenv | jq .pushed_at)"
 [[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
+[[ $(command -v asdf )      ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
 
 #Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
@@ -563,6 +564,19 @@ if [[ -d "$HOME/.zvm" ]]; then
         echo "ZIG version $(zig version)"
     else
         echo "No ZIG language installed."
+    fi
+fi
+
+# ASDF
+# export PATH="${ASDF_DATA_DIR:-$HOME/.asdf/shims:$PATH"
+if [[ -d "$HOME/.asdf" ]]; then
+    echo "ASDF: $($HOME/.local/bin/asdf --version)."
+    pathmunge "$HOME/.asdf/shims"
+    if [[  $(command -v odin) ]]; then
+        echo "USE: asdf set odin latest"
+        echo "ODIN version $(odin version)"
+    else
+        echo "No ODIN language installed."
     fi
 fi
 
