@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20250920A
+# 20251016A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -15,6 +15,7 @@ esac
 # .bashrc file from Chezmoi
 echo "Chezmoi: START .bashrc"
 . "$HOME/.chezmoi-pac"
+. "$HOME/.lastversion-pac"
 
 export UUID=$(id -u $USER)
 export GGID=$(id -g $USER)
