@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20251016A
+# 20251103A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -579,6 +579,18 @@ if [[ -d "$HOME/.asdf" ]]; then
         echo "ODIN version $(odin version)"
     else
         echo "No ODIN language installed."
+    fi
+fi
+
+##Nim, ChooseNIM
+#export PATH=/home/jradley/.nimble/bin:$PATH
+if [[ -d "$HOME/.nimble" ]]; then
+    echo "NIM: $($HOME/.nimble/bin/nim --version)."
+    pathmunge "$HOME/.nimble/bin"
+    if [[  $(command -v nim) ]]; then
+        echo "NIM installed"
+    else
+        echo "No NIM language installed."
     fi
 fi
 
