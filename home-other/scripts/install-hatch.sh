@@ -15,16 +15,15 @@ if [[ $(command -v lastversion)  ]]; then
 	#LATEST_VERSION=$(lastversion https://github.com/pypa/hatch)
 	
 	#This will fail in the future
-    LATEST_VERSION=$(git ls-remote --tags --sort=v:refname  https://github.com/pypa/hatch | grep "hatch-v1." | grep -v hatch-v1r | tail -1 | awk -F'-' '{print $2}') 
-    echo "LLLL: $LATEST_VERSION"   
+    LATEST_VERSION=$(git ls-remote --tags --sort=v:refname  https://github.com/pypa/hatch | grep "hatch-v1." | grep -v hatch-v1r | tail -1 | awk -F'-' '{print $2}')   
 else
 	echo "Please ensure Pipx and Lastversion are installed"
 	exit 1
 fi
 
-CURRENT_VERSION=$(hatch --version | awk '/Hatch/ {print $3}')
+CURRENT_VERSION=v$(hatch --version | awk '/Hatch/ {print $3}')
 
-echo "CURRENT: v$CURRENT_VERSION"
+echo "CURRENT: $CURRENT_VERSION"
 echo "LATEST: $LATEST_VERSION"
 
 if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
@@ -32,9 +31,11 @@ if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	exit 0
 fi
 
+exit 0
+
 ##hatch-x86_64-unknown-linux-gnu.tar.gz
 FILENAME="hatch-x86_64-unknown-linux-gnu.tar.gz"
-URL="https://github.com/pypa/hatch/releases/download/hatch-$LATEST_VERSION/hatch-x86_64-unknown-linux-gnu.tar.gz"
+URL="https://github.com/pypa/hatch/releases/download/hatch-v$LATEST_VERSION/hatch-x86_64-unknown-linux-gnu.tar.gz"
 
 if [[ "$LATEST_VERSION" == "NO"  ]]; then
 	echo "Not able to find latest version of hatch"
