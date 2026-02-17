@@ -8,6 +8,31 @@ get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
 
+check-zed() {
+    LATEST_ZED=""
+    CURRENT_ZED=""
+    if [[ -f "$HOME/.local/bin/zed" ]]; then
+        # echo "ZED Editor already installed. Checking for update"
+        CURRENT_ZED=v$(zed --version | awk '{print $2}')    
+        # echo "CURRENT VERSION: $CURRENT_ZED"
+        # Set your github username and repo name
+        repo="zed-industries/zed"
+        # Get latest release info
+        release=$(curl --silent -m 10 --connect-timeout 5 "https://api.github.com/repos/$repo/releases/latest")
+        # Release version
+        tag=$(echo "$release" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        LATEST_ZED=$tag       
+        # echo "LATEST_VERSION: $LATEST_ZED"
+
+        if [[ $CURRENT_ZED == $LATEST_ZED ]]; then
+            echo "ZED Editor latest version already installed."
+        else
+            echo "ZED Editor needs updating..."
+            curl -f https://zed.dev/install.sh | sh
+        fi        
+    fi
+}
+
 check-astronvim() {
     LATEST_ASTRONVIM=""
     CURRENT_ASTRONVIM=""
@@ -279,6 +304,7 @@ fi
 
 cwd=$(pwd)
 
+check-zed
 check-pnpm
 check-nvm
 check-rust
