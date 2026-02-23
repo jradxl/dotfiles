@@ -9,12 +9,13 @@ get-github-latest () {
 }
 
 check-zed() {
+    echo "## ZED EDITOR..."
     LATEST_ZED=""
     CURRENT_ZED=""
     if [[ -f "$HOME/.local/bin/zed" ]]; then
-        # echo "ZED Editor already installed. Checking for update"
+        echo "ZED Editor already installed. Checking for update"
         CURRENT_ZED=v$(zed --version | awk '{print $2}')    
-        # echo "CURRENT VERSION: $CURRENT_ZED"
+        echo "CURRENT: $CURRENT_ZED"
         # Set your github username and repo name
         repo="zed-industries/zed"
         # Get latest release info
@@ -22,7 +23,7 @@ check-zed() {
         # Release version
         tag=$(echo "$release" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         LATEST_ZED=$tag       
-        # echo "LATEST_VERSION: $LATEST_ZED"
+        echo "LATEST: $LATEST_ZED"
 
         if [[ $CURRENT_ZED == $LATEST_ZED ]]; then
             echo "ZED Editor latest version already installed."
