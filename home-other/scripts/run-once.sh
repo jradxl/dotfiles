@@ -22,7 +22,11 @@ check-zed() {
         release=$(curl --silent -m 10 --connect-timeout 5 "https://api.github.com/repos/$repo/releases/latest")
         # Release version
         tag=$(echo "$release" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-        LATEST_ZED=$tag       
+        LATEST_ZED=$tag
+        if [[ -z $LATEST_ZED ]]; then
+            echo "ZED: Can't get latest version. Aborting"
+            return
+        fi      
         echo "LATEST: $LATEST_ZED"
 
         if [[ $CURRENT_ZED == $LATEST_ZED ]]; then
