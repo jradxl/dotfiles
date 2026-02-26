@@ -277,7 +277,7 @@ fi
 if [[ -d "${HOME}/.g" ]]; then
     mkdir -p "${HOME}/go/bin"
     mkdir -p "${HOME}/.g/bin"
-    echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version )"
+    echo -n "Installed G (voidint Goland Version Manager version: $(g --version | grep version )"
     #[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
     #A more explicit version of . "${HOME}/.g/env" is preferred.
     #export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
