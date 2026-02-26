@@ -283,6 +283,7 @@ if [[ -d "${HOME}/.g" ]]; then
     pathmunge "${HOME}/go/bin"
     pathmunge "${HOME}/.g/go/bin"
     pathmunge "${HOME}/.g/bin"
+    export G_HOME="${HOME}/.g"
     export G_MIRROR=https://proxy.google.org
     export GOPROXY=https://proxy.google.org,direct
     #.g/go is sym link to $HOME/.g/versions/<goversion>
