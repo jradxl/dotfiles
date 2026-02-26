@@ -225,6 +225,7 @@ esac
 
 ##export PATH="$HOME/bin:$PATH"
 
+pathmunge "$HOME/Applications"
 pathmunge "$HOME/bin"
 pathmunge "$HOME/.local/bin"
 pathmunge "$HOME/.rd/bin"
@@ -272,7 +273,10 @@ fi
 
 #https://medium.com/@sahaidachnyi/standard-environment-variables-in-golang-2bcb1b869bae
 #https://go.dev/blog/get-familiar-with-workspaces
-if [[ -s "${HOME}/.g/env" ]]; then
+#Changed 2026/02/26 to test only for ~/.g
+if [[ -d "${HOME}/.g" ]]; then
+    mkdir -p "${HOME}/go/bin"
+    mkdir -p "${HOME}/.g/bin"   
     #[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
     #A more explicit version of . "${HOME}/.g/env" is preferred.
     #export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
@@ -594,3 +598,4 @@ if [[ -d "$HOME/.nimble" ]]; then
     fi
 fi
 
+export TERMINAL=terminator
