@@ -277,8 +277,6 @@ fi
 if [[ -d "${HOME}/.g" ]]; then
     mkdir -p "${HOME}/go/bin"
     mkdir -p "${HOME}/.g/bin"
-    echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
-    echo ""
     #[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
     #A more explicit version of . "${HOME}/.g/env" is preferred.
     #export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
@@ -372,6 +370,7 @@ fi
 ##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
 [[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
 [[ $(command -v codon )  ]] && echo "Installed CODON version: $(codon --version)"
+[[ $(command -v g )      ]] && echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
 [[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
 [[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
 [[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
