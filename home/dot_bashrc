@@ -166,6 +166,9 @@ alias neovim=nvim
 alias vim=nvim
 alias fxa="flox activate"
 alias lsdd='lsd -dl'
+alias fff='fresh'
+alias zzz='zed'
+alias lll='lapce'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -393,6 +396,8 @@ echo "NVIM Version Start..."
 [[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
 echo "NVIM Version End."
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
+[[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
+
 
 #if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
 #    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
