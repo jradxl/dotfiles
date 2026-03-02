@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20251103A
+# 20260302A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -288,7 +288,7 @@ if [[ -d "${HOME}/.g" ]]; then
     pathmunge "${HOME}/.g/bin"
     export G_HOME="${HOME}/.g"
     export G_MIRROR=https://proxy.google.org
-    export GOPROXY=https://proxy.google.org,direct
+    export GOPROXY=https://proxy.golang.org,direct
     #.g/go is sym link to $HOME/.g/versions/<goversion>
     #export GOROOT=/home/jradley/.g/versions/1.23.2
     export GOROOT="${HOME}/.g/go"
