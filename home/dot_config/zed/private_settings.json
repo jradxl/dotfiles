@@ -7,8 +7,23 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "languages": {
+    "Python": {
+      "language_servers": [
+              // Disable basedpyright and enable ty, and otherwise
+              // use the default configuration.
+              "!ty",
+              "basedpyright",
+              "!pylsp"
+            ],
+      "hard_tabs": false
+    },
+    "Go": {
+      "hard_tabs": false
+    }
+  },
   "ui_font_size": 18,
-  "buffer_font_size": 18,
+  "buffer_font_size": 14.0,
   "buffer_font_weight": 500,
   "theme": {
     "mode": "system",
