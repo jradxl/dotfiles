@@ -31,11 +31,9 @@ if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
 	exit 0
 fi
 
-exit 0
-
 ##hatch-x86_64-unknown-linux-gnu.tar.gz
 FILENAME="hatch-x86_64-unknown-linux-gnu.tar.gz"
-URL="https://github.com/pypa/hatch/releases/download/hatch-v$LATEST_VERSION/hatch-x86_64-unknown-linux-gnu.tar.gz"
+URL="https://github.com/pypa/hatch/releases/download/hatch-$LATEST_VERSION/hatch-x86_64-unknown-linux-gnu.tar.gz"
 
 if [[ "$LATEST_VERSION" == "NO"  ]]; then
 	echo "Not able to find latest version of hatch"
@@ -58,4 +56,3 @@ hatch --version
 echo "RUN hash -r in your shell"
 
 exit 0
-
