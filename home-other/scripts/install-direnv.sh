@@ -1,5 +1,21 @@
 #!/bin/bash
 
+MACH=$(uname -m)
+echo "Machine Arch: $MACH"
+case $MACH in
+  "aarch64")
+    echo "Setting ARCH to arm64"
+    ARCH="arm64"
+    ;;
+  "X86_64")
+    echo "Setting ARCH to amd64"
+    ARCH="amd64"
+    ;;
+  *)
+    echo "Unknown ARCH. Exiting..."
+    ;;
+esac
+
 if [[ ! $(command -v pipx) ]]; then
 	echo "Pipx needs to be installed first. Run install_pipx.sh"
 	exit 1
@@ -57,8 +73,9 @@ echo "installing DIRENV"
 rm -rf /tmp/direnv*
 # https://github.com/direnv/direnv/releases/download/v2.36.0/direnv.linux-amd64
 
+
 ##Found to be a redirect
-( cd /tmp && curl -L -o /tmp/direnv  "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-amd64" )
+( cd /tmp && curl -L -o /tmp/direnv  "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-$ARCH" )
 if [[ -f /tmp/direnv ]]; then
      ##sudo rm -f /usr/local/bin/
      #sudo cp /tmp/direnv /usr/local/bin/
