@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root"
    exit 1
 fi
 
@@ -13,16 +13,17 @@ else
 fi
 
 LOGPATH="/var/log/apt-upgrade"
-MESSAGE="Upgrading apt Packages if any..."
+#MESSAGE="Upgrading apt Packages if any..."
 
 mkdir -p "$LOGPATH"
 
 NOW=$(date +"%Y%m%d%k%M%S")
 LOGFILE="apt-upgrade_$NOW.txt"
+#echo "FN: $LOGFILE"
 LOGFULLPATH="$LOGPATH/$LOGFILE"
 
 # Initialise the logging module
-init_logger --log $LOGFULLPATH --quiet --level INFO  2>/dev/null
+init_logger --log "$LOGFULLPATH" --quiet --level INFO  2>/dev/null
 
 NUMBER=$(apt-get -q -y --ignore-hold --allow-change-held-packages --allow-unauthenticated -s dist-upgrade | /bin/grep  ^Inst | wc -l)
 if [[ "$NUMBER" == 0 ]]; then
@@ -31,11 +32,10 @@ if [[ "$NUMBER" == 0 ]]; then
     exit 0
 fi
 
-
 log_info "Starting..."
 
-apt-get update     >> $LOGFULLPATH
-apt-get dist-upgrade -y >> $LOGFULLPATH
+apt-get update     >> "$LOGFULLPATH"
+apt-get dist-upgrade -y >> "$LOGFULLPATH"
 RET="$?"
 
 if [[ "$RET" -ne 0  ]]; then
@@ -43,9 +43,8 @@ if [[ "$RET" -ne 0  ]]; then
 	exit 1
 fi
 
-apt-get autoremove
+apt-get autoremove >> "$LOGFULLPATH"
 
 log_info "Finished"
 
 exit 0
-
