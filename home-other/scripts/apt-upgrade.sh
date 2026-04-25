@@ -1,16 +1,20 @@
 #!/bin/bash
 
+#NEEDS https://github.com/GingerGraham/bash-logger/blob/main/logging.sh
+# WGET https://raw.githubusercontent.com/GingerGraham/bash-logger/refs/heads/main/logging.sh
+
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
    exit 1
 fi
 
-if [[ -f  /root/scripts/libs/logging.sh ]]; then
-    source /root/scripts/libs/logging.sh
-else
-    echo "Missing loggimg.sh Library"
-    exit 0
+if [[ ! -f  /root/scripts/libs/logging.sh ]]; then
+    echo "Missing logging.sh Library. Downloading..."
+    mkdir -p /root/scripts/libs
+    ( cd /root/scripts/libs && wget https://raw.githubusercontent.com/GingerGraham/bash-logger/refs/heads/main/logging.sh )    
 fi
+
+source /root/scripts/libs/logging.sh
 
 LOGPATH="/var/log/apt-upgrade"
 #MESSAGE="Upgrading apt Packages if any..."
@@ -25,7 +29,14 @@ LOGFULLPATH="$LOGPATH/$LOGFILE"
 # Initialise the logging module
 init_logger --log "$LOGFULLPATH" --quiet --level INFO  2>/dev/null
 
-NUMBER=$(apt-get -q -y --ignore-hold --allow-change-held-packages --allow-unauthenticated -s dist-upgrade | /bin/grep  ^Inst | wc -l)
+NUMBER=0
+NUMBER=$(apt-get -q -y --ignore-hold --allow-change-held-packages --allow-unauthenticated --allow-downgrades -s dist-upgrade | /bin/grep  ^Inst | wc -l)
+RET=$?
+if [[ "$RET" -ne 0 ]]; then
+    echo "Problem getting number of updates."
+    exit 1
+fi
+
 if [[ "$NUMBER" == 0 ]]; then
 	echo "There are currently no updates."
     log_info "There are currently no updates."
