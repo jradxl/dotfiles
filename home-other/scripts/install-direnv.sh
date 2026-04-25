@@ -11,6 +11,11 @@ case $MACH in
     echo "Setting ARCH to amd64"
     ARCH="amd64"
     ;;
+   #Became Lowercase in Kernel v7
+  "x86_64")
+      echo "Setting ARCH to amd64"
+      ARCH="amd64"
+      ;;    
   *)
     echo "Unknown ARCH. Exiting..."
     ;;
@@ -29,7 +34,7 @@ fi
 
 echo "Checking on DIRENV..."
 
-# If installed from packages they are too old    
+# If installed from packages they are too old
 echo "Uninstalling DIRENV Ubuntu package if present as is too old."
 
 if [[ $(dpkg -l direnv  2>/dev/null) ]]; then
@@ -73,6 +78,10 @@ echo "installing DIRENV"
 rm -rf /tmp/direnv*
 # https://github.com/direnv/direnv/releases/download/v2.36.0/direnv.linux-amd64
 
+if [[ -z "$latest_direnv" || -z "$ARCH" ]]; then
+    echo "ERROR: Latest:$latest_direnv OR Arch: $ARCH"
+    exit 1
+fi
 
 ##Found to be a redirect
 ( cd /tmp && curl -L -o /tmp/direnv  "https://github.com/direnv/direnv/releases/download/v$latest_direnv/direnv.linux-$ARCH" )
@@ -83,13 +92,13 @@ if [[ -f /tmp/direnv ]]; then
      #sudo chmod +x /usr/local/bin/direnv
      cp /tmp/direnv  "$HOME"/.local/bin/
      #chown root:root "$HOME"/.local/bin/direnv
-     chmod +x        "$HOME"/.local/bin/direnv     
+     chmod +x        "$HOME"/.local/bin/direnv
      hash -r
      direnv --version
 else
     echo "Download failed."
 fi
-    
+
 exit 0
 
 echo "Removing modifications to .bashrc. PLEASE CHECK!"
@@ -99,4 +108,3 @@ sed -i '\|^export PATH="$PATH:/home/jradley/.direnv"$|d' "$HOME/.bashrc"
 echo "Done"
 
 exit 0
-
