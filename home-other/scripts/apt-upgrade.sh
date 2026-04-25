@@ -54,7 +54,7 @@ if [[ "$RET" -ne 0  ]]; then
 	exit 1
 fi
 
-apt-get autoremove >> "$LOGFULLPATH"
+apt-get -y autoremove >> "$LOGFULLPATH"
 
 log_info "Finished"
 
