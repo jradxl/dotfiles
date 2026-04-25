@@ -43,10 +43,10 @@ if [[ "$NUMBER" == 0 ]]; then
     exit 0
 fi
 
-log_info "Starting..."
+log_info "There are $NUMBER updates available. This might take some time! ..."
 
-apt-get update     >> "$LOGFULLPATH"
-apt-get dist-upgrade -y >> "$LOGFULLPATH"
+apt-get -y update       >> "$LOGFULLPATH"
+apt-get -y dist-upgrade >> "$LOGFULLPATH"
 RET="$?"
 
 if [[ "$RET" -ne 0  ]]; then
