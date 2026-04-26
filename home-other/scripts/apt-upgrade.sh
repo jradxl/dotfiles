@@ -21,7 +21,7 @@ LOGPATH="/var/log/apt-upgrade"
 
 mkdir -p "$LOGPATH"
 
-NOW=$(date +"%Y%m%d%k%M%S")
+NOW=$(date +"%Y%m%d%H%M%S")
 LOGFILE="apt-upgrade_$NOW.txt"
 #echo "FN: $LOGFILE"
 LOGFULLPATH="$LOGPATH/$LOGFILE"
