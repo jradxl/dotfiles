@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20260303A
+# 20260425A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -14,11 +14,17 @@ esac
 
 # .bashrc file from Chezmoi
 echo "Chezmoi: START .bashrc"
-. "$HOME/.chezmoi-pac"
-. "$HOME/.lastversion-pac"
+if [[ -f "$HOME/.chezmoi-pac" ]]; then
+    . "$HOME/.chezmoi-pac"
+fi
+if [[ -f "$HOME/.lastversion-pac" ]]; then
+    . "$HOME/.lastversion-pac"
+fi
 
-export UUID=$(id -u $USER)
-export GGID=$(id -g $USER)
+UUID=$(id -u "$USER")
+export UUID
+GGID=$(id -g "$USER")
+export GGID
 echo "User, UID and GID is: $USER;$UUID;$GGID"
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
 
@@ -176,9 +182,11 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
+[[ -f "$HOME/.bash_aliases" ]] && . "$HOME/.bash_aliases"
 
 ## INFO Alias Completion.
+mkdir -p "$HOME"/.complete_alias
+touch "$HOME"/.complete_alias/complete_alias
 # Install git clone -o complete_alias https://github.com/cykerway/complete-alias.git
 # mv complete_alias .complete_alias
 # echo ". $HOME/.complete_alias/complete_alias" >> ~/.bash_completion
@@ -203,17 +211,13 @@ if [[ -d "$HOME/.bash_completion.d" ]]; then
     for bcfile in "$HOME/.bash_completion.d"/* ; do
         if [[ -f "$bcfile" ]]; then
             echo "    Doing $bcfile ..."
-            . $bcfile
+            . "$bcfile"
         fi
     done
 else
     echo  "Creating custom bash_completion.d"
     mkdir "$HOME"/.bash_completion.d
 fi
-
-export EDITOR="micro"
-#export EDITOR="zed --wait"
-#export EDITOR="nano"
 
 # pnpm
 export PNPM_HOME="/home/jradley/.local/share/pnpm"
@@ -603,4 +607,26 @@ if [[ -d "$HOME/.nimble" ]]; then
     fi
 fi
 
+if command -v zed >&2; then
+    export EDITOR="zed --wait"
+else
+    if command -v code >&2; then
+        export EDITOR="code --wait"
+    else
+        if command -v micro >&2; then
+            export EDITOR="micro"
+        else
+            if command -v nano >&2; then
+                export EDITOR="nano"
+            else
+                export EDITOR=""
+            fi
+        fi
+    fi
+fi
+echo "EDITOR set to $EDITOR"
+
 export TERMINAL=terminator
+echo "TERMINAL set to $TERMINAL"
+
+echo "End of .bashrc"
