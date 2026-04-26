@@ -2,7 +2,8 @@
 [keybindings]
 [profiles]
   [[default]]
-    cursor_color = "#aaaaaa"
+    font = Ubuntu Sans Mono 14
+    use_system_font = False
 [layouts]
   [[default]]
     [[[child0]]]
