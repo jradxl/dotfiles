@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20260425A
+# 20260429A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -52,9 +52,9 @@ wait4network() {
     local serverAdr="github.com"
     local count=0
     local count_max=20
-    
+
     echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
-    ping -c 1 $serverAdr > /dev/null 2>&1    
+    ping -c 1 $serverAdr > /dev/null 2>&1
     while [[ $? -ne 0 ]]; do
       let "count+=1"
       echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
@@ -172,6 +172,13 @@ alias neovim=nvim
 alias vim=nvim
 alias fxa="flox activate"
 alias lsdd='lsd -dl'
+
+if [[ -x "$HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh" ]]; then
+    #cp "$HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh" "$HOME/.local/bin/aptu"
+    alias aptu='sudo $HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh'
+else
+    echo "ERROR: apt-upgrade.sh script is not present or executable!"
+fi
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -337,16 +344,16 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     if [[ "$SHOULDRUN" == "Y" ]]; then
         echo "RUN ONCE TODAY"
         eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
-        
+
         echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
         echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
-                
+
         if [[ $(command -v chezmoi )  ]]; then
             echo "Upgrading Chezmoi, if needed..."
             chezmoi upgrade
         fi
 
-        #This is intentionally not sourced, so script 
+        #This is intentionally not sourced, so script
         # can be run independently. Master copy held in Github.
         RUNONCE="NO"
         RUNONCESCRIPT="$HOME"/.local/share/chezmoi/home-other/scripts/run-once.sh
@@ -454,12 +461,12 @@ echo ""
 echo ""
 echo "Docker settings..."
 if [[ $(command -v docker) ]]; then
-	if [[ -f "$HOME"/.docker-config ]]; then  
+	if [[ -f "$HOME"/.docker-config ]]; then
 		DOCKER_CONFIG=$(cat "$HOME"/.docker-config)
 		case "$DOCKER_CONFIG" in
 		"rootfull")     unset DOCKER_HOST; docker context use default >/dev/null 2>/dev/null;  echo "    Setting Docker Context to rootfull (default)";;
 		"rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
-		"docker_host")  docker context use rootless >/dev/null 2>/dev/null; 
+		"docker_host")  docker context use rootless >/dev/null 2>/dev/null;
 		                echo      "WARNING: Setting DOCKER_HOST for Rootless";
 		                export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 		                ;;
