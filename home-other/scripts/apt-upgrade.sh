@@ -29,6 +29,9 @@ LOGFULLPATH="$LOGPATH/$LOGFILE"
 # Initialise the logging module
 init_logger --log "$LOGFULLPATH" --quiet --level INFO  2>/dev/null
 
+#Update must be done before getting number of updates
+apt-get -yqq update
+
 NUMBER=0
 NUMBER=$(apt-get -q -y --ignore-hold --allow-change-held-packages --allow-unauthenticated --allow-downgrades -s dist-upgrade | /bin/grep  ^Inst | wc -l)
 RET=$?
