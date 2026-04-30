@@ -59,6 +59,13 @@ fi
 
 apt-get -y autoremove >> "$LOGFULLPATH"
 
+if [[ -f /run/reboot-required.pkgs  ]]; then
+    log_info ""
+    log_info "REBOOT REQUIRED, due to these packages..."
+    cat /run/reboot-required.pkgs >> "$LOGFULLPATH"
+    log_info ""
+fi
+
 log_info "Finished"
 
 exit 0
