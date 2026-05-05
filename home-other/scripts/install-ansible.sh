@@ -5,6 +5,45 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+#Returns 0 if not installed
+apt-cache policy ansible | grep none &>/dev/null
+RET=$?
+if [[ $RET == 0 ]]; then
+    echo "Good! Ubuntu Ansible package is NOT installed"
+    echo ""
+fi
+
+if [[ $RET == 1 ]]; then
+    echo "Ubuntu Ansible package installed. Purging..."
+    apt-get purge ansible -y
+    apt-get autoremove -y
+    echo ""
+fi
+
+if [[ $(command -v  pipx) ]]; then
+    echo "Found Pipx."
+    
+    pipx list --global | grep -q ansible &>/dev/null
+    RET=$?
+
+    if [[  $RET == 1 ]]; then
+        echo "Ansible Not Found. Installing..."
+        pipx install --include-deps ansible --global
+    else
+        echo "Ansible Found. Upgrading..."
+        pipx upgrade --include-injected ansible --global
+    fi
+else
+    echo "PIPX is not installed..."
+    exit 1
+fi
+
+
+exit 0
+
+##
+## This method os deprecated
+##
 UBUNTU_CODENAME=noble
 FILENAME="ansible-ubuntu-ansible-$UBUNTU_CODENAME.sources"
 
