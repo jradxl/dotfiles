@@ -21,7 +21,13 @@ else
     sudo pipx install --global lastversion
 fi
 
-FLATPAK_INSTALLED=$(flatpak --version)
+if [[ $(command -v flatpak) ]]; then
+    FLATPAK_INSTALLED=$(flatpak --version)
+    echo "Found flatpak Version: $FLATPAK_INSTALLED"
+else
+    echo "Flatpak not installed, yet..."
+fi
+
 FLATPAK_LATEST=$(lastversion https://github.com/flatpak/flatpak)
 
 echo "INSTALLED: $FLATPAK_INSTALLED"
