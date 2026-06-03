@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20260429A
+# 20260602A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -417,6 +417,7 @@ echo "NVIM Version End."
 [[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
 [[ $(command -v asdf )     ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP (i.e. rg) version:  $(rg --version)"
+[[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v)"
 
 #Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
@@ -637,3 +638,4 @@ export TERMINAL=terminator
 echo "TERMINAL set to $TERMINAL"
 
 echo "End of .bashrc"
+
