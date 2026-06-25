@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#VERSION: 20260625-001
+
 #1. Check not running as root
 
 if  [[ $(id -u) = 0 ]]; then
@@ -91,8 +93,8 @@ else
     touch "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
 fi
 
-log_info "No local change, so checking Server"
-echo "No local change, so checking Server"
+log_info "Checking Server"
+echo "Checking Server"
 
 #Clear tmp directory
 $(cd  "$KEEPASSXC_SYNCED_TMP" && rm -f $(compgen -G "$KEEPASSXC_SYNCED_TMP/*") )
