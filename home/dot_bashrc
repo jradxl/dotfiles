@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20260602A
+# 20260625A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -615,6 +615,17 @@ if [[ -d "$HOME/.nimble" ]]; then
     fi
 fi
 
+##CODON complier
+if [[ -d "$HOME/.codon" ]]; then
+    echo "CODON: $($HOME/.codon/bin/codon --version)."
+    pathmunge "$HOME/.codon/bin"
+    if [[  $(command -v nim) ]]; then
+        echo "CODON installed"
+    else
+        echo "No CODON Compiler installed."
+    fi
+fi
+
 if command -v zed >&2; then
     export EDITOR="zed --wait"
 else
@@ -638,4 +649,6 @@ export TERMINAL=terminator
 echo "TERMINAL set to $TERMINAL"
 
 echo "End of .bashrc"
+
+
 
