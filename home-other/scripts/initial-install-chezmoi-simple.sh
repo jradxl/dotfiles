@@ -8,7 +8,7 @@ get-github-latest () {
 }
 
 apt-installs () {
-    sudo apt update -y && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt clean -y && sudo apt autoclean -y
+    sudo apt-get update -y && sudo apt-get full-upgrade -y && sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y
     ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
     ## Includes dependencies for MOJO
     sudo apt-get -y install apt-file trash-cli build-essential micro jq \
