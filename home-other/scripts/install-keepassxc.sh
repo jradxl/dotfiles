@@ -38,7 +38,8 @@ log_info "Starting the KeepassXC Install utility"
 
 mkdir -p   $HOME/.ssh
 chmod 700  $HOME/.ssh
-tee $HOME/.ssh/config << EOF > /dev/null
+##tee, set to append
+tee -a $HOME/.ssh/config << EOF > /dev/null
 Host keepassxc
      User ${USER}
      HostName 100.98.57.8
@@ -52,7 +53,7 @@ Types: deb
 URIs: https://ppa.launchpadcontent.net/phoerious/keepassxc/ubuntu/
 Suites: ${UBUNTU_CODENAME}
 Components: main
-Signed-By: 
+Signed-By:
  -----BEGIN PGP PUBLIC KEY BLOCK-----
  .
  mQINBFnudIUBEAC/OhysfBjueQn2sIIHjkMJGDBZlRj/IcnVRD0G2eE5LvlQkohi
