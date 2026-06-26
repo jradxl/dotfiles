@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#VERSION: 20260625-001
+#VERSION: 20260626-001
 
 #1. Check not running as root
 
@@ -60,25 +60,34 @@ wait4server
 
 #3. Initialize Variables
 KEEPASSXC="$HOME/.keepassxc"
-echo "FN: $KEEPASSXC"
+#echo "FN: $KEEPASSXC"
 KEEPASSXC_SYNCED_TMP="$KEEPASSXC/tmp"
-echo "FN: $KEEPASSXC_SYNCED_TMP"
+#echo "FN: $KEEPASSXC_SYNCED_TMP"
 mkdir -p "$KEEPASSXC_SYNCED_TMP"
 KEEPASSXC_SYNCED="$KEEPASSXC/synced"
-echo "FN: $KEEPASSXC_SYNCED"
+#echo "FN: $KEEPASSXC_SYNCED"
 
 if [[ -f "$KEEPASSXC/keepassxc1.kdbx" ]]; then
 
-    #A. Compare Size of current database with synced reference
-    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
+    CURRENT1=$(cd "$KEEPASSXC_SYNCED"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
+    #echo "CURRENT1 IS: $CURRENT1"
 
-    if [[ "$?" == 0 ]]; then
+    #A. Compare Size of current database with synced copy
+    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/$CURRENT1"
+    RET="$?"
+    #echo "RET: $RET"
+    if [[ "$RET" == 2 ]]; then
+        echo "Compare Trouble!"
+        exit 1
+    fi
+
+    if [[ "$RET" == 0 ]]; then
         echo "Working Database is unchanged"
         echo "Proceding to check server..."
     else
         echo "Working Database has been changed."
-        echo "Updating Reference copy..."
-        cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
+        #echo "Updating Reference copy..."
+        #cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
         echo "Creating new synced copy"
         cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1-$NOW.kdbx"
         echo "Copying new file to server..."
@@ -90,7 +99,7 @@ else
     echo "Currently no local active database. New install?"
     echo "Creating Dummy entries to keep going..."
     touch "$KEEPASSXC/keepassxc1.kdbx"
-    touch "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
+    touch "$KEEPASSXC_SYNCED/keepassxc1-202601010101.kdbx"
 fi
 
 log_info "Checking Server"
@@ -106,11 +115,11 @@ scp jradley@keepassxc:"$KEEPASSXC_SYNCED/*" "$KEEPASSXC_SYNCED_TMP" >/dev/null
 #   Copy if it is
 #   Replace current if it is
 #   Compgen needed to expand wildcard in scripts
-LATEST=$(cd "$KEEPASSXC_SYNCED_TMP"; ls -t $(compgen -G '*.kdbx') | head -n 1)
+LATEST=$(cd "$KEEPASSXC_SYNCED_TMP"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
 echo "LATEST IS:  $LATEST"
 
 #Check for Reference
-CURRENT=$(cd "$KEEPASSXC_SYNCED"; ls -t $(compgen -G '*.kdbx') | head -n 1)
+CURRENT=$(cd "$KEEPASSXC_SYNCED"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
 echo "CURRENT IS: $CURRENT"
 
 if [[ "$LATEST" == "$CURRENT" ]]; then
