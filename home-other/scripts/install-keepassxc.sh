@@ -36,9 +36,15 @@ source /etc/os-release
 
 log_info "Starting the KeepassXC Install utility"
 
-mkdir -p   $HOME/.ssh
-chmod 700  $HOME/.ssh
-##tee, set to append
+mkdir -p   "$HOME/.ssh"
+chmod 700  "$HOME/.ssh"
+touch      "$HOME/.ssh/config"
+chmod 600  "$HOME/.ssh/config"
+
+#Grep for Exact String
+grep -q ^"Host keepassxc"$ "$HOME/.ssh/config"
+if [[ "$?" != 0  ]]; then
+#tee, set to append, if not present
 tee -a $HOME/.ssh/config << EOF > /dev/null
 Host keepassxc
      User ${USER}
@@ -47,6 +53,7 @@ Host keepassxc
      #AddKeysToAgent yes
      IdentityFile ~/.ssh/my-keys/keepassxc.key
 EOF
+fi
 
 sudo tee /etc/apt/sources.list.d/keepassxc.sources << EOF > /dev/null
 Types: deb
