@@ -64,8 +64,8 @@ KEEPASSXC="$HOME/.keepassxc"
 KEEPASSXC_SYNCED_TMP="$KEEPASSXC/tmp"
 #echo "FN: $KEEPASSXC_SYNCED_TMP"
 mkdir -p "$KEEPASSXC_SYNCED_TMP"
+KEEPASSXC_SYNCED="$KEEPASSXC/synced"
 if [[ $HOSTNAME == "zotacubuntu1"  ]]; then
-     KEEPASSXC_SYNCED="$KEEPASSXC/synced"
      echo "Creating Server's Synced Directory: $KEEPASSXC_SYNCED"
      mkdir -p "$KEEPASSXC_SYNCED"
 fi
