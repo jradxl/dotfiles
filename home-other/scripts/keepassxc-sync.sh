@@ -24,7 +24,7 @@ mkdir -p "$LOGPATH"
 
 NOW=$(date +"%Y%m%d%H%M%S")
 LOGFILE="keepassxc-synced-$NOW.txt"
-echo "FN: $LOGFILE"
+echo "LOG FILE IS: $LOGFILE"
 LOGFULLPATH="$LOGPATH/$LOGFILE"
 
 # Initialise the logging module
@@ -65,20 +65,24 @@ KEEPASSXC_SYNCED_TMP="$KEEPASSXC/tmp"
 #echo "FN: $KEEPASSXC_SYNCED_TMP"
 mkdir -p "$KEEPASSXC_SYNCED_TMP"
 KEEPASSXC_SYNCED="$KEEPASSXC/synced"
+#The SYNCED directory only exists on Server
 if [[ $HOSTNAME == "zotacubuntu1"  ]]; then
-     echo "Creating Server's Synced Directory: $KEEPASSXC_SYNCED"
-     mkdir -p "$KEEPASSXC_SYNCED"
+    if [[ ! -d  "$KEEPASSXC_SYNCED" ]]; then
+        echo "Creating Server's Synced Directory: $KEEPASSXC_SYNCED"
+        mkdir -p "$KEEPASSXC_SYNCED"
+    fi
 fi
 
+#Test for a Database.
 if [[ -f "$KEEPASSXC/keepassxc1.kdbx" ]]; then
     
     #OK, KeepassXC is probably installed!
     #Get the last copy from this server...
-    CURRENT1=$(cd "$KEEPASSXC"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
-    echo "CURRENT1 IS: $CURRENT1"
+    CURRENT=$(cd "$KEEPASSXC"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
+    echo "LOCAL CURRENT IS: $CURRENT"
 
     #A. Compare Size of current database with previous copy
-    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC/$CURRENT1"
+    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC/$CURRENT"
     RET="$?"
     #echo "RET: $RET"
     if [[ "$RET" == 2 ]]; then
@@ -96,9 +100,8 @@ if [[ -f "$KEEPASSXC/keepassxc1.kdbx" ]]; then
         echo "Creating new reference copy"
         cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC/keepassxc1-$NOW.kdbx"
         echo "Deleting old reference copy"
-        rm -f "$KEEPASSXC/$CURRENT1"
+        rm -f "$KEEPASSXC/$CURRENT"
         echo "Copying new file to server..."
-        #cp  "$KEEPASSXC/keepassxc1-$NOW.kdbx"  "$KEEPASSXC_SYNCED/"
         scp "$KEEPASSXC/keepassxc1-$NOW.kdbx"  jradley@keepassxc:"$KEEPASSXC_SYNCED/"
         echo "Finished Local change and update to Server."
         exit 0
@@ -147,3 +150,4 @@ fi
 $(cd  "$KEEPASSXC_SYNCED_TMP" && rm -f $(compgen -G "$KEEPASSXC_SYNCED_TMP/*") )
 
 echo "Finished Updating from Server"
+exit 0

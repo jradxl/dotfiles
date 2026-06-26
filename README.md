@@ -11,5 +11,10 @@ wget https://raw.githubusercontent.com/jradxl/dotfiles/main/home-other/scripts/i
 chmod +x initial-install-chezmoi-only.sh  
 ./initial-install-chezmoi-only.sh  
 
-Updated: Nov 2024
+## OR, for Non-GUI Servers
+wget https://raw.githubusercontent.com/jradxl/dotfiles/main/home-other/scripts/initial-install-chezmoi-simple.sh  
+chmod +x initial-install-chezmoi-simple.sh  
+./initial-install-chezmoi-simple.sh  
+
+Updated: June 2026
 
