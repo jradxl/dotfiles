@@ -136,6 +136,8 @@ else
     echo "Current Database is not latest. Copying..."
     #cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC_SYNCED/"
     cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC/"
+    echo "Deleting old reference copy..."
+    rm -f "$KEEPASSXC/$CURRENT"
     echo "Updating Database in use. Copying..."
     cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC/keepassxc1.kdbx"
 fi
