@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#VERSION: 20260626-001
+#VERSION: 20260626-002
 
 #1. Check not running as root
 
@@ -109,8 +109,6 @@ else
     touch "$KEEPASSXC/keepassxc1.kdbx"
     touch "$KEEPASSXC/keepassxc1-202601010101.kdbx"
 fi
-
-exit 0
 
 log_info "Checking Server"
 echo "Checking Server"
