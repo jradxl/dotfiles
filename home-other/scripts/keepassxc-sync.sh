@@ -64,16 +64,21 @@ KEEPASSXC="$HOME/.keepassxc"
 KEEPASSXC_SYNCED_TMP="$KEEPASSXC/tmp"
 #echo "FN: $KEEPASSXC_SYNCED_TMP"
 mkdir -p "$KEEPASSXC_SYNCED_TMP"
-KEEPASSXC_SYNCED="$KEEPASSXC/synced"
-#echo "FN: $KEEPASSXC_SYNCED"
+if [[ $HOSTNAME == "zotacubuntu1"  ]]; then
+     KEEPASSXC_SYNCED="$KEEPASSXC/synced"
+     echo "Creating Server's Synced Directory: $KEEPASSXC_SYNCED"
+     mkdir -p "$KEEPASSXC_SYNCED"
+fi
 
 if [[ -f "$KEEPASSXC/keepassxc1.kdbx" ]]; then
+    
+    #OK, KeepassXC is probably installed!
+    #Get the last copy from this server...
+    CURRENT1=$(cd "$KEEPASSXC"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
+    echo "CURRENT1 IS: $CURRENT1"
 
-    CURRENT1=$(cd "$KEEPASSXC_SYNCED"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
-    #echo "CURRENT1 IS: $CURRENT1"
-
-    #A. Compare Size of current database with synced copy
-    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/$CURRENT1"
+    #A. Compare Size of current database with previous copy
+    cmp -s "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC/$CURRENT1"
     RET="$?"
     #echo "RET: $RET"
     if [[ "$RET" == 2 ]]; then
@@ -88,19 +93,24 @@ if [[ -f "$KEEPASSXC/keepassxc1.kdbx" ]]; then
         echo "Working Database has been changed."
         #echo "Updating Reference copy..."
         #cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1.kdbx"
-        echo "Creating new synced copy"
-        cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC_SYNCED/keepassxc1-$NOW.kdbx"
+        echo "Creating new reference copy"
+        cp "$KEEPASSXC/keepassxc1.kdbx" "$KEEPASSXC/keepassxc1-$NOW.kdbx"
+        echo "Deleting old reference copy"
+        rm -f "$KEEPASSXC/$CURRENT1"
         echo "Copying new file to server..."
-        scp "$KEEPASSXC_SYNCED/keepassxc1-$NOW.kdbx"  jradley@keepassxc:"$KEEPASSXC_SYNCED/"
-        echo "Finished Local change, and update to Server."
+        #cp  "$KEEPASSXC/keepassxc1-$NOW.kdbx"  "$KEEPASSXC_SYNCED/"
+        scp "$KEEPASSXC/keepassxc1-$NOW.kdbx"  jradley@keepassxc:"$KEEPASSXC_SYNCED/"
+        echo "Finished Local change and update to Server."
         exit 0
     fi
 else
     echo "Currently no local active database. New install?"
     echo "Creating Dummy entries to keep going..."
     touch "$KEEPASSXC/keepassxc1.kdbx"
-    touch "$KEEPASSXC_SYNCED/keepassxc1-202601010101.kdbx"
+    touch "$KEEPASSXC/keepassxc1-202601010101.kdbx"
 fi
+
+exit 0
 
 log_info "Checking Server"
 echo "Checking Server"
@@ -119,14 +129,15 @@ LATEST=$(cd "$KEEPASSXC_SYNCED_TMP"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | h
 echo "LATEST IS:  $LATEST"
 
 #Check for Reference
-CURRENT=$(cd "$KEEPASSXC_SYNCED"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
+CURRENT=$(cd "$KEEPASSXC"; ls -t $(compgen -G 'keepassxc1-*.kdbx') | head -n 1)
 echo "CURRENT IS: $CURRENT"
 
 if [[ "$LATEST" == "$CURRENT" ]]; then
     echo "Current Database is latest."
 else
     echo "Current Database is not latest. Copying..."
-    cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC_SYNCED/"
+    #cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC_SYNCED/"
+    cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC/"
     echo "Updating Database in use. Copying..."
     cp "$KEEPASSXC_SYNCED_TMP/$LATEST" "$KEEPASSXC/keepassxc1.kdbx"
 fi
