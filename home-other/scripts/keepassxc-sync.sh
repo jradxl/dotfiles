@@ -19,7 +19,7 @@ if [[ ! -f  "$LOGLIBDIR/logging.sh" ]]; then
 fi
 source "$LOGLIBDIR/logging.sh"
 
-LOGPATH="$HOME/.keepassxc/synced/logs"
+LOGPATH="$HOME/.keepassxc/logs"
 mkdir -p "$LOGPATH"
 
 NOW=$(date +"%Y%m%d%H%M%S")
@@ -61,7 +61,7 @@ wait4server
 #3. Initialize Variables
 KEEPASSXC="$HOME/.keepassxc"
 echo "FN: $KEEPASSXC"
-KEEPASSXC_SYNCED_TMP="$KEEPASSXC/synced/tmp"
+KEEPASSXC_SYNCED_TMP="$KEEPASSXC/tmp"
 echo "FN: $KEEPASSXC_SYNCED_TMP"
 mkdir -p "$KEEPASSXC_SYNCED_TMP"
 KEEPASSXC_SYNCED="$KEEPASSXC/synced"
