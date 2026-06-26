@@ -1,23 +1,45 @@
 #!/bin/bash
 
-echo "Starting Initial Install of CHEZMOI...."
+echo "Starting Initial Install of CHEZMOI for Non-GUI Servers...."
+# 20260626a
 
 ##Not Currently Used.
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
 
+# Source - https://superuser.com/a/462982
+# Posted by terdon
+# Retrieved 2026-05-07, License - CC BY-SA 3.0
+pathmunge () {
+        if ! echo $PATH | /bin/egrep -q "(^|:)$1($|:)" ; then
+           if [ "$2" = "after" ] ; then
+              PATH=$PATH:$1
+           else
+              PATH=$1:$PATH
+           fi
+        fi
+}
+
+#NOTES: 
+#1. micro editor and spice-vdagent have X11 dependencies
+#2. Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
+#3. ssh-askpass requires x11-common
+
 apt-installs () {
-    sudo apt update -y && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt clean -y && sudo apt autoclean -y
-    ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
-    ## Includes dependencies for MOJO
-    sudo apt-get -y install apt-file trash-cli build-essential micro jq \
-         apt-transport-https terminator keychain git nmap net-tools \
-         curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent \
-         spice-vdagent openssh-server btop glances liblz4-dev libssl-dev \
-         libzstd-dev libxxhash-dev libacl1-dev javascript-common libjs-jquery\
-         libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip \
-         python3-setuptools python3-wheel software-properties-common
+
+    #Remove old pipx 
+    if [[ -x /usr/bin/pipx ]]; then
+        sudo apt purge pipx
+    fi
+
+    sudo apt-get update -y && sudo apt-get full-upgrade -y && sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y
+
+    sudo apt-get install apt-file trash-cli jq apt-transport-https keychain git nmap net-tools curl wget iproute2 apt-utils \
+        age vim rsync bison openssh-server btop glances liblz4-dev libssl-dev libzstd-dev libxxhash-dev \
+        libacl1-dev javascript-common libjs-jquery \
+        libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip python3-setuptools python3-wheel \
+        build-essential apt-transport-https software-properties-common ncat ndiff
 }
 
 ### Script STARTS ###
@@ -35,7 +57,8 @@ else
 fi
 
 ##Add to current shell
-export PATH="$HOME/.local/bin:$PATH"
+#export PATH="$HOME/.local/bin:$PATH"
+pathmunge "$HOME/.local/bin"
 echo "Using PATH: $PATH"
 
 if [[ -d "$HOME/.local/share/chezmoi" ]]; then
@@ -120,4 +143,3 @@ sudo systemctl daemon-reload
 
 ### End Chezmoi ###
 exit 0
-

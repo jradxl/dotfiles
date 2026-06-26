@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Starting Initial Install of CHEZMOI...."
-# 20260507a
+# 20260626a
 
 ##Not Currently Used.
 get-github-latest () {
@@ -21,22 +21,26 @@ pathmunge () {
         fi
 }
 
+
+## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
+## Includes dependencies for MOJO
 apt-installs () {
 
     #Remove old pipx 
     if [[ -x /usr/bin/pipx ]]; then
         sudo apt purge pipx
     fi
+
     sudo apt-get update -y && sudo apt-get full-upgrade -y && sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y
-    ## Don't add Pipx, Borg and Borgmatic from Ubuntu repositories
-    ## Includes dependencies for MOJO
-    sudo apt-get -y install ncat ndiff zenmap ssh-askpass apt-file trash-cli build-essential micro jq \
+
+    sudo apt-get -y install apt-file trash-cli build-essential micro jq \
          apt-transport-https terminator keychain git nmap net-tools \
          curl wget iproute2 apt-utils age vim rsync bison qemu-guest-agent \
          spice-vdagent openssh-server btop glances liblz4-dev libssl-dev \
          libzstd-dev libxxhash-dev libacl1-dev javascript-common libjs-jquery\
          libjs-sphinxdoc libjs-underscore libncurses-dev python3-dev python3-pip \
-         python3-setuptools python3-wheel software-properties-common gedit
+         python3-setuptools python3-wheel software-properties-common \
+         ncat ndiff zenmap ssh-askpass gedit
 }
 
 ### Script STARTS ###
@@ -56,7 +60,6 @@ fi
 ##Add to current shell
 #export PATH="$HOME/.local/bin:$PATH"
 pathmunge "$HOME/.local/bin"
-
 echo "Using PATH: $PATH"
 
 if [[ -d "$HOME/.local/share/chezmoi" ]]; then
