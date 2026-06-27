@@ -6,8 +6,21 @@ if  [[ $(id -u) = 0 ]]; then
 fi
 
 echo "Installing KeePassXC..."
+echo "KeepassXC should not be installed on a Server, due to X dependencies"
 echo "Script will ask for Sudo Password."
 echo ""
+
+dpkg-query -f '${Package} ${Status}\n' -W | grep xorg >/dev/null
+XORG=$?
+dpkg-query -f '${Package} ${Status}\n' -W | grep wayland >/dev/null
+WAYLAND=$?
+
+echo "XORG: $XORG, WAYLAND: $WAYLAND"
+if [[ "$XORG" == 1 && "$WAYLAND" == 1 ]]; then
+    echo "No XORG or WAYLAND found. Aborting."
+fi
+
+exit 0
 
 
 #2. Install the Log Library
