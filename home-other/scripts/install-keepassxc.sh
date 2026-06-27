@@ -24,6 +24,7 @@ WAYLAND=$?
 #echo "XORG: $XORG, WAYLAND: $WAYLAND"
 if [[ "$XORG" == 1 && "$WAYLAND" == 1 ]]; then
     echo "No XORG or WAYLAND found. Aborting."
+    exit 0
 fi
 
 echo "Script will ask for Sudo Password."
