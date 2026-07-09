@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#NEEDS https://github.com/GingerGraham/bash-logger/blob/main/logging.sh
+# VERSION: 20260709a
+
+# NEEDS https://github.com/GingerGraham/bash-logger/blob/main/logging.sh
 # WGET https://raw.githubusercontent.com/GingerGraham/bash-logger/refs/heads/main/logging.sh
 
 if [[ $EUID -ne 0 ]]; then
@@ -49,7 +51,7 @@ fi
 log_info "There are $NUMBER updates available. This might take some time! ..."
 
 apt-get -y update       >> "$LOGFULLPATH"
-apt-get -y dist-upgrade >> "$LOGFULLPATH"
+apt-get -y dist-upgrade --allow-downgrades >> "$LOGFULLPATH"
 RET="$?"
 
 if [[ "$RET" -ne 0  ]]; then
