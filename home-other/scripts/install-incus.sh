@@ -17,18 +17,18 @@ else
     exit 1
 fi
 
- echo "Installing INCUS. Needs SUDO password."
+echo "Installing INCUS. Needs SUDO password."
 
 sudo mkdir -p /etc/apt/keyrings/
 
 sudo curl -fsSL https://pkgs.zabbly.com/key.asc -o /etc/apt/keyrings/zabbly.asc
 
-#> /etc/apt/sources.list.d/zabbly-incus-stable.sources
+# /etc/apt/sources.list.d/zabbly-incus-stable.sources
 
-#SUITE=$(. /etc/os-release && echo ${VERSION_CODENAME})
-SUITE=noble
+SUITE=$(. /etc/os-release && echo ${VERSION_CODENAME})
+#SUITE=noble
 
-VAR3=$(cat <<EOF 
+VAR3=$(cat <<EOF
 Enabled: yes
 Types: deb
 URIs: https://pkgs.zabbly.com/incus/stable
@@ -51,4 +51,3 @@ sudo adduser "$USER" incus-admin
 newgrp incus-admin
 
 exit 0
-
