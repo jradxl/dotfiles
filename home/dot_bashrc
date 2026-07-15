@@ -648,17 +648,5 @@ echo "EDITOR set to $EDITOR"
 export TERMINAL=terminator
 echo "TERMINAL set to $TERMINAL"
 
-if [[ -d "$HOME/.password-store" ]]; then
-	echo "Setting up SUDO_ASKPASS..."
-    if [[ -f $HOME/scripts/get-pass.sh && -f "$HOME/scripts/gopass-u2p" ]]; then
-		echo "... Both SUDO_ASKPASS Helper Scripts found..."
-		if [[ $(command -v gopass ) ]]; then
-            echo "... GOPASS found and is version: $(gopass -v)"
-			echo "... Setting SUDO_ASKPASS variable..."
-            export SUDO_ASKPASS="$HOME/scripts/get-pass.sh"
-        fi
-    fi
-fi
-
 echo "End of .bashrc"
 
