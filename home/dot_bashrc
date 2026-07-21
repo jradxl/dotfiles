@@ -1,7 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-# 20260720A
+# 20260721A
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -28,7 +28,7 @@ export GGID
 echo "User, UID and GID is: $USER;$UUID;$GGID"
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
 
-pathmunge () {
+pathmunge() {
     case ":${PATH}:" in
         *:"$1":*)
             ;;
@@ -41,9 +41,15 @@ pathmunge () {
     esac
 }
 
-get-github-latest () {
-    git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+get-github-latest() {
+    git ls-remote --tags --sort $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
+
+get-github-terax-version() {
+    curl -s https://api.github.com/repos/crynta/terax-ai/releases | jq '.[0].assets[].browser_download_url' | grep latest | awk -F "/" '{print $8}'
+}
+
+echo "JSR1"
 
 echo ""
 echo "Waiting for network..."
@@ -67,6 +73,7 @@ wait4network() {
 
     echo "$(date): Connected - ${serverAdr}"
 }
+
 wait4network
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -406,6 +413,8 @@ echo "NVIM Version End."
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
 [[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
 [[ $(command -v herdr )    ]] && echo "Installed HERDR version (use hr):  $(herdr -V)"
+terax_version=$(get-github-terax-version)
+[[ $(command -v terax )    ]] && echo "Installed TERAX version (use tx): $terax_version"
 
 
 #if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
