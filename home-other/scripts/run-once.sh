@@ -235,7 +235,8 @@ check-flatpaks() {
         #echo "Updating system flatpaks if any"
         #sudo flatpak update --system -y
         echo "Updating user flatpaks if any"
-        flatpak update --user -y
+        #flatpak update --user -y
+        flatpak update -y
     fi
 }
 
