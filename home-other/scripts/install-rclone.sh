@@ -2,6 +2,9 @@
 
 echo "Installing RCLONE"
 
+echo "Removing outdated Apt package... Will ask for sudo password."
+sudo apt purge rclone
+
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d\n", $1,$2,$3); }'; }
 
 if [[ $(command -v pipx) ]]; then
@@ -54,6 +57,8 @@ if [[ "$INSTALL" == "YES" ]]; then
 fi
 echo "RCLONE installed with version ..."
 echo "<$(rclone --version)>"
-
+echo ""
+WHERE=$(which rclone)
+echo "RCLONE installed $WHERE"
 exit 0
 
