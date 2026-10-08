@@ -1,0 +1,682 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+# 202601006a
+
+## CHEZMOI supported: https://www.chezmoi.io/
+## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# .bashrc file from Chezmoi
+echo "Chezmoi: START .bashrc"
+if [[ -f "$HOME/.chezmoi-pac" ]]; then
+    . "$HOME/.chezmoi-pac"
+fi
+if [[ -f "$HOME/.lastversion-pac" ]]; then
+    . "$HOME/.lastversion-pac"
+fi
+
+UUID=$(id -u "$USER")
+export UUID
+GGID=$(id -g "$USER")
+export GGID
+echo "User, UID and GID is: $USER;$UUID;$GGID"
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
+
+pathmunge() {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH="$PATH:$1"
+            else
+                PATH="$1:$PATH"
+            fi
+    esac
+}
+
+get-github-latest() {
+    git ls-remote --tags --sort $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
+
+get-github-terax-version() {
+    curl -s https://api.github.com/repos/crynta/terax-ai/releases | jq '.[0].assets[].browser_download_url' | grep latest | awk -F "/" '{print $8}'
+}
+
+echo "JSR1"
+
+echo ""
+echo "Waiting for network..."
+echo ""
+wait4network() {
+    local serverAdr="github.com"
+    local count=0
+    local count_max=20
+
+    echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+    ping -c 1 $serverAdr > /dev/null 2>&1
+    while [[ $? -ne 0 ]]; do
+      let "count+=1"
+      echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+      sleep 2
+      if [[ ${count} -gt ${count_max} ]]; then
+        break
+      fi
+      ping -c 1 $serverAdr > /dev/null 2>&1
+    done
+
+    echo "$(date): Connected - ${serverAdr}"
+}
+
+wait4network
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+#HISTSIZE=1000
+#HISTFILESIZE=2000
+
+HISTSIZE=-1
+HISTFILESIZE=-1
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    #PS1='\033[01;31m\]─[\[\u\033[01;33m\]@\033[01;36m\]\h\033[01;31m\]]-[\033[01;32m\]\w\033[01;31m\]]\n─$ \033[00m\]'
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+#export PS1="\n[\w]\n\u@\h $ "
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+#alias ll='ls -alF'
+alias ll='eza -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias czm='chezmoi'
+alias czmcd='cd ~/.local/share/chezmoi'
+alias et='electerm'
+alias mr='micro'
+alias pls='pulsar'
+alias sctl='systemctl'
+alias pn='pnpm'
+alias ppp='pulsar'
+alias pya='source .venv/bin/activate'
+alias neovim=nvim
+alias vim=nvim
+alias fxa="flox activate"
+alias lsdd='lsd -dl'
+
+if [[ -x "$HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh" ]]; then
+    #cp "$HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh" "$HOME/.local/bin/aptu"
+    alias aptu='sudo $HOME/.local/share/chezmoi/home-other/scripts/apt-upgrade.sh'
+else
+    echo "ERROR: apt-upgrade.sh script is not present or executable!"
+fi
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+[[ -f "$HOME/.bash_aliases" ]] && . "$HOME/.bash_aliases"
+
+## INFO Alias Completion.
+mkdir -p "$HOME"/.complete_alias
+touch "$HOME"/.complete_alias/complete_alias
+# Install git clone -o complete_alias https://github.com/cykerway/complete-alias.git
+# mv complete_alias .complete_alias
+# echo ". $HOME/.complete_alias/complete_alias" >> ~/.bash_completion
+# echo "complete -F _complete_alias sctl" >> $HOME/.complete_alias/complete_alias
+# Note that 'complete' is a bash internal command
+##
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+#Local User Bash_completions are a bit confusing so I create my own
+if [[ -d "$HOME/.bash_completion.d" ]]; then
+    echo "Adding custom completions ..."
+    for bcfile in "$HOME/.bash_completion.d"/* ; do
+        if [[ -f "$bcfile" ]]; then
+            echo "    Doing $bcfile ..."
+            . "$bcfile"
+        fi
+    done
+else
+    echo  "Creating custom bash_completion.d"
+    mkdir "$HOME"/.bash_completion.d
+fi
+
+# pnpm
+export PNPM_HOME="/home/jradley/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+##export PATH="$HOME/bin:$PATH"
+
+pathmunge "$HOME/Applications"
+pathmunge "$HOME/bin"
+pathmunge "$HOME/.local/bin"
+pathmunge "$HOME/.rd/bin"
+## Now using BOB
+pathmunge "$HOME/Apps/nvim/bin"
+##pathmunge "$HOME/.local/share/bob/nvim-bin"
+## export PATH="/opt/nvim-linux64/bin:$PATH"
+## pathmunge "/opt/nvim-linux64/bin"
+##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
+pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
+
+# NOTE: Found better to install PODMAN and helpers in /usr/local/ as well as "$HOME/podman/bin"
+# NOTE: /usr/local before $HOME/podman/bin" so my script test work, but podman-desktop needs
+# the latter.
+pathmunge "$HOME/podman/bin"
+pathmunge "$HOME/lima/bin"
+pathmunge "$HOME/.codon/bin"
+
+# My Hishtory Config
+# NOTE: My install script will remove extras!
+# ORIG: export PATH="$PATH:$HOME/.hishtory"
+if [[ -f "$HOME/.hishtory/config.sh" ]]; then
+    pathmunge "$HOME/.hishtory" after
+    source $HOME/.hishtory/config.sh
+fi
+
+#Doesn't support luarocks
+#if [[ -f "$HOME/.luaenv/bin/luaenv" ]]; then
+#    pathmunge "$HOME/.luaenv/bin"
+#    eval "$(luaenv init -)"
+#fi
+
+##Use uv pathunge "$HOME/.rye/shims"
+##Use uv [[ -f "$HOME/.rye/env" ]] && . "$HOME/.rye/env"
+
+#Not using Modular export PATH="$PATH:/home/jradley/.modular/bin"
+
+[[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
+[[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
+[[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
+if [[ -f "$HOME/.deno/bin/deno" ]]; then
+    pathmunge "${HOME}/.deno/bin"
+    "$HOME"/.deno/bin/deno completions bash > "$HOME/.bash_completion.d/deno_completion"
+fi
+
+#https://medium.com/@sahaidachnyi/standard-environment-variables-in-golang-2bcb1b869bae
+#https://go.dev/blog/get-familiar-with-workspaces
+#Changed 2026/02/26 to test only for ~/.g
+if [[ -d "${HOME}/.g" ]]; then
+    mkdir -p "${HOME}/go/bin"
+    mkdir -p "${HOME}/.g/bin"
+    #[ -s "${HOME}/.g/env" ] && \. "${HOME}/.g/env"  # g shell setup
+    #A more explicit version of . "${HOME}/.g/env" is preferred.
+    #export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    pathmunge "${HOME}/go/bin"
+    pathmunge "${HOME}/.g/go/bin"
+    pathmunge "${HOME}/.g/bin"
+    export G_HOME="${HOME}/.g"
+    export G_MIRROR=https://proxy.google.org
+    export GOPROXY=https://proxy.golang.org,direct
+    #.g/go is sym link to $HOME/.g/versions/<goversion>
+    #export GOROOT=/home/jradley/.g/versions/1.23.2
+    export GOROOT="${HOME}/.g/go"
+    #GOPATH deprecated
+    export GOPATH="$HOME"/go
+    #GOWORK ???
+fi
+
+##This is a fussy installer. .nvm dir needs to pre exist.
+##Assumed to be already installed, hence check for upgrade.
+export NVM_DIR="$HOME/.nvm"
+mkdir -p "$NVM_DIR"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+##LUAVER
+[ -s ~/.luaver/luaver ] && . ~/.luaver/luaver
+[ -s ~/.luaver/completions/luaver.bash ] && . ~/.luaver/completions/luaver.bash
+
+########### KEYCHAIN START #################
+
+## Logic to run once per day
+export LOCK="$HOME/.runonce-lock"
+
+#echo "JSR1"
+if [[ "$(pwd)" == "$HOME" ]]; then
+    ##Test If run already today
+    SHOULDRUN="N"
+    if [[ ! -e "$LOCK" ]]; then  # no lock - command run for the first time
+        #"$@"
+        touch "$LOCK"
+        SHOULDRUN="Y"
+        #echo "JSR2"
+    else                         # lock exists
+        #echo "JSR3"
+        if [[ "$(find "$LOCK" -mmin +720)" ]]; then
+            #"$@"
+            SHOULDRUN="Y"
+            touch "$LOCK"
+            #echo "JSR4"
+        fi
+    fi
+    #echo "JSR5"
+    #echo "SHOULDRUN: $SHOULDRUN"
+    if [[ "$SHOULDRUN" == "Y" ]]; then
+        echo "RUN ONCE TODAY"
+        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+
+        echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
+        echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
+
+        if [[ $(command -v chezmoi )  ]]; then
+            echo "Upgrading Chezmoi, if needed..."
+            chezmoi upgrade
+        fi
+
+        #This is intentionally not sourced, so script
+        # can be run independently. Master copy held in Github.
+        RUNONCE="NO"
+        RUNONCESCRIPT="$HOME"/.local/share/chezmoi/home-other/scripts/run-once.sh
+        if [[  -f $RUNONCESCRIPT ]]  && [[ -x $RUNONCESCRIPT ]]; then
+            echo "RUN-ONCE script is found and is executable...";
+            "$RUNONCESCRIPT"
+        else
+            echo "ERROR: RUN-ONCE script is not available."
+        fi
+    else
+        echo "RUN TODAY"
+        eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        keychain --list
+    fi
+fi
+
+echo ""
+echo "Showing versions of all installed Apps....#"
+
+if [[ $(command -v direnv )    ]]; then
+    #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
+    eval "$(direnv hook bash)"
+    echo "Installed DIRENV version: $(direnv version)"
+fi
+##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
+[[ $(command -v codon )  ]] && echo "Installed CODON version: $(codon --version)"
+[[ $(command -v g )      ]] && echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
+[[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
+[[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
+[[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
+[[ $(command -v npm )    ]] && echo "Installed NPM version:  $(npm -v)"
+[[ $(command -v npx )    ]] && echo "Installed NPX version:  $(npx -v)"
+[[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
+[[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
+[[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
+[[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
+[[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
+[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version | grep deno)"
+[[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
+[[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
+[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
+[[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
+[[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
+[[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
+[[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
+echo "NVIM Version Start..."
+[[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
+echo "NVIM Version End."
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
+[[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
+[[ $(command -v herdr )    ]] && echo "Installed HERDR version (use hr):  $(herdr -V)"
+terax_version=$(get-github-terax-version)
+[[ $(command -v terax )    ]] && echo "Installed TERAX version (use tx): $terax_version"
+
+
+#if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
+#    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
+#fi
+
+[[ $(command -v lx )       ]] && echo "Installed LUX_CLI (lx) version:  $(lx -V)"
+[[ $(command -v luaver )   ]] && echo "Installed LUAVER version:  $(luaver version | grep Lua)"
+## Not Used [[ $(command -v luaenv )   ]] && echo "Installed LUAENV version:  $(curl -sL https://api.github.com/repos/cehoffman/luaenv | jq .pushed_at)"
+[[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
+[[ $(command -v asdf )     ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP (i.e. rg) version:  $(rg --version)"
+[[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v)"
+[[ $(command -v pixi   )   ]] && echo "Installed PIXI (i.e. codium) version:  $(pixi -V)"
+
+#Ruby Ubuntu Package
+if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
+    echo "Ubuntu ruby-full package is installed"
+    [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
+    [[ $(command -v gem ) ]] && echo "Installed native Gem version:  $(gem --version)"
+else
+    echo "Ubuntu ruby-full package not installed"
+fi
+
+[[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
+[[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
+[[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
+
+##PYENV Discontinued
+#https://realpython.com/python313-free-threading-jit/
+#PYTHON_CONFIGURE_OPTS='--enable-experimental-jit' pyenv install 3.13t
+#chmod 755 jradxl && rye toolchain register /home/jradxl/.pyenv/versions/3.13.0/bin/python
+#export PYENV_ROOT="$HOME/.pyenv"
+#if [[ -d $PYENV_ROOT/bin ]]; then
+#    pathmunge "${HOME}/.pyenv/bin"
+#    echo "Installed PYENV version: $(pyenv --version)"
+#fi
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
+##PYENV End
+
+########### KEYCHAIN END #################
+
+echo ""
+
+##Not Used
+#if [[ -f .python-version ]]; then
+#    echo "Current Python set by '.python-version': $(cat .python-version)"
+#else
+#    echo "'.python-version is NOT seting version "
+#fi
+
+[[ $(command -v python ) ]] && echo "Current Python  version: $(python -V)"
+[[ $(command -v python3 ) ]] && echo "Current Python3 version: $(python3 -V)"
+
+echo ""
+echo "Docker settings..."
+if [[ $(command -v docker) ]]; then
+	if [[ -f "$HOME"/.docker-config ]]; then
+		DOCKER_CONFIG=$(cat "$HOME"/.docker-config)
+		case "$DOCKER_CONFIG" in
+		"rootfull")     unset DOCKER_HOST; docker context use default >/dev/null 2>/dev/null;  echo "    Setting Docker Context to rootfull (default)";;
+		"rootless")     unset DOCKER_HOST; docker context use rootless >/dev/null 2>/dev/null; echo "    Setting Docker Context to rootless";;
+		"docker_host")  docker context use rootless >/dev/null 2>/dev/null;
+		                echo      "WARNING: Setting DOCKER_HOST for Rootless";
+		                export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+		                ;;
+		*)  echo "    ERROR: Unknown value in .docker-config file: <$DOCKER_CONFIG>";;
+		esac
+	 else
+		echo "    No .docker-config file found, so setting Docker Context as Default"
+		if [[ $(docker --version) ]]; then
+		    docker context use default >/dev/null 2>/dev/null
+		fi
+	fi
+	echo "    Confirming Docker Context is: $(docker context show)"
+	echo "    Note: DOCKER_HOST is <$DOCKER_HOST>"
+else
+	echo "    Docker not installed"
+fi
+echo "Docker settings end"
+echo ""
+
+##LUAROCKS
+[[ $(command -v luarocks) ]] && eval "$(luarocks path --bin)"
+
+# Set up fzf key bindings and fuzzy completion
+[[ $(command -v fzf) ]] &&  eval "$(fzf --bash)"
+
+if [[ $(command -v rbenv) ]]; then
+    # Added by `rbenv init` on Tue Jan  7 02:41:16 PM CET 2025
+    eval "$(~/.rbenv/bin/rbenv init - --no-rehash bash)"
+    export RBENV_ROOT=$(rbenv root)
+    git -C "$(rbenv root)"/plugins/ruby-build pull
+fi
+
+#export GPGME_DEBUG=9:$HOME/mygpgme.log
+# Password Store
+#export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
+#export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=ask
+# export PASSWORD_STORE_GPG_OPTS="--pinentry=loopback --passphrase-file /path/to/.passphrase"
+
+##NOTES PinEntry
+## apt install pinentry-curses
+## apt install pinentry-tty
+## update-alternatives --config pinentry
+## Select TTY
+GPG_TTY=$(tty)
+echo "Current TTY: $GPG_TTY"
+export GPG_TTY
+#gpg-connect-agent updatestartuptty /bye
+
+#Due to problem getting JetBrains Toolbox to run
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+    echo "Wayland Session detected, so not setting XAUTHORITY explictly."
+else
+    echo "No Wayland session, so setting XAUTHORITY"
+    export XAUTHORITY="$HOME"/.Xauthority
+fi
+
+###Doesn't seem to work woth Flox: eval "$(starship init bash)"
+
+echo "ChezMoi Alias: czm"
+echo "Chezmoi: End .bashrc"
+
+##echo "Use 'pya' to activate python"
+if [[ $(command -v flox ) ]]; then
+    echo "FLOX is installed"
+    if [[ -d "$HOME"/.flox ]]; then
+    echo "FLOX: To activate a project use, flox activate, or alias fxa"
+    echo "flox python contains no PIP"
+    #eval "$(flox activate -m dev)"
+    fi
+fi
+
+if [[ -d "$HOME"/.venv ]]; then
+    echo "Found .venv in Home!"
+    echo "Try to activate with, inve"
+else
+    echo "No .venv found in Home!"
+    echo "Create with, python3 -m venv .venv"
+    echo "And activate with, inve"
+fi
+
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+#export PATH="$HOME/gems/bin:$PATH"
+if [[ -d "$GEM_HOME" ]]; then
+    echo "GEMS dir found..."
+    pathmunge "${HOME}/gems/bin"
+else
+    echo "No GEMS dir found"
+fi
+
+if [[ $(command -v oh-my-posh) ]]; then
+    #NOTE: List Themes with "ls .cache/oh-my-posh/themes"
+    oh-my-posh upgrade
+    eval "$(oh-my-posh init bash --config 'negligible')"
+fi
+
+# >>> juliaup initialize >>>
+# !! Contents within this block are managed by juliaup !!
+case ":$PATH:" in
+    *:/home/jradley/.juliaup/bin:*)
+        ;;
+    *)
+        export PATH=/home/jradley/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+# <<< juliaup initialize <<<
+
+## oxidizr to switch coreutils
+
+## END
+#export PATH="$HOME/.luaver/luarocks/3.12.2_5.1/bin:$PATH"
+#export PATH="$HOME/.luaver/lua/5.1.5/bin:$PATH"
+
+
+# ZVM
+export ZVM_INSTALL="$HOME/.zvm/self"
+#export PATH="$PATH:$HOME/.zvm/bin"
+#export PATH="$PATH:$ZVM_INSTALL/"
+if [[ -d "$HOME/.zvm" ]]; then
+    echo "ZVM: $($HOME/.zvm/self/zvm --version)."
+    pathmunge "$HOME/.zvm/bin"
+    pathmunge "$ZVM_INSTALL/"
+    if [[  $(command -v zig) ]]; then
+        echo "ZIG version $(zig version)"
+    else
+        echo "No ZIG language installed."
+    fi
+fi
+
+# ASDF
+# export PATH="${ASDF_DATA_DIR:-$HOME/.asdf/shims:$PATH"
+if [[ -d "$HOME/.asdf" ]]; then
+    echo "ASDF: $($HOME/.local/bin/asdf --version)."
+    pathmunge "$HOME/.asdf/shims"
+    if [[  $(command -v odin) ]]; then
+        echo "USE: asdf set odin latest"
+        echo "ODIN version $(odin version)"
+    else
+        echo "No ODIN language installed."
+    fi
+fi
+
+##Nim, ChooseNIM
+#export PATH=/home/jradley/.nimble/bin:$PATH
+if [[ -d "$HOME/.nimble" ]]; then
+    echo "NIM: $($HOME/.nimble/bin/nim --version)."
+    pathmunge "$HOME/.nimble/bin"
+    if [[  $(command -v nim) ]]; then
+        echo "NIM installed"
+    else
+        echo "No NIM language installed."
+    fi
+fi
+
+##CODON complier
+if [[ -d "$HOME/.codon" ]]; then
+    echo "CODON: $($HOME/.codon/bin/codon --version)."
+    pathmunge "$HOME/.codon/bin"
+    if [[  $(command -v codon) ]]; then
+        echo "CODON installed"
+    else
+        echo "No CODON Compiler installed."
+    fi
+fi
+
+##PIXI
+#export PATH="/home/jradley/.pixi/bin:$PATH"
+if [[ -d "$HOME/.pixi" ]]; then
+    echo "PIXI: $($HOME/.pixi/bin/pixi --version)."
+    pathmunge "$HOME/.pixi/bin"
+    if [[  $(command -v pixi) ]]; then
+        echo "PIXI installed"
+    else
+        echo "No PIXI Compiler installed."
+    fi
+fi
+
+if command -v zed >&2; then
+    export EDITOR="zed --wait"
+else
+    if command -v code >&2; then
+        export EDITOR="code --wait"
+    else
+        if command -v micro >&2; then
+            export EDITOR="micro"
+        else
+            if command -v nano >&2; then
+                export EDITOR="nano"
+            else
+                export EDITOR=""
+            fi
+        fi
+    fi
+fi
+echo "EDITOR set to $EDITOR"
+
+export TERMINAL=terminator
+echo "TERMINAL set to $TERMINAL"
+
+echo "End of .bashrc"
+

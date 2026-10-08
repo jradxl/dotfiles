@@ -1,0 +1,79 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+#
+# 202601008b
+
+## CHEZMOI supported: https://www.chezmoi.io/
+## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+mkdir -p $HOME/.bash.d
+
+if [[ -f "$HOME/.bash.d/bash-user" ]]; then
+    source "$HOME/.bash.d/bash-user"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-paths" ]]; then
+    source "$HOME/.bash.d/bash-paths"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-chezmoi" ]]; then
+    source "$HOME/.bash.d/bash-chezmoi"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-functions" ]]; then
+    source "$HOME/.bash.d/bash-functions"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-waitnet" ]]; then
+    source "$HOME/.bash.d/bash-waitnet"
+fi
+wait4network
+
+if [[ -f "$HOME/.bash.d/bash-pixi" ]]; then
+    source "$HOME/.bash.d/bash-pixi"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-terminals" ]]; then
+    source "$HOME/.bash.d/bash-terminals"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-aliases" ]]; then
+    source "$HOME/.bash.d/bash-aliases"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-completions" ]]; then
+    source "$HOME/.bash.d/bash-completions"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-keychain" ]]; then
+    source "$HOME/.bash.d/bash-keychain"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-apps" ]]; then
+    source "$HOME/.bash.d/bash-apps"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-python" ]]; then
+    source "$HOME/.bash.d/bash-python"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-docker" ]]; then
+    source "$HOME/.bash.d/bash-docker"
+fi
+
+if [[ -f "$HOME/.bash.d/bash-jetbrains" ]]; then
+    source "$HOME/.bash.d/bash-jetbrains"
+fi
+
+echo ""
+echo "ChezMoi Alias: czm"
+echo "ChezMoi ChangeDir: czmcd"
+echo "Chezmoi: End .bashrc"
+

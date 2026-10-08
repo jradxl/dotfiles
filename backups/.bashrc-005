@@ -1,0 +1,250 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+# 202601007a
+
+## CHEZMOI supported: https://www.chezmoi.io/
+## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+NOW=$(date +"%Y%m%d%H%M%S")
+
+pathmunge() {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH="$PATH:$1"
+            else
+                PATH="$1:$PATH"
+            fi
+    esac
+}
+echo ""
+echo "Waiting for network..."
+echo ""
+wait4network() {
+    local serverAdr="github.com"
+    local count=0
+    local count_max=20
+
+    echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+    ping -c 1 $serverAdr > /dev/null 2>&1
+    while [[ $? -ne 0 ]]; do
+      let "count+=1"
+      echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+      sleep 2
+      if [[ ${count} -gt ${count_max} ]]; then
+        break
+      fi
+      ping -c 1 $serverAdr > /dev/null 2>&1
+    done
+
+    echo "$(date): Connected - ${serverAdr}"
+}
+
+wait4network
+
+echo "Chezmoi: START .bashrc"
+
+UUID=$(id -u "$USER")
+export UUID
+GGID=$(id -g "$USER")
+export GGID
+echo "User, UID and GID is: $USER;$UUID;$GGID"
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
+
+if [[ -d "$HOME/.pixi" ]]; then
+    echo "PIXI found, so not using goversionmanager G..."
+    pathmunge "$HOME/.pixi/bin"
+    if [[  $(command -v pixi) ]]; then
+        echo "PIXI installed: $($HOME/.pixi/bin/pixi --version)"
+        ##eval "$(pixi shell-hook --shell `zsh` )"
+    else
+        echo "No PIXI Compiler installed."
+    fi
+fi
+
+#PATH="/usr/bin/john:$PATH"
+#PATH="$PATH:/usr/bin/john2"
+pathmunge 
+
+if [[ -f "$HOME/.chezmoi-pac" ]]; then
+    . "$HOME/.chezmoi-pac"
+fi
+if [[ -f "$HOME/.lastversion-pac" ]]; then
+    . "$HOME/.lastversion-pac"
+fi
+
+alias czm='chezmoi'
+alias czmcd='cd ~/.local/share/chezmoi'
+[[ -f "$HOME/.bash_aliases" ]] && . "$HOME/.bash_aliases"
+
+if [[ $(command -v chezmoi )  ]]; then
+    echo "Upgrading Chezmoi, if needed..."
+    chezmoi upgrade
+fi
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+HISTSIZE=-1
+HISTFILESIZE=-1
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+########### KEYCHAIN START #################
+
+## Logic to run once per day
+export LOCK="$HOME/.runonce-lock"
+
+#echo "JSR1"
+if [[ "$(pwd)" == "$HOME" ]]; then
+    ##Test If run already today
+    SHOULDRUN="N"
+    if [[ ! -e "$LOCK" ]]; then  # no lock - command run for the first time
+        #"$@"
+        touch "$LOCK"
+        SHOULDRUN="Y"
+        #echo "JSR2"
+    else                         # lock exists
+        #echo "JSR3"
+        if [[ "$(find "$LOCK" -mmin +720)" ]]; then
+            #"$@"
+            SHOULDRUN="Y"
+            touch "$LOCK"
+            #echo "JSR4"
+        fi
+    fi
+    #echo "JSR5"
+    #echo "SHOULDRUN: $SHOULDRUN"
+    if [[ "$SHOULDRUN" == "Y" ]]; then
+        echo "RUN ONCE TODAY"
+        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+
+        echo "Latest Chezmoi Version:    $(get-github-latest https://github.com/twpayne/chezmoi)"
+        echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
+
+        if [[ $(command -v chezmoi )  ]]; then
+            echo "Upgrading Chezmoi, if needed..."
+            chezmoi upgrade
+        fi
+
+        #This is intentionally not sourced, so script
+        # can be run independently. Master copy held in Github.
+        RUNONCE="NO"
+        RUNONCESCRIPT="$HOME"/.local/share/chezmoi/home-other/scripts/run-once.sh
+        if [[  -f $RUNONCESCRIPT ]]  && [[ -x $RUNONCESCRIPT ]]; then
+            echo "RUN-ONCE script is found and is executable...";
+            "$RUNONCESCRIPT"
+        else
+            echo "ERROR: RUN-ONCE script is not available."
+        fi
+    else
+        echo "RUN TODAY"
+        eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        keychain --list
+    fi
+fi
+
+echo "Checking Apps..."
+if command -v zed >&2; then
+    export EDITOR="zed --wait"
+else
+    if command -v code >&2; then
+        export EDITOR="code --wait"
+    else
+        if command -v micro >&2; then
+            export EDITOR="micro"
+        else
+            if command -v nano >&2; then
+                export EDITOR="nano"
+            else
+                export EDITOR=""
+            fi
+        fi
+    fi
+fi
+echo "EDITOR set to $EDITOR"
+
+echo ""
+echo "Showing versions of all installed Apps....#"
+
+if [[ $(command -v direnv )    ]]; then
+    #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
+    eval "$(direnv hook bash)"
+    echo "Installed DIRENV version: $(direnv version)"
+fi
+
+##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
+[[ $(command -v codon )  ]] && echo "Installed CODON version: $(codon --version)"
+[[ $(command -v g )      ]] && echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
+[[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
+[[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
+[[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
+[[ $(command -v npm )    ]] && echo "Installed NPM version:  $(npm -v)"
+[[ $(command -v npx )    ]] && echo "Installed NPX version:  $(npx -v)"
+[[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
+[[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
+[[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
+[[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
+[[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
+[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version | grep deno)"
+[[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
+[[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
+[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
+[[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
+[[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
+[[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
+[[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
+echo "NVIM Version Start..."
+[[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
+echo "NVIM Version End."
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
+[[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
+[[ $(command -v herdr )    ]] && echo "Installed HERDR version (use hr):  $(herdr -V)"
+#terax_version=$(get-github-terax-version)
+#[[ $(command -v terax )    ]] && echo "Installed TERAX version (use tx): $terax_version"
+
+eval "$(pixi completion --shell bash)"
+
+PS1='${CUSTOM_PS1:+$CUSTOM_PS1}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+echo "End of .bashrc"
+
