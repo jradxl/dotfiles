@@ -1,0 +1,21 @@
+
+##Not Used
+#if [[ -f .python-version ]]; then
+#    echo "Current Python set by '.python-version': $(cat .python-version)"
+#else
+#    echo "'.python-version is NOT seting version "
+#fi
+
+echo ""
+[[ $(command -v python ) ]] && echo "Current Python  version: $(python -V)"
+[[ $(command -v python3 ) ]] && echo "Current Python3 version: $(python3 -V)"
+
+if [[ -d "$HOME"/.venv ]]; then
+    echo "Found .venv in Home!"
+    echo "Try to activate with, inve"
+else
+    echo "No .venv found in Home!"
+    echo "Create with, python3 -m venv .venv"
+    echo "And activate with, inve"
+fi
+

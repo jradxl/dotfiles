@@ -1,0 +1,9 @@
+
+get-github-latest() {
+    git ls-remote --tags --sort='v:refname' $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
+
+get-github-terax-version() {
+    curl -s https://api.github.com/repos/crynta/terax-ai/releases | jq '.[0].assets[].browser_download_url' | grep latest | awk -F "/" '{print $8}'
+}
+

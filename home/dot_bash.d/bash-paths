@@ -1,0 +1,38 @@
+pathmunge() {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH="$PATH:$1"
+            else
+                PATH="$1:$PATH"
+            fi
+    esac
+}
+
+#PATH="$HOME/.pixi/bin:$PATH"
+# SEE bash-pixi pathmunge "$HOME/.pixi/bin"
+
+#PATH="$HOME/.local/bin:$PATH"
+pathmunge "$HOME/.local/bin"
+
+pathmunge "$HOME/Apps"
+pathmunge "$HOME/bin"
+pathmunge "$HOME/.rd/bin"
+## Now using BOB
+pathmunge "$HOME/Apps/nvim/bin"
+##pathmunge "$HOME/.local/share/bob/nvim-bin"
+## export PATH="/opt/nvim-linux64/bin:$PATH"
+## pathmunge "/opt/nvim-linux64/bin"
+##export PATH="/home/jradley/.local/share/JetBrains/Toolbox/agoland/bin/:$PATH"
+pathmunge "$HOME/.local/share/JetBrains/Toolbox/apps/goland/bin/"
+
+# NOTE: Found better to install PODMAN and helpers in /usr/local/ as well as "$HOME/podman/bin"
+# NOTE: /usr/local before $HOME/podman/bin" so my script test work, but podman-desktop needs
+# the latter.
+pathmunge "$HOME/podman/bin"
+pathmunge "$HOME/lima/bin"
+pathmunge "$HOME/.codon/bin"
+
+

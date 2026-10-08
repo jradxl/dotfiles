@@ -1,0 +1,60 @@
+
+########### KEYCHAIN START #################
+
+## Logic to run once per day
+export LOCK="$HOME/.runonce-lock"
+
+#echo "JSR1"
+if [[ "$(pwd)" == "$HOME" ]]; then
+    ##Test If run already today
+    SHOULDRUN="N"
+    if [[ ! -e "$LOCK" ]]; then  # no lock - command run for the first time
+        #"$@"
+        touch "$LOCK"
+        SHOULDRUN="Y"
+        #echo "JSR2"
+    else                         # lock exists
+        #echo "JSR3"
+        if [[ "$(find "$LOCK" -mmin +720)" ]]; then
+            #"$@"
+            SHOULDRUN="Y"
+            touch "$LOCK"
+            #echo "JSR4"
+        fi
+    fi
+    #echo "JSR5"
+    #echo "SHOULDRUN: $SHOULDRUN"
+    if [[ "$SHOULDRUN" == "Y" ]]; then
+        echo "RUN ONCE TODAY"
+        eval $(keychain --clear --gpg2 --nogui --noask --eval --agents ssh,gpg)
+
+        CHEZMOI_LATEST=$(get-github-latest https://github.com/twpayne/chezmoi)
+        echo "Latest Chezmoi Version: $CHEZMOI_LATEST"
+        echo "Installed Chezmoi Version: $(chezmoi --version  | awk '{print $3}')"
+
+        if [[ $(command -v chezmoi )  ]]; then
+            echo "Upgrading Chezmoi, if needed..."
+            chezmoi upgrade
+        fi
+
+        #This is intentionally not sourced, so script
+        # can be run independently. Master copy held in Github.
+        RUNONCE="NO"
+        RUNONCESCRIPT="$HOME"/.local/share/chezmoi/home-other/scripts/run-once.sh
+        if [[  -f $RUNONCESCRIPT ]]  && [[ -x $RUNONCESCRIPT ]]; then
+            echo "RUN-ONCE script is found and is executable...";
+            "$RUNONCESCRIPT"
+        else
+            echo "ERROR: RUN-ONCE script is not available."
+        fi
+    else
+        echo "RUN TODAY"
+        eval $(keychain --gpg2 --nogui --noask --eval --agents ssh,gpg)
+        keychain --list
+    fi
+fi
+
+########### KEYCHAIN END #################
+echo ""
+
+

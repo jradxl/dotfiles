@@ -1,0 +1,10 @@
+
+# .bashrc file from Chezmoi
+
+if [[ -f "$HOME/.chezmoi-pac" ]]; then
+    . "$HOME/.chezmoi-pac"
+fi
+if [[ -f "$HOME/.lastversion-pac" ]]; then
+    . "$HOME/.lastversion-pac"
+fi
+

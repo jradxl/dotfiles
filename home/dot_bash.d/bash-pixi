@@ -1,0 +1,14 @@
+
+## PIXI
+#export PATH="/home/jradley/.pixi/bin:$PATH"
+if [[ -d "$HOME/.pixi" ]]; then
+    echo "PIXI found, so not using goversionmanager G..."
+    pathmunge "$HOME/.pixi/bin"
+    if [[  $(command -v pixi) ]]; then
+        echo "PIXI installed: $($HOME/.pixi/bin/pixi --version)"
+        ##eval "$(pixi shell-hook --shell `zsh` )"
+    else
+        echo "No PIXI utility installed."
+    fi
+fi
+

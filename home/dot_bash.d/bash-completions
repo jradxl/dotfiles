@@ -1,0 +1,35 @@
+## INFO Alias Completion.
+mkdir -p "$HOME"/.complete_alias
+touch "$HOME"/.complete_alias/complete_alias
+# Install git clone -o complete_alias https://github.com/cykerway/complete-alias.git
+# mv complete_alias .complete_alias
+# echo ". $HOME/.complete_alias/complete_alias" >> ~/.bash_completion
+# echo "complete -F _complete_alias sctl" >> $HOME/.complete_alias/complete_alias
+# Note that 'complete' is a bash internal command
+##
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+#Local User Bash_completions are a bit confusing so I create my own
+if [[ -d "$HOME/.bash_completion.d" ]]; then
+    echo "Adding custom completions ..."
+    for bcfile in "$HOME/.bash_completion.d"/* ; do
+        if [[ -f "$bcfile" ]]; then
+            echo "    Doing $bcfile ..."
+            . "$bcfile"
+        fi
+    done
+else
+    echo  "Creating custom bash_completion.d"
+    mkdir "$HOME"/.bash_completion.d
+fi
+

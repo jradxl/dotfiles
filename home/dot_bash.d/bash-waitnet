@@ -1,0 +1,26 @@
+
+
+wait4network() {
+    local serverAdr="github.com"
+    local count=0
+    local count_max=20
+
+    echo ""
+    echo "Waiting for network..."
+    echo ""
+
+    echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+    ping -c 1 $serverAdr > /dev/null 2>&1
+    while [[ $? -ne 0 ]]; do
+      let "count+=1"
+      echo -e "\e[1A\e[K$(date): testing connection [$count/$count_max] - ${serverAdr}"
+      sleep 2
+      if [[ ${count} -gt ${count_max} ]]; then
+        break
+      fi
+      ping -c 1 $serverAdr > /dev/null 2>&1
+    done
+
+    echo "$(date): Connected - ${serverAdr}"
+}
+

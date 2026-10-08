@@ -1,0 +1,8 @@
+
+UUID=$(id -u "$USER")
+export UUID
+GGID=$(id -g "$USER")
+export GGID
+echo "User, UID and GID is: $USER;$UUID;$GGID"
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$UID/bus
+

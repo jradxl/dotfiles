@@ -1,0 +1,9 @@
+
+#Due to problem getting JetBrains Toolbox to run
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+    echo "Wayland Session detected, so not setting XAUTHORITY explictly."
+else
+    echo "No Wayland session, so setting XAUTHORITY"
+    export XAUTHORITY="$HOME"/.Xauthority
+fi
+
