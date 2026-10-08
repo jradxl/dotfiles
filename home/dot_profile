@@ -8,8 +8,7 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-#20260712A
-
+#202601008a
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
@@ -62,4 +61,3 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 echo "End $HOME/.profile"
-
