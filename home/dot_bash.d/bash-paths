@@ -20,6 +20,7 @@ pathmunge "$HOME/.local/bin"
 pathmunge "$HOME/Apps"
 pathmunge "$HOME/bin"
 pathmunge "$HOME/.rd/bin"
+pathmunge "$HOME/.hishtory"
 ## Now using BOB
 pathmunge "$HOME/Apps/nvim/bin"
 ##pathmunge "$HOME/.local/share/bob/nvim-bin"
