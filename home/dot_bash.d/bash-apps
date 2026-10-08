@@ -1,6 +1,6 @@
 
 echo ""
-echo "Showing versions of all installed Apps....#"
+echo "Showing versions of all installed Apps..."
 
 if [[ $(command -v direnv )    ]]; then
     #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
