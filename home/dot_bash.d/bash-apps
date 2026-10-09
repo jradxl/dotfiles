@@ -228,7 +228,7 @@ if [[ -d "$HOME/.nimble" ]]; then
     fi
 fi
 
-###CODON complier
+### CODON complier
 if [[ -d "$HOME/.codon" ]]; then
     echo "CODON: $($HOME/.codon/bin/codon --version)."
     pathmunge "$HOME/.codon/bin"
@@ -239,17 +239,21 @@ if [[ -d "$HOME/.codon" ]]; then
     fi
 fi
 
-###ZED Editor
-if command -v zed >&2; then
+### ZED Editor
+if [[ $(command -v zed ) ]]; then
+    echo "Zed Editor: $(zed -v | awk '{print $2}')"
     export EDITOR="zed --wait"
 else
-    if command -v code >&2; then
+    if [[ $(command -v code ) ]]; then
+        echo "VSCode Editor: $(code -v | head -n 1)"
         export EDITOR="code --wait"
     else
-        if command -v micro >&2; then
+        if [[ $(command -v micro ) ]]; then
+            echo "Micro Editor: $(micro -version | awk '{print $2}')"
             export EDITOR="micro"
         else
-            if command -v nano >&2; then
+            if [[ $(command -v nano ) ]]; then
+                echo "Nano Editor: $(nano -V | head -n 1 | awk '{print $4}')"
                 export EDITOR="nano"
             else
                 export EDITOR=""
