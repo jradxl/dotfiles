@@ -54,7 +54,13 @@ if [[ "$(pwd)" == "$HOME" ]]; then
     fi
 fi
 
+[[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
+[[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
+[[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
+
 ########### KEYCHAIN END #################
 echo ""
+
+
 
 
