@@ -8,52 +8,17 @@ if [[ $(command -v direnv )    ]]; then
     echo "Installed DIRENV version: $(direnv version)"
 fi
 
-##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
-[[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
-[[ $(command -v codon )  ]] && echo "Installed CODON version: $(codon --version)"
-[[ $(command -v g )      ]] && echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
-[[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
-[[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
-[[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
-[[ $(command -v npm )    ]] && echo "Installed NPM version:  $(npm -v)"
-[[ $(command -v npx )    ]] && echo "Installed NPX version:  $(npx -v)"
-[[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
-[[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
-[[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
-[[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
-[[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
-[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version | grep deno)"
-[[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
-[[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
-[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
-[[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
-[[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
-[[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
-[[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
-echo "NVIM Version Start..."
-[[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
-echo "NVIM Version End."
-[[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
-[[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
-[[ $(command -v herdr )    ]] && echo "Installed HERDR version (use hr):  $(herdr -V)"
-terax_version=$(get-github-terax-version)
-[[ $(command -v terax )    ]] && echo "Installed TERAX version (use tx): $terax_version"
+### CARGO
+[[ -d "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
+[[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
 
 
+### ASTRO NVIM
 #if [[ -f "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt ]]; then
 #    echo "Installed AstroNvim version: " $(cat "$HOME"/.local/share/nvim/lazy/AstroNvim/version.txt)
 #fi
 
-[[ $(command -v lx )       ]] && echo "Installed LUX_CLI (lx) version:  $(lx -V)"
-[[ $(command -v luaver )   ]] && echo "Installed LUAVER version:  $(luaver version | grep Lua)"
-## Not Used [[ $(command -v luaenv )   ]] && echo "Installed LUAENV version:  $(curl -sL https://api.github.com/repos/cehoffman/luaenv | jq .pushed_at)"
-[[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
-[[ $(command -v asdf )     ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
-[[ $(command -v rg )       ]] && echo "Installed RIPGREP (i.e. rg) version:  $(rg --version)"
-[[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v)"
-[[ $(command -v pixi   )   ]] && echo "Installed PIXI (i.e. pixi) version:  $(pixi -V)"
-
-#Ruby Ubuntu Package
+### Ruby Ubuntu Package
 if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
     echo "Ubuntu ruby-full package is installed"
     [[ $(command -v ruby ) ]] && echo "Installed native Ruby version:  $(ruby --version)"
@@ -61,10 +26,6 @@ if [[ $(dpkg -s ruby-full 1> /dev/null 2> /dev/null) ]]; then
 else
     echo "Ubuntu ruby-full package not installed"
 fi
-
-[[ -z "$HOSTNAME" ]]                      && HOSTNAME=$(uname -n)
-[[ -f $HOME/.keychain/$HOSTNAME-sh ]]     && source $HOME/.keychain/$HOSTNAME-sh
-[[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source $HOME/.keychain/$HOSTNAME-sh-gpg
 
 ##PYENV Discontinued
 #https://realpython.com/python313-free-threading-jit/
@@ -90,9 +51,10 @@ fi
 
 #Not using Modular export PATH="$PATH:/home/jradley/.modular/bin"
 
-[[ -f "$HOME/.cargo/bin" ]]                  && pathmunge "$HOME/.cargo/bin"
-[[ -f "$HOME/.cargo/env" ]]                  && . "$HOME/.cargo/env"
+### SWIFTLY
 [[ -f "$HOME/.local/share/swiftly/env.sh" ]] && . "$HOME/.local/share/swiftly/env.sh"
+
+### DENO
 if [[ -f "$HOME/.deno/bin/deno" ]]; then
     pathmunge "${HOME}/.deno/bin"
     "$HOME"/.deno/bin/deno completions bash > "$HOME/.bash_completion.d/deno_completion"
@@ -123,12 +85,13 @@ if [[ $(command -v rbenv) ]]; then
 fi
 
 #export GPGME_DEBUG=9:$HOME/mygpgme.log
-# Password Store
+
+### PASSWORD STORE
 #export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=loopback
 #export PASSWORD_STORE_GPG_OPTS=--pinentry-mode=ask
 #export PASSWORD_STORE_GPG_OPTS="--pinentry=loopback --passphrase-file /path/to/.passphrase"
 
-##NOTES PinEntry
+### PINENTRY NOTES 
 ## apt install pinentry-curses
 ## apt install pinentry-tty
 ## update-alternatives --config pinentry
@@ -138,11 +101,7 @@ echo "Current TTY: $GPG_TTY"
 export GPG_TTY
 #gpg-connect-agent updatestartuptty /bye
 
-
 ###Doesn't seem to work woth Flox: eval "$(starship init bash)"
-
-echo "ChezMoi Alias: czm"
-echo "Chezmoi: End .bashrc"
 
 ##echo "Use 'pya' to activate python"
 if [[ $(command -v flox ) ]]; then
@@ -229,19 +188,13 @@ if [[ -d "$HOME/.nimble" ]]; then
 fi
 
 ### CODON complier
-if [[ -d "$HOME/.codon" ]]; then
-    echo "CODON: $($HOME/.codon/bin/codon --version)."
+if [[ -d "$HOME/.codon/bin" ]]; then
     pathmunge "$HOME/.codon/bin"
-    if [[  $(command -v codon) ]]; then
-        echo "CODON installed"
-    else
-        echo "No CODON Compiler installed."
-    fi
 fi
 
 ### ZED Editor
 if [[ $(command -v zed ) ]]; then
-    echo "Zed Editor: $(zed -v | awk '{print $2}')"
+    echo "Installed Zed Editor: $(zed -v | awk '{print $2}')"
     export EDITOR="zed --wait"
 else
     if [[ $(command -v code ) ]]; then
@@ -262,4 +215,44 @@ else
     fi
 fi
 echo "EDITOR set to $EDITOR"
+
+
+##Use uv [[ $(command -v rye )    ]] && echo "Installed RYE version: $(rye --version)"
+[[ $(command -v python ) ]] && echo "Installed PYTHON version: $(python -V)"
+[[ $(command -v codon )  ]] && echo "Installed CODON version: $(codon --version)"
+[[ $(command -v g )      ]] && echo "Installed G (voidint Goland Version Manager version: $(g --version | grep version | tr '\n' ' ')"
+[[ $(command -v go )     ]] && echo "Installed GOLANG version: $(go version)"
+[[ $(command -v nvm )    ]] && echo "Installed NVM Version: $(nvm --version)"
+[[ $(command -v node )   ]] && echo "Installed NODE version: $(node -v)"
+[[ $(command -v npm )    ]] && echo "Installed NPM version:  $(npm -v)"
+[[ $(command -v npx )    ]] && echo "Installed NPX version:  $(npx -v)"
+[[ $(command -v rustc )  ]] && echo "Installed RUSTC version:  $(rustc -V)"
+[[ $(command -v cargo )  ]] && echo "Installed CARGO version:  $(cargo -V)"
+[[ $(command -v uv )     ]] && echo "Installed UV version:  $(uv -V)"
+[[ $(command -v hatch )  ]] && echo "Installed HATCH version:  $(hatch --version)"
+[[ $(command -v poetry ) ]] && echo "Installed POETRY version:  $(poetry --version)"
+[[ $(command -v deno )   ]] && echo "Installed DENO version:  $(deno --version | grep deno)"
+[[ $(command -v pnpm )   ]] && echo "Installed PNPM version:  $(pnpm --version)"
+[[ $(command -v fzf )    ]] && echo "Installed FZF version:  $(fzf --version)"
+[[ $(command -v rbenv )    ]] && echo "Installed RBENV version:  $(rbenv --version)"
+[[ $(command -v lua )      ]] && echo "Installed LUA version:  $(lua -v | awk '{print $2}')"
+[[ $(command -v luarocks ) ]] && echo "Installed LUAROCKS version:  $(luarocks --version | grep luarocks | awk '{print $2}')"
+[[ $(command -v hishtory ) ]] && echo "Installed HISHTORY version:  $(hishtory -v | awk '{print $3}')"
+[[ $(command -v just )     ]] && echo "Installed JUST version:  $(just -V)"
+#echo "NVIM Version Start..."
+[[ $(command -v nvim )     ]] && echo "Installed NVIM version:  $(nvim -v)"
+#echo "NVIM Version End."
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP version:  $(rg -V)"
+[[ $(command -v fresh )    ]] && echo "Installed FRESH version:  $(fresh -V)"
+[[ $(command -v herdr )    ]] && echo "Installed HERDR version (use hr):  $(herdr -V)"
+terax_version=$(get-github-terax-version)
+[[ $(command -v terax )    ]] && echo "Installed TERAX version (use tx): $terax_version"
+[[ $(command -v lx )       ]] && echo "Installed LUX_CLI (lx) version:  $(lx -V)"
+[[ $(command -v luaver )   ]] && echo "Installed LUAVER version:  $(luaver version | grep Lua)"
+## Not Used [[ $(command -v luaenv )   ]] && echo "Installed LUAENV version:  $(curl -sL https://api.github.com/repos/cehoffman/luaenv | jq .pushed_at)"
+[[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
+[[ $(command -v asdf )     ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
+[[ $(command -v rg )       ]] && echo "Installed RIPGREP (i.e. rg) version:  $(rg --version)"
+[[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v | head -n 1)"
+[[ $(command -v pixi   )   ]] && echo "Installed PIXI (i.e. pixi) version:  $(pixi -V)"
 
