@@ -8,3 +8,7 @@ if [[ -f "$HOME/.lastversion-pac" ]]; then
     . "$HOME/.lastversion-pac"
 fi
 
+#echo "ChezMoi Alias: czm"
+#echo "Chezmoi: End .bashrc"
+
+
