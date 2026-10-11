@@ -193,7 +193,8 @@ if [[ -d "$HOME/.codon/bin" ]]; then
 fi
 
 ### ZED Editor
-if [[ $(command -v zed ) ]]; then
+## Explicit to avoid confusion with zfs
+if [[ -f "$HOME/.local/bin/zed" ]]; then
     echo "Installed Zed Editor: $(zed -v | awk '{print $2}')"
     export EDITOR="zed --wait"
 else
