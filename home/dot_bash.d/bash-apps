@@ -2,6 +2,8 @@
 echo ""
 echo "Showing versions of all installed Apps..."
 
+#20261024a
+
 if [[ $(command -v direnv )    ]]; then
     #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
     eval "$(direnv hook bash)"
@@ -254,6 +256,7 @@ terax_version=$(get-github-terax-version)
 [[ $(command -v bob )      ]] && echo "Installed BOB (nvim version manager) version:  $(bob --version)"
 [[ $(command -v asdf )     ]] && echo "Installed ASDF (multiple version manager) version:  $(asdf --version)"
 [[ $(command -v rg )       ]] && echo "Installed RIPGREP (i.e. rg) version:  $(rg --version)"
+[[ $(command -v code )     ]] && echo "Installed VSCODE (i.e. vscode) version:  $(code -v | head -n 1)"
 [[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v | head -n 1)"
 [[ $(command -v pixi   )   ]] && echo "Installed PIXI (i.e. pixi) version:  $(pixi -V)"
 
