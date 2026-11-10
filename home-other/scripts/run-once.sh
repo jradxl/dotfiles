@@ -4,6 +4,8 @@
 # Can be run as standalone script
 ###################
 
+#20261110a
+
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
 }
@@ -235,8 +237,8 @@ check-flatpaks() {
         #echo "Updating system flatpaks if any"
         #sudo flatpak update --system -y
         echo "Updating user flatpaks if any"
-        #flatpak update --user -y
-        flatpak update -y
+        flatpak update --user -y
+        #flatpak update -y
     fi
 }
 
