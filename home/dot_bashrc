@@ -2,7 +2,7 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 #
-# 202601111a
+# 202601111b
 
 ## CHEZMOI supported: https://www.chezmoi.io/
 ## Install on new machine as: sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
@@ -74,12 +74,14 @@ if [[ -f "$HOME/.bash.d/bash-jetbrains" ]]; then
     source "$HOME/.bash.d/bash-jetbrains"
 fi
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[[ -s "/home/jradley/.llvmvm/scripts/llvmvm.sh" ]] && source "/home/jradley/.llvmvm/scripts/llvmvm.sh"
+
 echo ""
 echo "ChezMoi Alias: czm"
 echo "ChezMoi ChangeDir: czmcd"
 echo "Chezmoi: End .bashrc"
 
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
