@@ -260,6 +260,7 @@ terax_version=$(get-github-terax-version)
 [[ $(command -v codium )   ]] && echo "Installed VSCODIUM (i.e. codium) version:  $(codium -v | head -n 1)"
 [[ $(command -v pixi   )   ]] && echo "Installed PIXI (i.e. pixi) version:  $(pixi -V)"
 [[ $(command -v julia   )  ]] && echo "Installed JULIA version: $(julia -v | awk '{print $3}')"
-[[ $(command -v clang++ )  ]] && echo "Installed CLANG++ version: $(clang++ --version | head -n 1 | awk '{print $4}')"
+#SEE ~/Devel/LLVM
+[[ $(command -v clang++ )  ]] && echo "Installed CLANG++ via apt.llvm.org version: $(clang++ --version | head -n 1 | awk '{print $4}')"
 
 
