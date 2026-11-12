@@ -1,4 +1,3 @@
-
 echo ""
 echo "Showing versions of all installed Apps..."
 
@@ -167,7 +166,7 @@ fi
 # ASDF
 # export PATH="${ASDF_DATA_DIR:-$HOME/.asdf/shims:$PATH"
 if [[ -d "$HOME/.asdf" ]]; then
-    echo "ASDF: $($HOME/.local/bin/asdf --version)."
+    echo "ASDF installed in: $(command -v asdf)."
     pathmunge "$HOME/.asdf/shims"
     if [[  $(command -v odin) ]]; then
         echo "USE: asdf set odin latest"
@@ -262,5 +261,6 @@ terax_version=$(get-github-terax-version)
 [[ $(command -v julia   )  ]] && echo "Installed JULIA version: $(julia -v | awk '{print $3}')"
 #SEE ~/Devel/LLVM
 [[ $(command -v clang++ )  ]] && echo "Installed CLANG++ via apt.llvm.org version: $(clang++ --version | head -n 1 | awk '{print $4}')"
+[[ $(command -v asdf )     ]] && echo "Installed ASDF version: v$(asdf --version | awk '{print $3}')"
 
 
