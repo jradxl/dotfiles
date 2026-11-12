@@ -4,10 +4,16 @@
 # Can be run as standalone script
 ###################
 
-#20261110a
+#20261112a
 
 get-github-latest () {
     git ls-remote --tags --sort=v:refname $1 | grep -v "rc" | grep -v "{}"  | grep -v "release" | tail -n 1 | tr -d '[:space:]' |  rev | cut -d/ -f1 | rev
+}
+
+check-asdf() {
+    if [[ -f  "$HOME/.local/share/chezmoi/home-other/scripts/install-asdf.sh" ]]; then
+        "$HOME/.local/share/chezmoi/home-other/scripts/install-asdf.sh"
+    fi
 }
 
 check-zed() {
@@ -326,6 +332,7 @@ check-direnv
 check-flatpaks
 check-hishtory
 check-astronvim
+check-asdf
 
 echo "####### RUN-ONCE script finished. #######"
 echo ""
