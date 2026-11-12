@@ -31,5 +31,5 @@ else
 	sudo mv nebula /usr/local/bin
 	sudo mv nebula-cert /usr/local/bin
 	rm -rf ./nebula-linux-amd64.tar.gz
-        sudo systemctl start nebula
+    sudo systemctl start nebula
 fi
