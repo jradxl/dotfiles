@@ -45,7 +45,7 @@ $(cd /tmp && wget "$URL" )
 $(cd /tmp && tar xf "$FILENAME")
 
 pushd /tmp > /dev/null
-shasum -a 256 -c /tmp/SHA256SUM
+shasum -a 256 --ignore-missing -c /tmp/SHA256SUMS
 RET=$?
 popd > /dev/null
 RET="$?"
@@ -63,3 +63,4 @@ just --version
 echo "RUN hash -r in your shell"
 
 exit 0
+
