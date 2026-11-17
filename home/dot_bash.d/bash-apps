@@ -1,7 +1,7 @@
 echo ""
 echo "Showing versions of all installed Apps..."
 
-#20261104a
+#20261171a
 
 if [[ $(command -v direnv )    ]]; then
     #Make sure it appears even after rvm, git-prompt and other shell extensions that manipulate the prompt.
@@ -163,11 +163,17 @@ if [[ -d "$HOME/.zvm" ]]; then
     fi
 fi
 
+# HARE, HAREDOC and HAREC
+if [[ -d "$HOME/.hare" ]]; then
+    pathmunge "$HOME/.hare/bin"
+    echo "HARE installed in: $(command -v hare)."
+fi
+
 # ASDF
 # export PATH="${ASDF_DATA_DIR:-$HOME/.asdf/shims:$PATH"
 if [[ -d "$HOME/.asdf" ]]; then
-    echo "ASDF installed in: $(command -v asdf)."
     pathmunge "$HOME/.asdf/shims"
+    echo "ASDF installed in: $(command -v asdf)."
     if [[  $(command -v odin) ]]; then
         echo "USE: asdf set odin latest"
         echo "ODIN version $(odin version)"
@@ -261,6 +267,8 @@ terax_version=$(get-github-terax-version)
 [[ $(command -v julia   )  ]] && echo "Installed JULIA version: $(julia -v | awk '{print $3}')"
 #SEE ~/Devel/LLVM
 [[ $(command -v clang++ )  ]] && echo "Installed CLANG++ via apt.llvm.org version: $(clang++ --version | head -n 1 | awk '{print $4}')"
-[[ $(command -v asdf )     ]] && echo "Installed ASDF version: v$(asdf --version | awk '{print $3}')"
+[[ $(command -v asdf )     ]] && echo "Installed ASDF version: $(asdf --version | awk '{print $3}')"
+##OR hare version | awk '{print $2}' | cut -d- -f0
+[[ $(command -v hare )     ]] && echo "Installed HARE version: $(hare version | awk '{print $2}')"
 
 
