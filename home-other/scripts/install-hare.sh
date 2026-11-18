@@ -10,7 +10,7 @@ CURRENT="NONE"
 if [[ -f "$HOME/.hare/bin/hare" ]]; then
     echo "Found hare already installed"
     #CURRENT=$(hare -v)
-    CURRENT=v$(hare -v | awk '{print $2}' | head -c 6)
+    CURRENT=v$(hare version | awk '{print $2}' | head -c 6)
 else
     echo "harec Not Found. Cloning or updating repository"
     if [[ -d "$HOME/Devel/sourcehut/hare/" ]]; then
@@ -39,7 +39,7 @@ fi
 echo "Latest is: $LATEST"
 
 if [[ "$CURRENT" == "$LATEST" ]]; then
-    echo "hare is aleady current"
+    echo "hare is already current"
 else
     echo "hare needs an upgrade"
     if [[ -d "$HOME/Devel/sourcehut/hare/" ]]; then

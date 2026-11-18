@@ -59,7 +59,7 @@ fi
 echo "Latest is: $LATEST"
 
 if [[ "$CURRENT" == "$LATEST" ]]; then
-    echo "harec is aleady current"
+    echo "harec is already current"
 else
     echo "harec needs an upgrade"
     if [[ -d "$HOME/Devel/sourcehut/harec/" ]]; then
